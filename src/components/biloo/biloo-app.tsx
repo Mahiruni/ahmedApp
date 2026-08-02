@@ -3,6 +3,7 @@
 import {
   type Dispatch,
   type SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -11,8 +12,8 @@ import {
 import {
   initialDriverJobs,
   initialIncidents,
-  initialNotifications,
-  initialOrders,
+  initialNotifications as demoInitialNotifications,
+  initialOrders as demoInitialOrders,
   initialVendorOrders,
   type ActiveOrder,
   type AdminIncident,
@@ -26,6 +27,9 @@ import {
   type VendorOrder,
   catalog,
 } from "@/data/biloo";
+
+import type { AppViewer } from "@/lib/biloo/auth";
+import { useBilooRealtime } from "@/hooks/use-biloo-realtime";
 
 import { CustomerDashboard } from "./customer-dashboard";
 import { AdminDashboard } from "./admin-dashboard";
@@ -49,11 +53,13 @@ const vendorStatusOrder: VendorOrder["status"][] = [
 function useStoredState<T>(
   key: string,
   initialValue: T,
+  enabled = true,
 ): [T, Dispatch<SetStateAction<T>>] {
   const [value, setValue] = useState<T>(initialValue);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     let cancelled = false;
     const timeout = window.setTimeout(() => {
       try {
@@ -70,16 +76,16 @@ function useStoredState<T>(
       cancelled = true;
       window.clearTimeout(timeout);
     };
-  }, [key]);
+  }, [enabled, key]);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!enabled || !hydrated) return;
     try {
       window.localStorage.setItem(key, JSON.stringify(value));
     } catch {
       // Storage may be unavailable in privacy mode; in-memory state still works.
     }
-  }, [hydrated, key, value]);
+  }, [enabled, hydrated, key, value]);
 
   return [value, setValue];
 }
@@ -101,21 +107,47 @@ function paymentMethodLabel(method: PaymentMethod) {
   return "cash on delivery";
 }
 
-export function BilooApp() {
-  const [role, setRole] = useStoredState<Role>("biloo.role", "customer");
+export function BilooApp({
+  viewer = null,
+  initialRemoteOrders = [],
+  initialRemoteNotifications = [],
+  initialCatalog = catalog,
+  liveData = false,
+}: {
+  viewer?: AppViewer | null;
+  initialRemoteOrders?: ActiveOrder[];
+  initialRemoteNotifications?: BilooNotification[];
+  initialCatalog?: CatalogItem[];
+  liveData?: boolean;
+}) {
+  const [role, setRole] = useStoredState<Role>(
+    "biloo.role",
+    viewer?.uiRole ?? "customer",
+    !liveData,
+  );
   const [service, setService] = useStoredState<ServiceKey>(
     "biloo.service",
     "food",
+    !liveData,
   );
   const [search, setSearch] = useState("");
-  const [cart, setCart] = useStoredState<CartLine[]>("biloo.cart", []);
+  const [cart, setCart] = useStoredState<CartLine[]>(
+    "biloo.cart",
+    [],
+    !liveData,
+  );
   const [orders, setOrders] = useStoredState<ActiveOrder[]>(
     "biloo.orders",
-    initialOrders,
+    liveData ? initialRemoteOrders : demoInitialOrders,
+    !liveData,
   );
   const [notifications, setNotifications] = useStoredState<
     BilooNotification[]
-  >("biloo.notifications", initialNotifications);
+  >(
+    "biloo.notifications",
+    liveData ? initialRemoteNotifications : demoInitialNotifications,
+    !liveData,
+  );
   const [vendorOrders, setVendorOrders] = useStoredState<VendorOrder[]>(
     "biloo.vendor-orders",
     initialVendorOrders,
@@ -143,19 +175,46 @@ export function BilooApp() {
 
   const catalogItems = useMemo(() => {
     const normalized = search.trim().toLowerCase();
-    return catalog.filter((item) => {
+    return initialCatalog.filter((item) => {
       if (item.service !== service) return false;
       if (!normalized) return true;
       return `${item.name} ${item.merchant} ${item.category} ${item.description}`
         .toLowerCase()
         .includes(normalized);
     });
-  }, [search, service]);
+  }, [initialCatalog, search, service]);
 
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
   ).length;
   const cartCount = cart.reduce((total, line) => total + line.quantity, 0);
+
+  const upsertRealtimeOrder = useCallback((incoming: ActiveOrder) => {
+    setOrders((current) => {
+      const exists = current.some((order) => order.id === incoming.id);
+      return exists
+        ? current.map((order) => (order.id === incoming.id ? incoming : order))
+        : [incoming, ...current];
+    });
+  }, [setOrders]);
+
+  const prependRealtimeNotification = useCallback(
+    (incoming: BilooNotification) => {
+      setNotifications((current) =>
+        current.some((item) => item.id === incoming.id)
+          ? current
+          : [incoming, ...current],
+      );
+    },
+    [setNotifications],
+  );
+
+  useBilooRealtime({
+    customerId: viewer?.id,
+    enabled: liveData,
+    onOrder: upsertRealtimeOrder,
+    onNotification: prependRealtimeNotification,
+  });
 
   useEffect(() => {
     if (!toast) return;
@@ -188,9 +247,18 @@ export function BilooApp() {
 
   function addToCart(item: CatalogItem) {
     const existingService = cart[0]?.item.service;
+    const existingMerchant = cart[0]?.item.merchant;
     if (existingService && existingService !== item.service) {
       setToast(
         `Your cart contains ${serviceLabel(existingService)} items. Complete or clear it before starting another order.`,
+      );
+      setCartOpen(true);
+      return;
+    }
+
+    if (liveData && existingMerchant && existingMerchant !== item.merchant) {
+      setToast(
+        `Complete your ${existingMerchant} order before adding items from ${item.merchant}.`,
       );
       setCartOpen(true);
       return;
@@ -224,8 +292,44 @@ export function BilooApp() {
     );
   }
 
-  function confirmCheckout(paymentMethod: PaymentMethod) {
+  async function confirmCheckout(paymentMethod: PaymentMethod) {
     if (!cart.length) return;
+
+    if (liveData) {
+      setToast("Placing your secure order…");
+      try {
+        const response = await fetch("/api/biloo/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service: cart[0].item.service,
+            paymentMethod,
+            items: cart.map((line) => ({
+              externalId: line.item.id,
+              quantity: line.quantity,
+            })),
+          }),
+        });
+        const result = (await response.json()) as {
+          order?: ActiveOrder;
+          error?: string;
+        };
+        if (!response.ok || !result.order) {
+          throw new Error(result.error ?? "Unable to place your order.");
+        }
+
+        upsertRealtimeOrder(result.order);
+        setCart([]);
+        setCheckoutOpen(false);
+        setCartOpen(false);
+        setToast(`Order ${result.order.id} placed successfully.`);
+        setSelectedOrder(result.order);
+      } catch (error) {
+        setToast(error instanceof Error ? error.message : "Order failed.");
+      }
+      return;
+    }
+
     const subtotal = cart.reduce(
       (total, line) => total + line.item.price * line.quantity,
       0,
@@ -256,7 +360,7 @@ export function BilooApp() {
     setSelectedOrder(order);
   }
 
-  function bookTaxi(booking: {
+  async function bookTaxi(booking: {
     pickup: string;
     dropoff: string;
     rideName: string;
@@ -264,6 +368,40 @@ export function BilooApp() {
   }) {
     if (!booking.pickup.trim() || !booking.dropoff.trim()) {
       setToast("Enter both pickup and destination before booking.");
+      return;
+    }
+
+    if (liveData) {
+      setToast("Requesting your ride…");
+      try {
+        const rideClass = booking.rideName.toLowerCase().includes("comfort")
+          ? "comfort"
+          : booking.rideName.toLowerCase().includes("xl")
+            ? "xl"
+            : "standard";
+        const response = await fetch("/api/biloo/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            service: "taxi",
+            pickup: booking.pickup,
+            dropoff: booking.dropoff,
+            rideClass,
+          }),
+        });
+        const result = (await response.json()) as {
+          order?: ActiveOrder;
+          error?: string;
+        };
+        if (!response.ok || !result.order) {
+          throw new Error(result.error ?? "Unable to request your ride.");
+        }
+        upsertRealtimeOrder(result.order);
+        setToast("Ride request sent. A driver is being matched.");
+        setSelectedOrder(result.order);
+      } catch (error) {
+        setToast(error instanceof Error ? error.message : "Ride request failed.");
+      }
       return;
     }
 
@@ -348,6 +486,9 @@ export function BilooApp() {
     setNotifications((current) =>
       current.map((notification) => ({ ...notification, read: true })),
     );
+    if (liveData) {
+      void fetch("/api/biloo/notifications", { method: "PATCH" });
+    }
   }
 
   return (
@@ -357,10 +498,17 @@ export function BilooApp() {
         onOpenCart={() => setCartOpen(true)}
         onOpenNotifications={openNotifications}
         unreadCount={unreadCount}
+        accountInitials={viewer?.initials}
+        liveData={liveData}
       />
 
       <div className="mx-auto grid max-w-[1540px] lg:grid-cols-[270px_minmax(0,1fr)]">
-        <RoleRail role={role} setRole={setRole} />
+        <RoleRail
+          role={role}
+          setRole={setRole}
+          availableRoles={viewer ? [viewer.uiRole] : undefined}
+          liveData={liveData}
+        />
 
         <section className="min-w-0 px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8">
           {role === "customer" ? (
@@ -432,6 +580,10 @@ export function BilooApp() {
       />
       <TrackingModal
         onAdvance={(order) => {
+          if (liveData) {
+            setToast("Live order status updates automatically.");
+            return;
+          }
           const nextProgress = Math.min(order.progress + 18, 96);
           const updated: ActiveOrder = {
             ...order,

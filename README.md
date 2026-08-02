@@ -1,24 +1,46 @@
 # BILOO Super App
 
-A responsive multi-service MVP for Ethiopian mobility and commerce. The application combines food delivery, taxi booking, supermarket shopping, construction materials, and car parts in one interface.
+BILOO is a multi-service platform for food delivery, taxi booking, supermarket
+shopping, construction materials, and car parts.
 
-## Included workspaces
+## Current build
 
-- Customer ordering, cart, checkout, taxi booking, GPS fallback, notifications, and order tracking
-- Driver availability, job acceptance, route state, completion, earnings, and demand view
-- Vendor order progression, store availability, and inventory alerts
-- Admin performance metrics, incident management, and operations controls
-- PostgreSQL production schema draft and architecture documentation
+The repository contains:
 
-## Run locally
+- Responsive customer, driver, vendor, and admin workspaces.
+- Supabase SSR authentication and account recovery.
+- Role-based onboarding and guarded driver/vendor applications.
+- Postgres schema, explicit grants, RLS policies, transactional order RPCs, and
+  Realtime publications.
+- Database-backed customer orders and notifications when Supabase is configured.
+- A local demo fallback for interface development without credentials.
+
+## Local development
 
 ```bash
+cp .env.example .env.local
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`. The full application is available at both `/` and `/biloo`.
+Open `http://localhost:3000`. Without Supabase variables the interface runs in
+demo mode. With valid Supabase variables it requires authentication and uses
+shared production data.
 
-## Production integrations
+## Validation
 
-The MVP uses local browser persistence and simulated tracking. Configure the environment placeholders in `.env.example` before connecting authentication, PostgreSQL/Supabase, payment processing, maps, dispatch, and push notifications.
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run format:check
+```
+
+## Database
+
+Apply the migration in:
+
+`supabase/migrations/20260802214600_phase2_production_foundation.sql`
+
+Read `docs/PHASE_2_PRODUCTION_FOUNDATION.md` before connecting a production
+project.

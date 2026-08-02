@@ -1,5 +1,5 @@
-import { BilooApp } from "@/components/biloo/biloo-app";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
-  return <BilooApp />;
+  redirect("/biloo");
 }
