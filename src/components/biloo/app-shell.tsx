@@ -101,64 +101,40 @@ export function AppHeader({
   return (
     <>
       <header
-        className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/95 px-3 backdrop-blur-2xl sm:px-5"
+        className="sticky top-0 z-50 border-b border-[#e8e8e8] bg-white/95 px-4 backdrop-blur-xl sm:px-6"
         data-biloo-header
       >
-        <div className="mx-auto flex h-[76px] max-w-[1540px] items-center gap-3 sm:gap-5">
+        <div className="mx-auto flex h-16 max-w-[1500px] items-center gap-3">
           <Link
             aria-label="BILOO home"
-            className="min-w-0 shrink-0 rounded-2xl transition hover:opacity-80"
+            className="shrink-0 rounded-lg transition-opacity hover:opacity-70"
             href="/biloo"
           >
             <BrandMark />
           </Link>
 
-          <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
-            <div className="flex items-center gap-1 rounded-full border border-slate-200/75 bg-slate-50/80 p-1 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset]">
-              <span className="flex min-h-10 items-center gap-2 rounded-full bg-white px-4 text-[11px] font-black text-[#07111f] shadow-sm">
-                <span className="grid size-6 place-items-center rounded-full bg-[#07111f] text-[#55e6b1]">
-                  <Icon className="size-3.5" name={currentRole.icon} />
-                </span>
-                {currentRole.label} workspace
-              </span>
-              <span className="flex min-h-10 items-center gap-2 px-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
-                <span className="biloo-pulse size-2 rounded-full bg-[#55e6b1]" />
-                Connected commerce
-              </span>
-            </div>
+          <div className="hidden min-w-0 flex-1 justify-center lg:flex">
+            <span className="inline-flex h-9 items-center gap-2 rounded-full bg-[#f3f3f3] px-3 text-[12px] font-medium text-[#333333]">
+              <Icon className="size-4" name={currentRole.icon} />
+              {currentRole.label}
+              <span className="size-1.5 rounded-full bg-[#06c167]" />
+            </span>
           </div>
 
-          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-            <span
-              className={`hidden min-h-10 items-center gap-2 rounded-full px-3.5 text-[9px] font-black uppercase tracking-[0.14em] xl:inline-flex ${
-                liveData
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "bg-amber-50 text-amber-700"
-              }`}
-            >
-              <span
-                className={`size-1.5 rounded-full ${
-                  liveData ? "bg-emerald-500" : "bg-amber-500"
-                }`}
-              />
-              {liveData ? "Live data" : "Demo mode"}
-            </span>
-
+          <div className="ml-auto flex items-center gap-1.5">
             <HeaderAction
               badge={cartCount ? String(cartCount) : undefined}
-              className="hidden sm:grid"
               label="Open cart"
               onClick={onOpenCart}
             >
-              <Icon name="cart" />
+              <Icon className="size-[19px]" name="cart" />
             </HeaderAction>
             <HeaderAction
               alert={Boolean(unreadCount)}
-              className="hidden sm:grid"
               label="Open notifications"
               onClick={onOpenNotifications}
             >
-              <Icon name="bell" />
+              <Icon className="size-[19px]" name="bell" />
             </HeaderAction>
 
             <button
@@ -166,33 +142,23 @@ export function AppHeader({
               aria-controls="biloo-command-menu"
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close BILOO menu" : "Open BILOO menu"}
-              className={`group flex min-h-12 items-center gap-2 rounded-full border px-1.5 pr-2 transition duration-200 sm:pr-3 ${
+              className={`group ml-0.5 flex size-10 items-center justify-center rounded-full transition ${
                 menuOpen
-                  ? "border-[#07111f] bg-[#07111f] text-white shadow-[0_16px_38px_rgba(7,17,31,0.2)]"
-                  : "border-slate-200/85 bg-white text-[#07111f] shadow-sm hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                  ? "bg-[#333333] text-white"
+                  : "bg-black text-white hover:bg-[#333333]"
               }`}
               onClick={() => setMenuOpen((open) => !open)}
               type="button"
             >
-              <span
-                className={`grid size-9 place-items-center rounded-full text-[10px] font-black transition ${
-                  menuOpen
-                    ? "bg-white text-[#07111f]"
-                    : "bg-gradient-to-br from-[#07111f] to-[#123b66] text-white"
-                }`}
-              >
-                {accountInitials}
-              </span>
-              <span className="hidden text-xs font-black sm:block">Menu</span>
-              <span className="relative ml-0.5 block h-4 w-4" aria-hidden="true">
+              <span className="relative block h-4 w-[18px]" aria-hidden="true">
                 <span
-                  className={`absolute left-0 top-[4px] h-[1.5px] w-4 rounded-full bg-current transition ${
-                    menuOpen ? "translate-y-[3px] rotate-45" : ""
+                  className={`absolute left-0 top-[4px] h-[1.5px] w-[18px] rounded-full bg-current transition-transform duration-200 ${
+                    menuOpen ? "translate-y-[3.5px] rotate-45" : ""
                   }`}
                 />
                 <span
-                  className={`absolute bottom-[4px] left-0 h-[1.5px] w-4 rounded-full bg-current transition ${
-                    menuOpen ? "-translate-y-[3px] -rotate-45" : ""
+                  className={`absolute bottom-[4px] left-0 h-[1.5px] w-[18px] rounded-full bg-current transition-transform duration-200 ${
+                    menuOpen ? "-translate-y-[3.5px] -rotate-45" : ""
                   }`}
                 />
               </span>
@@ -203,14 +169,16 @@ export function AppHeader({
 
       <div
         aria-hidden={!menuOpen}
-        className={`fixed inset-0 z-[80] transition duration-300 ${
-          menuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        className={`fixed inset-0 z-[80] transition-opacity duration-200 ${
+          menuOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
         }`}
         id="biloo-command-menu"
       >
         <button
           aria-label="Close BILOO menu"
-          className="absolute inset-0 bg-[#07111f]/42 backdrop-blur-[6px]"
+          className="absolute inset-0 bg-black/35"
           onClick={() => setMenuOpen(false)}
           tabIndex={menuOpen ? 0 : -1}
           type="button"
@@ -219,101 +187,79 @@ export function AppHeader({
         <section
           aria-label="BILOO navigation"
           aria-modal="true"
-          className={`absolute inset-x-3 bottom-3 top-[88px] flex flex-col overflow-hidden rounded-[2rem] border border-white/80 bg-white/95 shadow-[0_36px_110px_rgba(7,17,31,0.34)] backdrop-blur-2xl transition duration-300 sm:inset-x-auto sm:bottom-auto sm:right-5 sm:top-[88px] sm:max-h-[calc(100svh-104px)] sm:w-[460px] ${
-            menuOpen
-              ? "translate-y-0 scale-100 opacity-100"
-              : "translate-y-3 scale-[0.98] opacity-0"
+          className={`absolute inset-y-0 right-0 flex w-[min(90vw,360px)] flex-col bg-white shadow-[-16px_0_48px_rgba(0,0,0,0.16)] transition-transform duration-300 ease-out ${
+            menuOpen ? "translate-x-0" : "translate-x-full"
           }`}
           role="dialog"
         >
-          <div className="flex items-start justify-between gap-4 border-b border-slate-200/75 px-5 py-5 sm:px-6">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
-                  BILOO command center
-                </span>
-                <span
-                  className={`size-1.5 rounded-full ${
-                    liveData ? "bg-emerald-500" : "bg-amber-500"
-                  }`}
-                />
-              </div>
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.045em] text-[#07111f]">
-                Move through BILOO.
-              </h2>
-              <p className="mt-2 max-w-sm text-xs leading-5 text-slate-500">
-                Switch workspace, open your activity, or manage your account from one focused menu.
-              </p>
-            </div>
+          <div className="flex items-center justify-between border-b border-[#eeeeee] px-5 pb-4 pt-[max(18px,env(safe-area-inset-top))]">
+            <BrandMark />
             <button
               aria-label="Close menu"
-              className="grid size-10 shrink-0 place-items-center rounded-full bg-slate-100 text-[#07111f] transition hover:rotate-6 hover:bg-[#07111f] hover:text-white"
+              className="grid size-9 place-items-center rounded-full bg-[#f3f3f3] text-black transition hover:bg-[#e8e8e8]"
               onClick={() => setMenuOpen(false)}
               type="button"
             >
-              <Icon className="size-4" name="close" />
+              <Icon className="size-[17px]" name="close" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">
-                Workspaces
-              </p>
-              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[9px] font-black text-slate-500">
-                {visibleRoles.length} available
+          <div className="flex-1 overflow-y-auto px-4 py-4">
+            <div className="flex items-center gap-3 rounded-xl bg-[#f3f3f3] p-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-black text-[11px] font-semibold text-white">
+                {accountInitials}
               </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-semibold text-black">
+                  BILOO account
+                </span>
+                <span className="mt-0.5 block truncate text-[11px] text-[#6b6b6b]">
+                  {currentRole.label} workspace · {liveData ? "Connected" : "Demo"}
+                </span>
+              </span>
+              <span className={`size-2 rounded-full ${liveData ? "bg-[#06c167]" : "bg-[#9b9b9b]"}`} />
             </div>
 
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              {visibleRoles.map((item) => {
+            <p className="mb-2 mt-6 px-2 text-[11px] font-semibold text-[#6b6b6b]">
+              Workspaces
+            </p>
+            <div className="overflow-hidden rounded-xl border border-[#e8e8e8]">
+              {visibleRoles.map((item, index) => {
                 const active = item.key === roleState.role;
                 return (
                   <button
                     aria-current={active ? "page" : undefined}
-                    className={`group flex min-h-[86px] items-center gap-3 rounded-[1.35rem] border p-3.5 text-left transition duration-200 ${
-                      active
-                        ? "border-[#07111f] bg-[#07111f] text-white shadow-[0_16px_38px_rgba(7,17,31,0.16)]"
-                        : "border-slate-200/80 bg-white text-[#07111f] hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
-                    }`}
+                    className={`flex min-h-[54px] w-full items-center gap-3 px-3.5 text-left transition ${
+                      active ? "bg-[#f3f3f3]" : "bg-white hover:bg-[#f8f8f8]"
+                    } ${index ? "border-t border-[#eeeeee]" : ""}`}
                     key={item.key}
                     onClick={() => switchWorkspace(item.key)}
                     type="button"
                   >
                     <span
-                      className={`grid size-11 shrink-0 place-items-center rounded-2xl ${
-                        active
-                          ? "bg-white/10 text-[#55e6b1]"
-                          : "bg-[#eef3f8] text-[#123b66]"
+                      className={`grid size-8 shrink-0 place-items-center rounded-lg ${
+                        active ? "bg-black text-white" : "bg-[#eeeeee] text-black"
                       }`}
                     >
-                      <Icon name={item.icon} />
+                      <Icon className="size-4" name={item.icon} />
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-black">{item.label}</span>
-                      <span
-                        className={`mt-1 block text-[10px] leading-4 ${
-                          active ? "text-white/45" : "text-slate-400"
-                        }`}
-                      >
-                        {item.description}
-                      </span>
+                    <span className="min-w-0 flex-1 text-[13px] font-medium text-black">
+                      {item.label}
                     </span>
-                    <Icon
-                      className={`size-4 transition group-hover:translate-x-0.5 ${
-                        active ? "text-[#55e6b1]" : "text-slate-300"
-                      }`}
-                      name="arrow"
-                    />
+                    {active ? (
+                      <span className="size-2 rounded-full bg-[#06c167]" />
+                    ) : (
+                      <Icon className="size-4 text-[#a0a0a0]" name="arrow" />
+                    )}
                   </button>
                 );
               })}
             </div>
 
-            <p className="mt-6 text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">
-              Quick access
+            <p className="mb-2 mt-6 px-2 text-[11px] font-semibold text-[#6b6b6b]">
+              Account
             </p>
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="overflow-hidden rounded-xl border border-[#e8e8e8]">
               <MenuAction
                 badge={cartCount ? String(cartCount) : undefined}
                 icon="cart"
@@ -326,43 +272,26 @@ export function AppHeader({
                 label="Notifications"
                 onClick={() => runMenuAction(onOpenNotifications)}
               />
-              <Link
-                className="group flex min-h-16 items-center gap-3 rounded-[1.2rem] border border-slate-200/80 bg-white px-3.5 text-[#07111f] transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+              <MenuLink
                 href={liveData ? "/account" : "/auth/login"}
+                icon="customer"
+                label="Account settings"
                 onClick={() => setMenuOpen(false)}
-              >
-                <span className="grid size-9 place-items-center rounded-xl bg-[#eef3f8] text-[#123b66]">
-                  <Icon className="size-4" name="customer" />
-                </span>
-                <span className="text-xs font-black">Account</span>
-                <Icon className="ml-auto size-3.5 text-slate-300 transition group-hover:translate-x-0.5" name="arrow" />
-              </Link>
-              <Link
-                className="group flex min-h-16 items-center gap-3 rounded-[1.2rem] border border-slate-200/80 bg-white px-3.5 text-[#07111f] transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+              />
+              <MenuLink
                 href="/biloo"
+                icon="home"
+                label="BILOO home"
                 onClick={() => setMenuOpen(false)}
-              >
-                <span className="grid size-9 place-items-center rounded-xl bg-[#eef3f8] text-[#123b66]">
-                  <Icon className="size-4" name="home" />
-                </span>
-                <span className="text-xs font-black">BILOO home</span>
-                <Icon className="ml-auto size-3.5 text-slate-300 transition group-hover:translate-x-0.5" name="arrow" />
-              </Link>
+              />
             </div>
           </div>
 
-          <footer className="flex items-center justify-between gap-4 border-t border-slate-200/75 bg-slate-50/80 px-5 py-4 sm:px-6">
-            <span className="flex items-center gap-2 text-[10px] font-black text-slate-500">
-              <span
-                className={`size-2 rounded-full ${
-                  liveData ? "bg-emerald-500" : "bg-amber-500"
-                }`}
-              />
-              {liveData ? "Supabase connected" : "Local demo experience"}
-            </span>
-            <span className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-300">
-              Addis Ababa
-            </span>
+          <footer className="border-t border-[#eeeeee] px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+            <div className="flex items-center justify-between text-[10px] text-[#777777]">
+              <span>{liveData ? "Supabase connected" : "Local preview"}</span>
+              <span>Addis Ababa</span>
+            </div>
           </footer>
         </section>
       </div>
@@ -376,30 +305,28 @@ function HeaderAction({
   onClick,
   badge,
   alert = false,
-  className = "",
 }: {
   children: ReactNode;
   label: string;
   onClick: () => void;
   badge?: string;
   alert?: boolean;
-  className?: string;
 }) {
   return (
     <button
       aria-label={label}
-      className={`relative size-11 place-items-center rounded-full border border-slate-200/85 bg-white text-[#07111f] shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md ${className}`}
+      className="relative grid size-10 place-items-center rounded-full bg-[#f3f3f3] text-black transition hover:bg-[#e8e8e8]"
       onClick={onClick}
       type="button"
     >
       {children}
       {badge ? (
-        <span className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-[#ffca68] px-1 text-[9px] font-black text-[#07111f] ring-2 ring-white">
+        <span className="absolute -right-0.5 -top-0.5 grid min-h-4 min-w-4 place-items-center rounded-full bg-black px-1 text-[8px] font-semibold text-white ring-2 ring-white">
           {badge}
         </span>
       ) : null}
       {alert ? (
-        <span className="absolute right-1.5 top-1.5 size-2.5 rounded-full bg-rose-500 ring-2 ring-white" />
+        <span className="absolute right-1 top-1 size-2 rounded-full bg-[#d92d20] ring-2 ring-[#f3f3f3]" />
       ) : null}
     </button>
   );
@@ -420,25 +347,51 @@ function MenuAction({
 }) {
   return (
     <button
-      className="group relative flex min-h-16 items-center gap-3 rounded-[1.2rem] border border-slate-200/80 bg-white px-3.5 text-left text-[#07111f] transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+      className="flex min-h-[52px] w-full items-center gap-3 border-b border-[#eeeeee] bg-white px-3.5 text-left transition last:border-b-0 hover:bg-[#f8f8f8]"
       onClick={onClick}
       type="button"
     >
-      <span className="relative grid size-9 place-items-center rounded-xl bg-[#eef3f8] text-[#123b66]">
+      <span className="relative grid size-8 place-items-center rounded-lg bg-[#eeeeee] text-black">
         <Icon className="size-4" name={icon} />
         {alert ? (
-          <span className="absolute right-0 top-0 size-2 rounded-full bg-rose-500 ring-2 ring-[#eef3f8]" />
+          <span className="absolute right-0 top-0 size-2 rounded-full bg-[#d92d20] ring-2 ring-[#eeeeee]" />
         ) : null}
       </span>
-      <span className="text-xs font-black">{label}</span>
+      <span className="min-w-0 flex-1 text-[13px] font-medium text-black">{label}</span>
       {badge ? (
-        <span className="ml-auto rounded-full bg-[#ffca68] px-2 py-1 text-[9px] font-black text-[#07111f]">
+        <span className="rounded-full bg-black px-2 py-0.5 text-[9px] font-semibold text-white">
           {badge}
         </span>
       ) : (
-        <Icon className="ml-auto size-3.5 text-slate-300 transition group-hover:translate-x-0.5" name="arrow" />
+        <Icon className="size-4 text-[#a0a0a0]" name="arrow" />
       )}
     </button>
+  );
+}
+
+function MenuLink({
+  href,
+  icon,
+  label,
+  onClick,
+}: {
+  href: string;
+  icon: "customer" | "home";
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      className="flex min-h-[52px] items-center gap-3 border-b border-[#eeeeee] bg-white px-3.5 transition last:border-b-0 hover:bg-[#f8f8f8]"
+      href={href}
+      onClick={onClick}
+    >
+      <span className="grid size-8 place-items-center rounded-lg bg-[#eeeeee] text-black">
+        <Icon className="size-4" name={icon} />
+      </span>
+      <span className="min-w-0 flex-1 text-[13px] font-medium text-black">{label}</span>
+      <Icon className="size-4 text-[#a0a0a0]" name="arrow" />
+    </Link>
   );
 }
 
@@ -476,20 +429,18 @@ export function RoleRail({
 
   return (
     <aside
-      className="fixed inset-x-2 bottom-2 z-50 rounded-[1.55rem] border border-white/15 bg-[#07111f]/94 p-2 shadow-[0_24px_70px_rgba(7,17,31,0.34)] backdrop-blur-2xl lg:sticky lg:inset-auto lg:top-[88px] lg:z-20 lg:mx-4 lg:my-4 lg:h-[calc(100vh-104px)] lg:rounded-[2rem] lg:p-4"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-[#e8e8e8] bg-white/98 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.04)] backdrop-blur-xl lg:sticky lg:inset-auto lg:top-20 lg:z-20 lg:mx-4 lg:my-5 lg:h-[calc(100vh-100px)] lg:rounded-2xl lg:border lg:pb-0 lg:shadow-none"
       data-biloo-role-rail
     >
-      <div className="hidden px-3 pt-2 lg:block">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
-          Workspaces
-        </p>
-        <p className="mt-2 text-sm font-bold leading-5 text-white/72">
-          One operating system for every side of BILOO.
+      <div className="hidden border-b border-[#eeeeee] px-4 py-4 lg:block">
+        <p className="text-[12px] font-semibold text-black">Workspaces</p>
+        <p className="mt-1 text-[11px] leading-4 text-[#777777]">
+          Switch operational views.
         </p>
       </div>
 
       <div
-        className={`grid gap-1.5 lg:mt-5 lg:grid-cols-1 lg:gap-2 ${
+        className={`grid lg:block ${
           visibleRoles.length === 1 ? "grid-cols-1" : "grid-cols-4"
         }`}
       >
@@ -498,64 +449,34 @@ export function RoleRail({
           return (
             <button
               aria-current={active ? "page" : undefined}
-              className={`group flex min-h-[62px] flex-col items-center justify-center rounded-[1.15rem] px-2 py-2 text-center transition duration-300 lg:min-h-[68px] lg:flex-row lg:justify-start lg:gap-3 lg:px-3.5 lg:text-left ${
+              className={`group flex min-h-[60px] w-full flex-col items-center justify-center gap-1 px-1 text-center transition lg:min-h-[54px] lg:flex-row lg:justify-start lg:gap-3 lg:border-b lg:border-[#eeeeee] lg:px-3.5 lg:text-left ${
                 active
-                  ? "bg-white text-[#07111f] shadow-[0_14px_30px_rgba(0,0,0,0.18)]"
-                  : "text-white/52 hover:bg-white/8 hover:text-white"
+                  ? "text-black"
+                  : "text-[#777777] hover:bg-[#f8f8f8] hover:text-black"
               }`}
               key={item.key}
               onClick={() => selectRole(item.key)}
               type="button"
             >
               <span
-                className={`grid size-9 shrink-0 place-items-center rounded-xl transition ${
-                  active
-                    ? "bg-[#0a1b31] text-[#55e6b1]"
-                    : "bg-white/8 text-white/70 group-hover:bg-white/12"
+                className={`relative grid size-6 shrink-0 place-items-center rounded-md lg:size-8 ${
+                  active ? "bg-black text-white" : "bg-transparent text-current lg:bg-[#eeeeee]"
                 }`}
               >
-                <Icon className="size-4.5" name={item.icon} />
+                <Icon className="size-[18px] lg:size-4" name={item.icon} />
               </span>
-              <span className="mt-1.5 min-w-0 lg:mt-0">
-                <span className="block text-[10px] font-black sm:text-[11px] lg:text-sm">
-                  {item.label}
-                </span>
-                <span
-                  className={`mt-0.5 hidden text-[11px] leading-4 lg:block ${
-                    active ? "text-slate-400" : "text-white/30"
-                  }`}
-                >
-                  {item.description}
-                </span>
-              </span>
+              <span className="text-[10px] font-medium lg:text-[13px]">{item.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="mt-auto hidden rounded-[1.45rem] border border-white/8 bg-white/5 p-4 lg:block">
-        <div className="flex items-center justify-between gap-3">
-          <span className="grid size-10 place-items-center rounded-xl bg-[#55e6b1]/12 text-[#55e6b1]">
-            <Icon className="size-5" name="shield" />
-          </span>
-          <span className="rounded-full bg-white/8 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-white/45">
-            Phase 2.1
-          </span>
-        </div>
-        <p className="mt-4 text-sm font-black text-white">
-          {liveData ? "Production connected" : "Experience preview"}
-        </p>
-        <p className="mt-2 text-xs leading-5 text-white/38">
-          {liveData
-            ? "Secure shared data, realtime updates and authenticated workspaces."
-            : "The complete connected lifecycle is running locally on this device."}
-        </p>
-        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/8">
-          <div
-            className={`h-full rounded-full bg-gradient-to-r from-[#55e6b1] to-[#ffca68] ${
-              liveData ? "w-[72%]" : "w-[58%]"
-            }`}
-          />
+      <div className="mx-3 mt-auto hidden rounded-xl bg-[#f3f3f3] p-3 lg:block">
+        <div className="flex items-center gap-2">
+          <span className={`size-2 rounded-full ${liveData ? "bg-[#06c167]" : "bg-[#9b9b9b]"}`} />
+          <p className="text-[11px] font-medium text-black">
+            {liveData ? "Production connected" : "Demo experience"}
+          </p>
         </div>
       </div>
     </aside>
