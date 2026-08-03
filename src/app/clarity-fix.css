@@ -1,0 +1,91 @@
+/* BILOO clarity correction.
+   Android WebView and some Chromium builds can rasterize large backdrop-filter
+   layers softly. Keep premium depth through shadows and borders, but render all
+   primary app surfaces as crisp, opaque layers. */
+
+:root {
+  --biloo-crisp-surface: #ffffff;
+  --biloo-crisp-canvas: #f6f6f4;
+}
+
+/* Remove composited glass blur from the application UI. */
+body *,
+body *::before,
+body *::after {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html,
+body,
+main[class*="min-h-screen"] {
+  filter: none !important;
+}
+
+body {
+  background: var(--biloo-crisp-canvas) !important;
+}
+
+/* Solid shell surfaces prevent full-layer softness on Android. */
+[data-biloo-header] {
+  background: #ffffff !important;
+  box-shadow: 0 1px 0 rgba(10, 11, 13, 0.08), 0 8px 24px rgba(10, 11, 13, 0.035) !important;
+}
+
+[data-biloo-role-rail] {
+  background: #ffffff !important;
+}
+
+#biloo-command-menu > section[role="dialog"],
+body [role="dialog"] {
+  background: #ffffff !important;
+}
+
+#biloo-command-menu > button {
+  background: rgba(4, 5, 6, 0.42) !important;
+}
+
+/* Cards and sheets remain elevated, but fully sharp. */
+main section[class*="bg-white"],
+main article[class*="bg-white"],
+main section[class*="rounded-2xl"][class*="border"],
+main article[class*="rounded-2xl"][class*="border"] {
+  background-color: var(--biloo-crisp-surface) !important;
+}
+
+[data-biloo-customer-home] > button:first-child,
+.biloo-standard-search,
+.biloo-route-field,
+.biloo-map-card {
+  background-color: #ffffff !important;
+}
+
+/* Remove decorative full-screen haze while retaining meaningful map heat zones. */
+main .pointer-events-none[class*="blur-2xl"],
+main .pointer-events-none[class*="blur-3xl"] {
+  display: none !important;
+}
+
+/* Keep text and icons on their own crisp raster layer. */
+main h1,
+main h2,
+main h3,
+main h4,
+main p,
+main span,
+main svg,
+[data-biloo-header] svg,
+[data-biloo-role-rail] svg {
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+@media (max-width: 1023px) {
+  [data-biloo-role-rail] {
+    box-shadow: 0 -8px 24px rgba(10, 11, 13, 0.06) !important;
+  }
+
+  #biloo-command-menu > section[role="dialog"] {
+    background: #ffffff !important;
+  }
+}
