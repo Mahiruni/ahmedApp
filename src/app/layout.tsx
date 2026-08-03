@@ -8,6 +8,7 @@ import "./navigation.css";
 import "./google-maps.css";
 import "./premium-system.css";
 import "./final-polish.css";
+import "./notifications.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
