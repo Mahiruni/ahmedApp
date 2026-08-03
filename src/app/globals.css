@@ -2,8 +2,14 @@
 
 :root {
   color-scheme: light;
-  --background: #f2f5f7;
-  --foreground: #10243a;
+  --background: #f5f7fb;
+  --foreground: #101828;
+  --biloo-ink: #07111f;
+  --biloo-navy: #0a1b31;
+  --biloo-blue: #123b66;
+  --biloo-mint: #55e6b1;
+  --biloo-amber: #ffca68;
+  --biloo-cloud: #eef3f8;
 }
 
 * {
@@ -19,7 +25,11 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
-  background: var(--background);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(85, 230, 177, 0.11), transparent 28rem),
+    radial-gradient(circle at 100% 3%, rgba(255, 202, 104, 0.13), transparent 30rem),
+    linear-gradient(180deg, #f8fafc 0%, #f3f6fa 45%, #eef3f8 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -44,7 +54,163 @@ button:disabled {
   cursor: not-allowed;
 }
 
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(85, 230, 177, 0.45);
+  outline-offset: 2px;
+}
+
 ::selection {
-  background: #f2bd4b;
-  color: #082640;
+  background: var(--biloo-mint);
+  color: var(--biloo-ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(10, 27, 49, 0.18);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(10, 27, 49, 0.34);
+  background-clip: padding-box;
+}
+
+/* Shared premium treatment for every BILOO workspace. */
+main[class*="min-h-screen"][class*="bg-[#f2f5f7]"] {
+  position: relative;
+  isolation: isolate;
+  background: transparent !important;
+}
+
+main[class*="min-h-screen"][class*="bg-[#f2f5f7]"]::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(10, 27, 49, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10, 27, 49, 0.025) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+main[class*="min-h-screen"] section[class*="rounded-[1.8rem]"] {
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 24px 70px rgba(26, 43, 68, 0.08) !important;
+  backdrop-filter: blur(24px);
+}
+
+main[class*="min-h-screen"] section[class*="bg-[#082640]"] {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(circle at 86% 14%, rgba(85, 230, 177, 0.2), transparent 21rem),
+    radial-gradient(circle at 30% 110%, rgba(255, 202, 104, 0.16), transparent 25rem),
+    linear-gradient(135deg, #07111f 0%, #0a2039 50%, #103c61 100%) !important;
+  box-shadow: 0 32px 90px rgba(7, 17, 31, 0.24) !important;
+}
+
+main[class*="min-h-screen"] article[class*="rounded-[1.55rem]"],
+main[class*="min-h-screen"] article[class*="rounded-[1.45rem]"] {
+  border-color: rgba(204, 214, 226, 0.68) !important;
+  box-shadow: 0 14px 45px rgba(26, 43, 68, 0.055);
+}
+
+main[class*="min-h-screen"] input,
+main[class*="min-h-screen"] select,
+main[class*="min-h-screen"] textarea {
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+main[class*="min-h-screen"] input:focus,
+main[class*="min-h-screen"] select:focus,
+main[class*="min-h-screen"] textarea:focus {
+  border-color: rgba(18, 59, 102, 0.42) !important;
+  box-shadow: 0 0 0 4px rgba(85, 230, 177, 0.11);
+}
+
+[data-biloo-role-rail] ~ section {
+  padding-bottom: 7.75rem !important;
+}
+
+.biloo-float {
+  animation: biloo-float 5.5s ease-in-out infinite;
+}
+
+.biloo-pulse {
+  animation: biloo-pulse 2.4s ease-in-out infinite;
+}
+
+.biloo-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.biloo-shine::after {
+  position: absolute;
+  top: -80%;
+  left: -45%;
+  width: 28%;
+  height: 260%;
+  content: "";
+  transform: rotate(22deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  animation: biloo-shine 6s ease-in-out infinite;
+}
+
+@keyframes biloo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes biloo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(85, 230, 177, 0.34); }
+  50% { box-shadow: 0 0 0 8px rgba(85, 230, 177, 0); }
+}
+
+@keyframes biloo-shine {
+  0%, 64% { transform: translateX(-220%) rotate(22deg); }
+  100% { transform: translateX(660%) rotate(22deg); }
+}
+
+@media (min-width: 1024px) {
+  [data-biloo-role-rail] ~ section {
+    padding-bottom: 2rem !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
