@@ -143,6 +143,16 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
+      complete_biloo_onboarding: {
+        Args: {
+          p_display_name: string;
+          p_phone: string;
+          p_city: string;
+          p_requested_role: "customer" | "driver" | "vendor_owner";
+          p_application_data?: Json;
+        };
+        Returns: undefined;
+      };
       place_biloo_order: {
         Args: {
           p_items: Json;
