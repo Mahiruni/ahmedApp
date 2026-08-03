@@ -7,7 +7,8 @@
 [data-biloo-header] button,
 [data-biloo-header] a,
 #biloo-command-menu button,
-#biloo-command-menu a {
+#biloo-command-menu a,
+[data-biloo-role-rail] button {
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -24,33 +25,149 @@
 }
 
 @media (max-width: 1023px) {
+  /* X-style mobile footer: flat, quiet, readable and predictable. */
   [data-biloo-role-rail] {
     inset: auto 0 0 !important;
+    z-index: 70 !important;
+    width: 100% !important;
+    margin: 0 !important;
     border-width: 1px 0 0 !important;
+    border-color: #eff0f1 !important;
     border-radius: 0 !important;
-    padding-inline: 0 !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    padding: 4px 8px max(4px, env(safe-area-inset-bottom)) !important;
+    box-shadow: 0 -1px 10px rgba(15, 20, 25, 0.045) !important;
+    backdrop-filter: saturate(180%) blur(18px) !important;
+  }
+
+  [data-biloo-role-rail] > div:nth-child(2) {
+    align-items: stretch !important;
+    gap: 0 !important;
+    margin: 0 !important;
   }
 
   [data-biloo-role-rail] button {
-    min-height: 60px !important;
+    position: relative !important;
+    min-width: 0 !important;
+    min-height: 58px !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 3px !important;
     border: 0 !important;
     border-radius: 0 !important;
+    background: transparent !important;
+    padding: 5px 2px 4px !important;
+    color: #536471 !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  [data-biloo-role-rail] button:hover,
+  [data-biloo-role-rail] button:active {
+    background: transparent !important;
+    color: #0f1419 !important;
+    transform: none !important;
+  }
+
+  [data-biloo-role-rail] button::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 22px;
+    height: 2px;
+    border-radius: 0 0 999px 999px;
+    background: transparent;
+    content: "";
+    transform: translateX(-50%);
+    transition: background-color 150ms ease, width 150ms ease;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] {
+    background: transparent !important;
+    color: #0f1419 !important;
+    box-shadow: none !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"]::before {
+    width: 28px;
+    background: #0f1419;
+  }
+
+  [data-biloo-role-rail] button > span:first-child {
+    display: grid !important;
+    width: 28px !important;
+    height: 28px !important;
+    flex: 0 0 28px !important;
+    place-items: center !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    color: inherit !important;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  [data-biloo-role-rail] button:hover > span:first-child,
+  [data-biloo-role-rail] button:active > span:first-child {
+    background: #eff3f4 !important;
+  }
+
+  [data-biloo-role-rail] button > span:first-child svg {
+    width: 21px !important;
+    height: 21px !important;
+    stroke-width: 1.9 !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] > span:first-child svg {
+    stroke-width: 2.25 !important;
   }
 
   [data-biloo-role-rail] button[aria-current="page"] > span:first-child::after {
-    position: absolute;
-    bottom: -7px;
-    left: 50%;
-    width: 18px;
-    height: 2px;
-    border-radius: 999px;
-    background: #000000;
-    content: "";
-    transform: translateX(-50%);
+    display: none !important;
+  }
+
+  [data-biloo-role-rail] button > span:nth-child(2) {
+    display: block !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+  }
+
+  [data-biloo-role-rail] button > span:nth-child(2) > span:first-child {
+    display: block !important;
+    overflow: hidden !important;
+    max-width: 100% !important;
+    color: inherit !important;
+    font-size: 9.5px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+    line-height: 1.15 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] > span:nth-child(2) > span:first-child {
+    font-weight: 750 !important;
+  }
+
+  [data-biloo-role-rail] button > span:nth-child(2) > span:nth-child(2) {
+    display: none !important;
+  }
+
+  [data-biloo-role-rail] ~ section {
+    padding-bottom: calc(5.35rem + env(safe-area-inset-bottom)) !important;
   }
 
   #biloo-command-menu > section[role="dialog"] {
     width: min(90vw, 360px) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  [data-biloo-role-rail] {
+    padding-inline: 2px !important;
+  }
+
+  [data-biloo-role-rail] button > span:nth-child(2) > span:first-child {
+    font-size: 8.75px !important;
   }
 }
 
@@ -63,7 +180,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   #biloo-command-menu,
-  #biloo-command-menu > section[role="dialog"] {
+  #biloo-command-menu > section[role="dialog"],
+  [data-biloo-role-rail] button,
+  [data-biloo-role-rail] button::before {
     transition-duration: 0.01ms !important;
   }
 }
