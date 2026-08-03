@@ -22,6 +22,106 @@ li {
   text-wrap: pretty;
 }
 
+/* Standard customer search: one focused field and one separate location action. */
+.biloo-standard-search {
+  border: 1px solid var(--biloo-line);
+  border-radius: 14px;
+  background: var(--biloo-surface);
+  color: var(--biloo-ink);
+  box-shadow: var(--biloo-shadow-control);
+  transition:
+    border-color 180ms var(--biloo-ease),
+    background-color 180ms var(--biloo-ease),
+    box-shadow 180ms var(--biloo-ease);
+}
+
+.biloo-standard-search:hover {
+  border-color: var(--biloo-line-strong);
+  background: #fbfbfa;
+}
+
+.biloo-standard-search:focus-within {
+  border-color: var(--biloo-mobility);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(39, 110, 241, 0.12);
+}
+
+.biloo-standard-search:focus-within .biloo-search-icon {
+  color: var(--biloo-mobility) !important;
+}
+
+.biloo-standard-search-input {
+  width: 100%;
+  min-height: 24px !important;
+  height: 24px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  color: var(--biloo-ink) !important;
+  font-size: 16px !important;
+  font-weight: 520 !important;
+  line-height: 24px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.biloo-standard-search-input:focus {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.biloo-standard-search-input::placeholder {
+  color: var(--biloo-muted) !important;
+  font-weight: 470 !important;
+  opacity: 1;
+}
+
+.biloo-standard-search-input::-webkit-search-cancel-button,
+.biloo-standard-search-input::-webkit-search-decoration {
+  display: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.biloo-search-clear {
+  background: #f0f1f2;
+  color: #5f636b;
+  transition:
+    background-color 150ms var(--biloo-ease),
+    color 150ms var(--biloo-ease);
+}
+
+.biloo-search-clear:hover {
+  background: #e5e7e9;
+  color: var(--biloo-ink);
+}
+
+.biloo-search-location {
+  border: 1px solid rgba(39, 110, 241, 0.16);
+  background: var(--biloo-mobility-soft);
+  color: var(--biloo-mobility);
+  box-shadow: var(--biloo-shadow-control);
+  transition:
+    border-color 160ms var(--biloo-ease),
+    background-color 160ms var(--biloo-ease),
+    box-shadow 160ms var(--biloo-ease);
+}
+
+.biloo-search-location:hover {
+  border-color: rgba(39, 110, 241, 0.28);
+  background: #dfe9ff;
+  box-shadow: 0 8px 20px rgba(39, 110, 241, 0.12);
+}
+
+.biloo-search-location:active,
+.biloo-search-clear:active,
+.biloo-standard-search:active {
+  transform: none !important;
+}
+
 /* Keep compact controls compact when older global input rules are present. */
 .biloo-route-field input {
   min-height: 24px !important;
@@ -178,6 +278,15 @@ main > div.fixed[class*="bottom-5"][class*="left-1/2"] {
 
   .biloo-map-card > div {
     min-height: 340px !important;
+  }
+
+  .biloo-standard-search {
+    padding-inline: 12px !important;
+  }
+
+  .biloo-search-location {
+    width: 50px !important;
+    height: 50px !important;
   }
 }
 
