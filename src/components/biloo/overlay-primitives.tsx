@@ -24,7 +24,7 @@ export function Drawer({
     >
       <button
         aria-label="Close panel"
-        className={`absolute inset-0 bg-slate-950/45 backdrop-blur-sm transition ${
+        className={`absolute inset-0 bg-[#07111f]/58 backdrop-blur-md transition duration-300 ${
           open ? "opacity-100" : "opacity-0"
         }`}
         onClick={onClose}
@@ -32,15 +32,18 @@ export function Drawer({
       />
       <section
         aria-label={title}
-        className={`absolute inset-y-0 right-0 flex w-[min(100%,470px)] flex-col bg-white shadow-2xl transition duration-300 ${
-          open ? "translate-x-0" : "translate-x-full"
+        className={`absolute inset-y-2 right-2 flex w-[calc(100%-1rem)] max-w-[490px] flex-col overflow-hidden rounded-[1.9rem] border border-white/70 bg-white/94 shadow-[0_34px_100px_rgba(7,17,31,0.32)] backdrop-blur-2xl transition duration-300 sm:inset-y-3 sm:right-3 sm:w-[min(100%-1.5rem,490px)] ${
+          open ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0"
         }`}
       >
-        <div className="flex h-[72px] items-center justify-between border-b border-slate-200 px-5 sm:px-6">
-          <h2 className="text-xl font-black tracking-[-0.03em]">{title}</h2>
+        <div className="flex h-[76px] items-center justify-between border-b border-slate-200/70 px-5 sm:px-6">
+          <div>
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">BILOO workspace</p>
+            <h2 className="mt-1 text-xl font-black tracking-[-0.035em] text-[#101828]">{title}</h2>
+          </div>
           <button
             aria-label="Close"
-            className="grid size-10 place-items-center rounded-xl bg-slate-100 text-[#082640]"
+            className="grid size-10 place-items-center rounded-xl bg-[#eef3f8] text-[#0a1b31] transition hover:rotate-6 hover:bg-[#0a1b31] hover:text-white"
             onClick={onClose}
             type="button"
           >
@@ -65,18 +68,21 @@ export function Modal({
   wide?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-[80] grid place-items-center overflow-y-auto bg-slate-950/50 p-3 backdrop-blur-sm sm:p-5">
+    <div className="fixed inset-0 z-[80] grid place-items-center overflow-y-auto bg-[#07111f]/62 p-3 backdrop-blur-md sm:p-5">
       <section
         aria-label={title}
-        className={`my-auto w-full overflow-hidden rounded-[1.8rem] bg-white shadow-2xl ${
+        className={`my-auto w-full overflow-hidden rounded-[2rem] border border-white/70 bg-white/95 shadow-[0_36px_120px_rgba(7,17,31,0.38)] backdrop-blur-2xl ${
           wide ? "max-w-5xl" : "max-w-xl"
         }`}
       >
-        <div className="flex h-[68px] items-center justify-between border-b border-slate-200 px-5 sm:px-6">
-          <h2 className="text-xl font-black tracking-[-0.03em]">{title}</h2>
+        <div className="flex h-[74px] items-center justify-between border-b border-slate-200/70 px-5 sm:px-6">
+          <div>
+            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">Connected experience</p>
+            <h2 className="mt-1 text-xl font-black tracking-[-0.035em] text-[#101828]">{title}</h2>
+          </div>
           <button
             aria-label="Close"
-            className="grid size-10 place-items-center rounded-xl bg-slate-100 text-[#082640]"
+            className="grid size-10 place-items-center rounded-xl bg-[#eef3f8] text-[#0a1b31] transition hover:rotate-6 hover:bg-[#0a1b31] hover:text-white"
             onClick={onClose}
             type="button"
           >
