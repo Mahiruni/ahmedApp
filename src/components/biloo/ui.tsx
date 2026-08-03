@@ -11,9 +11,9 @@ export function formatETB(value: number) {
 export function serviceLabel(service: ServiceKey) {
   const labels: Record<ServiceKey, string> = {
     food: "Food delivery",
-    taxi: "Taxi",
-    market: "Supermarket",
-    construction: "Construction",
+    taxi: "Ride",
+    market: "Groceries",
+    construction: "Materials",
     parts: "Car parts",
   };
 
@@ -261,16 +261,16 @@ export function Icon({
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#082640] text-sm font-black tracking-[-0.06em] text-[#f2bd4b] shadow-[0_12px_30px_rgba(8,38,64,0.22)]">
+    <div className="flex items-center gap-2.5">
+      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-black text-[11px] font-bold tracking-[-0.04em] text-white">
         BL
       </span>
       {!compact ? (
-        <div>
-          <p className="text-xl font-black tracking-[-0.05em] text-[#082640]">
+        <div className="leading-none">
+          <p className="text-[19px] font-bold tracking-[-0.045em] text-black">
             BILOO
           </p>
-          <p className="text-[9px] font-bold uppercase tracking-[0.23em] text-slate-400">
+          <p className="mt-1 text-[9px] font-medium tracking-[0.12em] text-[#777777]">
             One app. Every move.
           </p>
         </div>
@@ -288,7 +288,7 @@ export function Surface({
 }) {
   return (
     <section
-      className={`rounded-[1.8rem] border border-slate-200/90 bg-white shadow-[0_14px_45px_rgba(15,23,42,0.045)] ${className}`}
+      className={`rounded-2xl border border-[#e4e4e4] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className}`}
     >
       {children}
     </section>
@@ -303,16 +303,16 @@ export function StatusPill({
   tone?: "neutral" | "success" | "warning" | "danger" | "brand";
 }) {
   const tones = {
-    neutral: "bg-slate-100 text-slate-600",
-    success: "bg-emerald-50 text-emerald-700",
-    warning: "bg-amber-50 text-amber-700",
-    danger: "bg-rose-50 text-rose-700",
-    brand: "bg-[#e9f1f7] text-[#082640]",
+    neutral: "bg-[#f3f3f3] text-[#545454]",
+    success: "bg-[#e8f7ef] text-[#087443]",
+    warning: "bg-[#fff3db] text-[#8a5b00]",
+    danger: "bg-[#fdecec] text-[#b42318]",
+    brand: "bg-black text-white",
   };
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3 py-1.5 text-[11px] font-black ${tones[tone]}`}
+      className={`inline-flex min-h-6 items-center rounded-full px-2.5 text-[10px] font-semibold ${tones[tone]}`}
     >
       {children}
     </span>
