@@ -1,1 +1,0 @@
-Verification marker for the BILOO crisp-rendering correction.
