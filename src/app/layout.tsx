@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 import "./brand-overrides.css";
 import "./navigation.css";
+import "./google-maps.css";
 
 export const metadata: Metadata = {
   title: {
