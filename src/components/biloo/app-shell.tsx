@@ -7,13 +7,17 @@ import { roles, type Role } from "@/data/biloo";
 
 import { BrandMark, Icon } from "./ui";
 
+const roleChangeEvent = "biloo:role-change";
+
+function announceRoleChange(role: Role) {
+  window.dispatchEvent(new CustomEvent<Role>(roleChangeEvent, { detail: role }));
+}
+
 export function AppHeader({
   cartCount,
   unreadCount,
   onOpenCart,
   onOpenNotifications,
-  role,
-  setRole,
   availableRoles = roles.map((item) => item.key),
   accountInitials = "BI",
   liveData = false,
@@ -22,16 +26,25 @@ export function AppHeader({
   unreadCount: number;
   onOpenCart: () => void;
   onOpenNotifications: () => void;
-  role: Role;
-  setRole: (role: Role) => void;
   availableRoles?: Role[];
   accountInitials?: string;
   liveData?: boolean;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeRole, setActiveRole] = useState<Role>(availableRoles[0] ?? "customer");
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const visibleRoles = roles.filter((item) => availableRoles.includes(item.key));
-  const currentRole = roles.find((item) => item.key === role) ?? roles[0];
+  const currentRole = roles.find((item) => item.key === activeRole) ?? roles[0];
+
+  useEffect(() => {
+    function syncActiveRole(event: Event) {
+      const nextRole = (event as CustomEvent<Role>).detail;
+      if (availableRoles.includes(nextRole)) setActiveRole(nextRole);
+    }
+
+    window.addEventListener(roleChangeEvent, syncActiveRole);
+    return () => window.removeEventListener(roleChangeEvent, syncActiveRole);
+  }, [availableRoles]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -57,23 +70,29 @@ export function AppHeader({
     action();
   }
 
+  function switchWorkspace(nextRole: Role) {
+    setActiveRole(nextRole);
+    setMenuOpen(false);
+    announceRoleChange(nextRole);
+  }
+
   return (
     <>
       <header
-        className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/92 px-3 backdrop-blur-2xl sm:px-5"
+        className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/95 px-3 backdrop-blur-2xl sm:px-5"
         data-biloo-header
       >
         <div className="mx-auto flex h-[76px] max-w-[1540px] items-center gap-3 sm:gap-5">
           <Link
             aria-label="BILOO home"
-            className="min-w-0 shrink-0 rounded-2xl transition hover:opacity-78"
+            className="min-w-0 shrink-0 rounded-2xl transition hover:opacity-80"
             href="/biloo"
           >
             <BrandMark />
           </Link>
 
           <div className="hidden min-w-0 flex-1 items-center justify-center lg:flex">
-            <div className="flex items-center gap-1 rounded-full border border-slate-200/75 bg-slate-50/86 p-1 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset]">
+            <div className="flex items-center gap-1 rounded-full border border-slate-200/75 bg-slate-50/80 p-1 shadow-[0_1px_0_rgba(255,255,255,0.9)_inset]">
               <span className="flex min-h-10 items-center gap-2 rounded-full bg-white px-4 text-[11px] font-black text-[#07111f] shadow-sm">
                 <span className="grid size-6 place-items-center rounded-full bg-[#07111f] text-[#55e6b1]">
                   <Icon className="size-3.5" name={currentRole.icon} />
@@ -178,7 +197,7 @@ export function AppHeader({
         <section
           aria-label="BILOO navigation"
           aria-modal="true"
-          className={`absolute inset-x-3 bottom-3 top-[88px] flex flex-col overflow-hidden rounded-[2rem] border border-white/80 bg-white/96 shadow-[0_36px_110px_rgba(7,17,31,0.34)] backdrop-blur-2xl transition duration-300 sm:inset-x-auto sm:bottom-auto sm:right-5 sm:top-[88px] sm:max-h-[calc(100svh-104px)] sm:w-[460px] ${
+          className={`absolute inset-x-3 bottom-3 top-[88px] flex flex-col overflow-hidden rounded-[2rem] border border-white/80 bg-white/95 shadow-[0_36px_110px_rgba(7,17,31,0.34)] backdrop-blur-2xl transition duration-300 sm:inset-x-auto sm:bottom-auto sm:right-5 sm:top-[88px] sm:max-h-[calc(100svh-104px)] sm:w-[460px] ${
             menuOpen
               ? "translate-y-0 scale-100 opacity-100"
               : "translate-y-3 scale-[0.98] opacity-0"
@@ -226,7 +245,7 @@ export function AppHeader({
 
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {visibleRoles.map((item) => {
-                const active = item.key === role;
+                const active = item.key === activeRole;
                 return (
                   <button
                     aria-current={active ? "page" : undefined}
@@ -236,7 +255,7 @@ export function AppHeader({
                         : "border-slate-200/80 bg-white text-[#07111f] hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                     }`}
                     key={item.key}
-                    onClick={() => runMenuAction(() => setRole(item.key))}
+                    onClick={() => switchWorkspace(item.key)}
                     type="button"
                   >
                     <span
@@ -310,7 +329,7 @@ export function AppHeader({
             </div>
           </div>
 
-          <footer className="flex items-center justify-between gap-4 border-t border-slate-200/75 bg-slate-50/82 px-5 py-4 sm:px-6">
+          <footer className="flex items-center justify-between gap-4 border-t border-slate-200/75 bg-slate-50/80 px-5 py-4 sm:px-6">
             <span className="flex items-center gap-2 text-[10px] font-black text-slate-500">
               <span
                 className={`size-2 rounded-full ${
@@ -414,6 +433,25 @@ export function RoleRail({
 }) {
   const visibleRoles = roles.filter((item) => availableRoles.includes(item.key));
 
+  useEffect(() => {
+    announceRoleChange(role);
+  }, [role]);
+
+  useEffect(() => {
+    function switchFromHeader(event: Event) {
+      const nextRole = (event as CustomEvent<Role>).detail;
+      if (nextRole !== role && availableRoles.includes(nextRole)) setRole(nextRole);
+    }
+
+    window.addEventListener(roleChangeEvent, switchFromHeader);
+    return () => window.removeEventListener(roleChangeEvent, switchFromHeader);
+  }, [availableRoles, role, setRole]);
+
+  function selectRole(nextRole: Role) {
+    setRole(nextRole);
+    announceRoleChange(nextRole);
+  }
+
   return (
     <aside
       className="fixed inset-x-2 bottom-2 z-50 rounded-[1.55rem] border border-white/15 bg-[#07111f]/94 p-2 shadow-[0_24px_70px_rgba(7,17,31,0.34)] backdrop-blur-2xl lg:sticky lg:inset-auto lg:top-[88px] lg:z-20 lg:mx-4 lg:my-4 lg:h-[calc(100vh-104px)] lg:rounded-[2rem] lg:p-4"
@@ -444,7 +482,7 @@ export function RoleRail({
                   : "text-white/52 hover:bg-white/8 hover:text-white"
               }`}
               key={item.key}
-              onClick={() => setRole(item.key)}
+              onClick={() => selectRole(item.key)}
               type="button"
             >
               <span
