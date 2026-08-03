@@ -9,8 +9,10 @@ The repository contains:
 
 - Responsive customer, driver, vendor, and admin workspaces.
 - Supabase SSR authentication and account recovery.
-- Role-based onboarding and guarded driver/vendor applications.
-- Postgres schema, explicit grants, RLS policies, transactional order RPCs, and
+- Role-based onboarding with structured driver and vendor application details.
+- A live admin verification center at `/admin/role-applications`.
+- Atomic approval that activates a verified driver profile or vendor business.
+- Postgres schema, explicit grants, RLS policies, transactional RPCs, and
   Realtime publications.
 - Database-backed customer orders and notifications when Supabase is configured.
 - A local demo fallback for interface development without credentials.
@@ -38,9 +40,18 @@ npm run format:check
 
 ## Database
 
-Apply the migration in:
+Apply the migrations in `supabase/migrations` in timestamp order.
 
-`supabase/migrations/20260802214600_phase2_production_foundation.sql`
+Production foundation:
 
-Read `docs/PHASE_2_PRODUCTION_FOUNDATION.md` before connecting a production
-project.
+- `20260802214600_phase2_production_foundation.sql`
+
+Phase 2.2 role activation:
+
+- `20260803120000_phase2_2_role_activation.sql`
+- `20260803121000_phase2_2_onboarding_transaction.sql`
+
+Read these implementation notes before connecting or changing production:
+
+- `docs/PHASE_2_PRODUCTION_FOUNDATION.md`
+- `docs/PHASE_2_2_ROLE_ACTIVATION.md`
