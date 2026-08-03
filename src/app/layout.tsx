@@ -1,10 +1,24 @@
 import type { Metadata, Viewport } from "next";
+import { Inter_Tight, Manrope } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "./globals.css";
 import "./brand-overrides.css";
 import "./navigation.css";
 import "./google-maps.css";
+import "./premium-system.css";
+
+const bilooSans = Manrope({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-biloo-sans",
+});
+
+const bilooDisplay = Inter_Tight({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-biloo-display",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -19,13 +33,15 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#000308",
+  themeColor: "#0b0b0d",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
+        {children}
+      </body>
     </html>
   );
 }
