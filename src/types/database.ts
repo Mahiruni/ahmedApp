@@ -45,7 +45,7 @@ type Table<Row, Insert = Partial<Row>, Update = Partial<Insert>> = {
   Relationships: [];
 };
 
-export interface ProfileRow {
+export type ProfileRow = {
   id: string;
   role: BilooUserRole;
   display_name: string;
@@ -57,9 +57,9 @@ export interface ProfileRow {
   onboarding_completed_at: string | null;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface AddressRow {
+export type AddressRow = {
   id: string;
   customer_id: string;
   label: string;
@@ -70,9 +70,9 @@ export interface AddressRow {
   is_default: boolean;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface OrderRow {
+export type OrderRow = {
   id: string;
   public_id: string;
   customer_id: string;
@@ -93,9 +93,9 @@ export interface OrderRow {
   metadata: Json;
   created_at: string;
   updated_at: string;
-}
+};
 
-export interface NotificationRow {
+export type NotificationRow = {
   id: string;
   recipient_id: string;
   title: string;
@@ -105,7 +105,7 @@ export interface NotificationRow {
   delivery_status: string;
   created_at: string;
   read_at: string | null;
-}
+};
 
 export interface Database {
   public: {
