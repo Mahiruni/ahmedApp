@@ -232,7 +232,7 @@ export function GooglePlaceField({
           },
           placeholder:
             tone === "pickup"
-              ? "Pickup location in Addis Ababa"
+              ? "Pickup in Addis or nearby"
               : "Where are you going?",
         });
         element.className = "biloo-google-place";
@@ -276,7 +276,7 @@ export function GooglePlaceField({
     }
   }, [value]);
 
-  async function useCurrentLocation() {
+  function useCurrentLocation() {
     if (!navigator.geolocation || locating) return;
     setLocating(true);
 
@@ -315,21 +315,24 @@ export function GooglePlaceField({
   }
 
   return (
-    <div className="flex min-h-[58px] items-center gap-3 rounded-lg bg-[#f3f3f3] px-3">
+    <div className="biloo-route-field flex min-h-[60px] items-center gap-3 px-3.5">
       <span
+        aria-hidden="true"
         className={`size-2.5 shrink-0 ${
-          tone === "pickup" ? "rounded-sm bg-black" : "rounded-full bg-black"
+          tone === "pickup"
+            ? "biloo-route-dot-pickup"
+            : "biloo-route-dot-destination"
         }`}
       />
-      <div className="min-w-0 flex-1 py-2">
-        <span className="block text-[10px] font-medium text-[#6b6b6b]">{label}</span>
+      <div className="min-w-0 flex-1 py-2.5">
+        <span className="block text-[10px] font-semibold tracking-[0.01em] text-[#777b84]">
+          {label}
+        </span>
         {status === "fallback" ? (
           <input
-            className="mt-0.5 w-full bg-transparent text-sm font-medium text-black outline-none placeholder:text-[#8a8a8a]"
+            className="!mt-0 !min-h-6 !w-full !border-0 !bg-transparent !p-0 text-sm font-semibold text-[#0b0b0d] !shadow-none outline-none placeholder:font-medium placeholder:text-[#91949b]"
             onChange={(event) => onChange(event.target.value)}
-            placeholder={
-              tone === "pickup" ? "Pickup location" : "Enter destination"
-            }
+            placeholder={tone === "pickup" ? "Pickup location" : "Enter destination"}
             value={value}
           />
         ) : (
@@ -339,8 +342,9 @@ export function GooglePlaceField({
             ref={hostRef}
           >
             {status === "loading" ? (
-              <span className="text-sm font-medium text-[#8a8a8a]">
-                Loading Google Places…
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-[#91949b]">
+                <span className="size-1.5 animate-pulse rounded-full bg-[#276ef1]" />
+                Loading places
               </span>
             ) : null}
           </div>
@@ -349,9 +353,10 @@ export function GooglePlaceField({
       {allowCurrentLocation ? (
         <button
           aria-label="Use current GPS location"
-          className="grid size-9 shrink-0 place-items-center rounded-full bg-white text-black shadow-sm transition active:scale-95"
+          className="biloo-gps-button grid size-9 shrink-0 place-items-center rounded-full transition active:scale-95"
           disabled={locating}
           onClick={useCurrentLocation}
+          title="Use my current location"
           type="button"
         >
           <Icon
@@ -424,6 +429,21 @@ export function GoogleRouteMap({
               elementType: "labels.icon",
               stylers: [{ visibility: "off" }],
             },
+            {
+              featureType: "road",
+              elementType: "geometry",
+              stylers: [{ color: "#ffffff" }],
+            },
+            {
+              featureType: "landscape",
+              elementType: "geometry",
+              stylers: [{ color: "#f4f5f3" }],
+            },
+            {
+              featureType: "water",
+              elementType: "geometry",
+              stylers: [{ color: "#dce8f8" }],
+            },
           ],
         });
         const traffic = new mapsLibrary.TrafficLayer({ autoRefresh: true });
@@ -478,15 +498,15 @@ export function GoogleRouteMap({
           polylinesRef.current.forEach((polyline) => polyline.setMap(null));
           const polylines = route.createPolylines({
             polylineOptions: {
-              strokeColor: "#000000",
-              strokeOpacity: 0.92,
-              strokeWeight: 5,
+              strokeColor: "#276EF1",
+              strokeOpacity: 0.96,
+              strokeWeight: 6,
             },
           });
           polylines.forEach((polyline) => polyline.setMap(mapRef.current));
           polylinesRef.current = polylines;
 
-          if (route.viewport) mapRef.current.fitBounds(route.viewport, 54);
+          if (route.viewport) mapRef.current.fitBounds(route.viewport, 58);
           const distanceMeters = route.distanceMeters ?? 0;
           const durationMillis = route.durationMillis ?? 0;
           const metrics = {
@@ -505,7 +525,7 @@ export function GoogleRouteMap({
           mapRef.current?.setCenter(ADDIS_CENTER);
           mapRef.current?.setZoom(12);
         });
-    }, 500);
+    }, 450);
 
     return () => {
       cancelled = true;
@@ -514,35 +534,49 @@ export function GoogleRouteMap({
   }, [dropoff, mapReady, pickup]);
 
   return (
-    <div className="relative min-h-[480px] overflow-hidden rounded-xl bg-[#e8e8e8] sm:min-h-[560px]">
-      <div className="absolute inset-0" ref={containerRef} />
+    <div className="biloo-map-card relative min-h-[430px] bg-[#e9ebed] sm:min-h-[560px]">
+      <div className="biloo-map-canvas absolute inset-0" ref={containerRef} />
 
       {routeState === "loading" ? (
-        <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-medium text-black shadow-md">
-          <span className="size-2 animate-pulse rounded-full bg-black" />
+        <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-black/5 bg-white/96 px-3 py-2 text-[11px] font-semibold text-[#0b0b0d] shadow-[0_8px_24px_rgba(10,11,13,0.12)] backdrop-blur-xl">
+          <span className="size-2 animate-pulse rounded-full bg-[#276ef1]" />
           Finding the fastest route
         </div>
       ) : null}
 
+      {routeState === "ready" ? (
+        <div className="absolute right-3 top-3 inline-flex items-center gap-2 rounded-full border border-black/5 bg-white/94 px-3 py-2 text-[10px] font-semibold text-[#4f535b] shadow-[0_8px_24px_rgba(10,11,13,0.1)] backdrop-blur-xl">
+          <span className="size-2 rounded-full bg-[#11884f]" />
+          Live traffic
+        </div>
+      ) : null}
+
       {routeState === "idle" ? (
-        <div className="absolute inset-x-3 bottom-3 rounded-xl bg-white p-4 shadow-lg">
-          <p className="text-sm font-semibold text-black">Live Addis map</p>
-          <p className="mt-1 text-xs leading-5 text-[#6b6b6b]">
-            Enter pickup and destination to see traffic-aware distance and ETA.
-          </p>
+        <div className="absolute inset-x-3 bottom-3 rounded-2xl border border-black/5 bg-white/94 p-4 shadow-[0_16px_42px_rgba(10,11,13,0.12)] backdrop-blur-xl">
+          <div className="flex items-start gap-3">
+            <span className="biloo-tone-mobility grid size-10 shrink-0 place-items-center rounded-full">
+              <Icon className="size-4.5" name="map" />
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-[#0b0b0d]">Live Addis map</p>
+              <p className="mt-1 text-xs leading-5 text-[#6d7078]">
+                Enter pickup and destination to see traffic-aware distance and ETA.
+              </p>
+            </div>
+          </div>
         </div>
       ) : null}
 
       {routeState === "missing-key" || routeState === "unavailable" ? (
-        <div className="absolute inset-0 grid place-items-center bg-[#eeeeee] p-6 text-center">
-          <div className="max-w-xs rounded-xl bg-white p-5 shadow-sm">
-            <span className="mx-auto grid size-11 place-items-center rounded-full bg-black text-white">
+        <div className="absolute inset-0 grid place-items-center bg-[linear-gradient(145deg,#f2f3f4,#e6e9ed)] p-6 text-center">
+          <div className="max-w-xs rounded-2xl border border-black/5 bg-white/96 p-6 shadow-[0_18px_48px_rgba(10,11,13,0.1)] backdrop-blur-xl">
+            <span className="biloo-tone-mobility mx-auto grid size-12 place-items-center rounded-full">
               <Icon className="size-5" name="map" />
             </span>
-            <p className="mt-4 text-sm font-semibold text-black">
+            <p className="mt-4 text-sm font-semibold text-[#0b0b0d]">
               Google Maps integration is ready
             </p>
-            <p className="mt-2 text-xs leading-5 text-[#6b6b6b]">
+            <p className="mt-2 text-xs leading-5 text-[#6d7078]">
               Add the restricted production Maps key to enable live Addis traffic,
               place search, routing and ETA.
             </p>
