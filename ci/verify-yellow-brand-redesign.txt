@@ -1,0 +1,1 @@
+Verify the BILOO black, white and electric-yellow redesign against TypeScript, ESLint and the production build.
