@@ -1,2 +1,3 @@
 Verification marker for the final mobile GPS and interface polish.
 Run the full repository validation pipeline against the current main source.
+Verification retry: 2026-08-03.
