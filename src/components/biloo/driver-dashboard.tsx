@@ -8,6 +8,15 @@ import { formatETB, Icon, serviceLabel, StatusPill, Surface } from "./ui";
 
 type DriverStage = "accepted" | "at_pickup" | "picked_up" | "at_dropoff";
 
+type DriverJobWithContact = DriverJob & {
+  customerName?: string;
+  customerPhone?: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  contactName?: string;
+  contactPhone?: string;
+};
+
 const driverStages: Array<{
   key: DriverStage;
   label: string;
@@ -22,6 +31,20 @@ const driverStages: Array<{
 
 const driverStageStorageKey = "biloo.driver-active-stage";
 const declinedJobsStorageKey = "biloo.driver-declined-jobs";
+
+function normalizeEthiopianDialNumber(value?: string) {
+  if (!value) return null;
+
+  const trimmed = value.trim();
+  const digits = trimmed.replace(/\D/g, "");
+  if (digits.length < 9) return null;
+
+  if (trimmed.startsWith("+")) return `+${digits}`;
+  if (digits.startsWith("251")) return `+${digits}`;
+  if (digits.startsWith("0")) return `+251${digits.slice(1)}`;
+
+  return digits;
+}
 
 export function DriverDashboard({
   online,
@@ -76,7 +99,11 @@ export function DriverDashboard({
 
   useEffect(() => {
     if (!activeJob) {
-      window.localStorage.removeItem(driverStageStorageKey);
+      try {
+        window.localStorage.removeItem(driverStageStorageKey);
+      } catch {
+        // In-memory progress still works.
+      }
       return;
     }
     try {
@@ -114,10 +141,26 @@ export function DriverDashboard({
   const currentStage =
     driverStages.find((candidate) => candidate.key === stage) ?? driverStages[0];
 
+  const activeJobContact = activeJob as DriverJobWithContact | null;
+  const activeContactName =
+    activeJobContact?.customerName ??
+    activeJobContact?.recipientName ??
+    activeJobContact?.contactName ??
+    "customer";
+  const activeContactPhone = normalizeEthiopianDialNumber(
+    activeJobContact?.customerPhone ??
+      activeJobContact?.recipientPhone ??
+      activeJobContact?.contactPhone,
+  );
+
   function advanceJob() {
     const currentIndex = driverStages.findIndex((candidate) => candidate.key === stage);
     if (currentIndex === driverStages.length - 1) {
-      window.localStorage.removeItem(driverStageStorageKey);
+      try {
+        window.localStorage.removeItem(driverStageStorageKey);
+      } catch {
+        // Completion remains available when storage is blocked.
+      }
       setStage("accepted");
       onComplete();
       return;
@@ -136,7 +179,8 @@ export function DriverDashboard({
   }
 
   function openNavigation(job: DriverJob) {
-    const destination = stage === "accepted" || stage === "at_pickup" ? job.pickup : job.dropoff;
+    const destination =
+      stage === "accepted" || stage === "at_pickup" ? job.pickup : job.dropoff;
     window.open(
       `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`,
       "_blank",
@@ -186,9 +230,7 @@ export function DriverDashboard({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-2xl font-black">{value}</p>
-                  <p className="mt-2 text-xs font-semibold text-white/55">
-                    {label}
-                  </p>
+                  <p className="mt-2 text-xs font-semibold text-white/55">{label}</p>
                 </div>
                 <Icon className="size-5 text-[#f2bd4b]" name={icon as IconName} />
               </div>
@@ -228,8 +270,12 @@ export function DriverDashboard({
               </div>
               <div className="mt-3 grid grid-cols-4 gap-2">
                 {driverStages.map((item) => {
-                  const activeIndex = driverStages.findIndex((candidate) => candidate.key === stage);
-                  const itemIndex = driverStages.findIndex((candidate) => candidate.key === item.key);
+                  const activeIndex = driverStages.findIndex(
+                    (candidate) => candidate.key === stage,
+                  );
+                  const itemIndex = driverStages.findIndex(
+                    (candidate) => candidate.key === item.key,
+                  );
                   return (
                     <div key={item.key} className="text-center">
                       <span
@@ -258,12 +304,25 @@ export function DriverDashboard({
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <a
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-black text-[#082640]"
-                  href="tel:+251911000000"
-                >
-                  <Icon name="phone" /> Call
-                </a>
+                {activeContactPhone ? (
+                  <a
+                    aria-label={`Call ${activeContactName}`}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-black text-[#082640]"
+                    href={`tel:${activeContactPhone}`}
+                  >
+                    <Icon name="phone" /> Call customer
+                  </a>
+                ) : (
+                  <button
+                    aria-label="Customer phone unavailable"
+                    className="inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 text-sm font-black text-slate-400"
+                    disabled
+                    title="No verified customer phone is attached to this job"
+                    type="button"
+                  >
+                    <Icon name="phone" /> Call unavailable
+                  </button>
+                )}
                 <button
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#082640] text-sm font-black text-white"
                   onClick={() => openNavigation(activeJob)}
@@ -272,6 +331,9 @@ export function DriverDashboard({
                   <Icon name="navigation" /> Navigate
                 </button>
               </div>
+              <p className="mt-2 text-[10px] leading-4 text-slate-400">
+                Calls use the verified phone attached to this customer’s active job.
+              </p>
               <button
                 className="mt-3 min-h-12 w-full rounded-xl bg-emerald-600 text-sm font-black text-white transition hover:bg-emerald-700"
                 onClick={advanceJob}
@@ -287,7 +349,7 @@ export function DriverDashboard({
               <div className="absolute left-[19%] top-[19%] grid size-12 place-items-center rounded-full border-4 border-white bg-emerald-500 text-white shadow-xl">
                 <Icon name="location" />
               </div>
-              <div className="absolute right-[14%] bottom-[19%] grid size-12 place-items-center rounded-full border-4 border-white bg-rose-500 text-white shadow-xl">
+              <div className="absolute bottom-[19%] right-[14%] grid size-12 place-items-center rounded-full border-4 border-white bg-rose-500 text-white shadow-xl">
                 <Icon name="location" />
               </div>
               <div className="absolute left-[52%] top-[44%] grid size-14 place-items-center rounded-full border-4 border-white bg-[#082640] text-[#f2bd4b] shadow-2xl">
