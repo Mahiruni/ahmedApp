@@ -1,11 +1,27 @@
 "use client";
 
-import type {
-  DriverJob,
-  IconName,
-} from "@/data/biloo";
+import { useEffect, useMemo, useState } from "react";
+
+import type { DriverJob, IconName } from "@/data/biloo";
 
 import { formatETB, Icon, serviceLabel, StatusPill, Surface } from "./ui";
+
+type DriverStage = "accepted" | "at_pickup" | "picked_up" | "at_dropoff";
+
+const driverStages: Array<{
+  key: DriverStage;
+  label: string;
+  action: string;
+  progress: number;
+}> = [
+  { key: "accepted", label: "Accepted", action: "Arrived at pickup", progress: 18 },
+  { key: "at_pickup", label: "At pickup", action: "Confirm pickup", progress: 46 },
+  { key: "picked_up", label: "Picked up", action: "Arrived at drop-off", progress: 74 },
+  { key: "at_dropoff", label: "At drop-off", action: "Complete job", progress: 100 },
+];
+
+const driverStageStorageKey = "biloo.driver-active-stage";
+const declinedJobsStorageKey = "biloo.driver-declined-jobs";
 
 export function DriverDashboard({
   online,
@@ -26,6 +42,108 @@ export function DriverDashboard({
   onAccept: (job: DriverJob) => void;
   onComplete: () => void;
 }) {
+  const [stage, setStage] = useState<DriverStage>("accepted");
+  const [declinedJobIds, setDeclinedJobIds] = useState<string[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedDeclined = window.localStorage.getItem(declinedJobsStorageKey);
+      if (storedDeclined) setDeclinedJobIds(JSON.parse(storedDeclined) as string[]);
+    } catch {
+      // Keep the driver workflow usable when storage is blocked or corrupted.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!activeJob) {
+      setStage("accepted");
+      return;
+    }
+
+    try {
+      const stored = window.localStorage.getItem(driverStageStorageKey);
+      if (!stored) {
+        setStage("accepted");
+        return;
+      }
+      const parsed = JSON.parse(stored) as { jobId?: string; stage?: DriverStage };
+      setStage(parsed.jobId === activeJob.id && parsed.stage ? parsed.stage : "accepted");
+    } catch {
+      setStage("accepted");
+    }
+  }, [activeJob?.id]);
+
+  useEffect(() => {
+    if (!activeJob) {
+      window.localStorage.removeItem(driverStageStorageKey);
+      return;
+    }
+    try {
+      window.localStorage.setItem(
+        driverStageStorageKey,
+        JSON.stringify({ jobId: activeJob.id, stage }),
+      );
+    } catch {
+      // In-memory progress still works.
+    }
+  }, [activeJob, stage]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        declinedJobsStorageKey,
+        JSON.stringify(declinedJobIds),
+      );
+    } catch {
+      // In-memory filtering still works.
+    }
+  }, [declinedJobIds]);
+
+  useEffect(() => {
+    if (!notice) return;
+    const timeout = window.setTimeout(() => setNotice(null), 2800);
+    return () => window.clearTimeout(timeout);
+  }, [notice]);
+
+  const visibleJobs = useMemo(
+    () => jobs.filter((job) => !declinedJobIds.includes(job.id)),
+    [declinedJobIds, jobs],
+  );
+
+  const currentStage =
+    driverStages.find((candidate) => candidate.key === stage) ?? driverStages[0];
+
+  function advanceJob() {
+    const currentIndex = driverStages.findIndex((candidate) => candidate.key === stage);
+    if (currentIndex === driverStages.length - 1) {
+      window.localStorage.removeItem(driverStageStorageKey);
+      setStage("accepted");
+      onComplete();
+      return;
+    }
+
+    const next = driverStages[currentIndex + 1];
+    setStage(next.key);
+    setNotice(`Job updated: ${next.label}.`);
+  }
+
+  function declineJob(job: DriverJob) {
+    setDeclinedJobIds((current) =>
+      current.includes(job.id) ? current : [...current, job.id],
+    );
+    setNotice(`${job.id} declined. It was removed from your queue.`);
+  }
+
+  function openNavigation(job: DriverJob) {
+    const destination = stage === "accepted" || stage === "at_pickup" ? job.pickup : job.dropoff;
+    window.open(
+      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(destination)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
+  }
+
   return (
     <div className="space-y-5 sm:space-y-6">
       <section className="relative overflow-hidden rounded-[2rem] bg-[#082640] p-6 text-white shadow-[0_28px_80px_rgba(8,38,64,0.22)] sm:p-8">
@@ -79,46 +197,76 @@ export function DriverDashboard({
         </div>
       </section>
 
+      {notice ? (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">
+          {notice}
+        </div>
+      ) : null}
+
       {activeJob ? (
         <Surface className="overflow-hidden">
           <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
             <div className="p-5 sm:p-6">
-              <StatusPill tone="success">Active job</StatusPill>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <StatusPill tone="success">Active job</StatusPill>
+                <span className="text-xs font-black text-slate-400">
+                  {currentStage.progress}% complete
+                </span>
+              </div>
               <h2 className="mt-4 text-3xl font-black tracking-[-0.045em]">
                 {activeJob.type} in progress
               </h2>
               <p className="mt-2 text-sm text-slate-500">
-                {serviceLabel(activeJob.service)} · {activeJob.distance} ·{" "}
-                {activeJob.eta}
+                {serviceLabel(activeJob.service)} · {activeJob.distance} · {activeJob.eta}
               </p>
+
+              <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                  style={{ width: `${currentStage.progress}%` }}
+                />
+              </div>
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                {driverStages.map((item) => {
+                  const activeIndex = driverStages.findIndex((candidate) => candidate.key === stage);
+                  const itemIndex = driverStages.findIndex((candidate) => candidate.key === item.key);
+                  return (
+                    <div key={item.key} className="text-center">
+                      <span
+                        className={`mx-auto block size-2.5 rounded-full ${
+                          itemIndex <= activeIndex ? "bg-emerald-500" : "bg-slate-200"
+                        }`}
+                      />
+                      <span className="mt-2 block text-[9px] font-black text-slate-400">
+                        {item.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
 
               <div className="mt-6 space-y-4">
                 <RouteStop label="Pickup" location={activeJob.pickup} tone="green" />
-                <RouteStop
-                  label="Drop-off"
-                  location={activeJob.dropoff}
-                  tone="red"
-                />
+                <RouteStop label="Drop-off" location={activeJob.dropoff} tone="red" />
               </div>
 
               <div className="mt-6 rounded-2xl bg-[#f5f8fa] p-4">
                 <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
                   Estimated earning
                 </p>
-                <p className="mt-2 text-2xl font-black">
-                  {formatETB(activeJob.amount)}
-                </p>
+                <p className="mt-2 text-2xl font-black">{formatETB(activeJob.amount)}</p>
               </div>
 
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <button
+                <a
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-black text-[#082640]"
-                  type="button"
+                  href="tel:+251911000000"
                 >
                   <Icon name="phone" /> Call
-                </button>
+                </a>
                 <button
                   className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#082640] text-sm font-black text-white"
+                  onClick={() => openNavigation(activeJob)}
                   type="button"
                 >
                   <Icon name="navigation" /> Navigate
@@ -126,10 +274,10 @@ export function DriverDashboard({
               </div>
               <button
                 className="mt-3 min-h-12 w-full rounded-xl bg-emerald-600 text-sm font-black text-white transition hover:bg-emerald-700"
-                onClick={onComplete}
+                onClick={advanceJob}
                 type="button"
               >
-                Complete job
+                {currentStage.action}
               </button>
             </div>
 
@@ -146,9 +294,9 @@ export function DriverDashboard({
                 <Icon name={activeJob.type === "Taxi" ? "taxi" : "driver"} />
               </div>
               <div className="absolute inset-x-5 bottom-5 rounded-2xl bg-white/92 p-4 shadow-xl backdrop-blur">
-                <p className="text-sm font-black">Fastest route selected</p>
+                <p className="text-sm font-black">{currentStage.label}</p>
                 <p className="mt-1 text-xs text-slate-500">
-                  Traffic-aware navigation will use the configured map provider.
+                  Your progress is saved on this device until the backend is connected.
                 </p>
               </div>
             </div>
@@ -172,7 +320,7 @@ export function DriverDashboard({
             </div>
 
             <div className="mt-6 space-y-4">
-              {jobs.map((job) => (
+              {visibleJobs.map((job) => (
                 <article
                   className={`rounded-[1.45rem] border p-5 transition ${
                     online
@@ -185,9 +333,7 @@ export function DriverDashboard({
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <StatusPill tone="brand">{job.type}</StatusPill>
-                        <span className="text-xs font-bold text-slate-400">
-                          {job.id}
-                        </span>
+                        <span className="text-xs font-bold text-slate-400">{job.id}</span>
                       </div>
                       <p className="mt-4 text-sm font-black">{job.pickup}</p>
                       <div className="my-2 ml-2 h-5 border-l border-dashed border-slate-300" />
@@ -205,8 +351,9 @@ export function DriverDashboard({
 
                   <div className="mt-5 grid grid-cols-2 gap-3">
                     <button
-                      className="min-h-11 rounded-xl border border-slate-200 text-xs font-black text-slate-500"
+                      className="min-h-11 rounded-xl border border-slate-200 text-xs font-black text-slate-500 disabled:opacity-40"
                       disabled={!online}
+                      onClick={() => declineJob(job)}
                       type="button"
                     >
                       Decline
@@ -222,6 +369,16 @@ export function DriverDashboard({
                   </div>
                 </article>
               ))}
+
+              {visibleJobs.length === 0 ? (
+                <div className="rounded-[1.45rem] bg-slate-50 px-6 py-12 text-center">
+                  <Icon className="mx-auto size-8 text-slate-300" name="check" />
+                  <p className="mt-4 text-sm font-black text-slate-600">Queue cleared</p>
+                  <p className="mt-2 text-xs text-slate-400">
+                    New requests will appear here when they become available.
+                  </p>
+                </div>
+              ) : null}
             </div>
           </Surface>
 
@@ -264,9 +421,7 @@ function DemandMap() {
       <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
         Demand map
       </p>
-      <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
-        High-demand zones
-      </h2>
+      <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">High-demand zones</h2>
       <div className="relative mt-6 min-h-[430px] overflow-hidden rounded-[1.45rem] bg-[#e8eef2]">
         <div className="absolute inset-0 opacity-55 [background-image:linear-gradient(#cbd5e1_1px,transparent_1px),linear-gradient(90deg,#cbd5e1_1px,transparent_1px)] [background-size:40px_40px]" />
         <div className="absolute left-[15%] top-[20%] size-32 rounded-full bg-amber-400/38 blur-sm" />
