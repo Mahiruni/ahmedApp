@@ -21,6 +21,7 @@ import {
   type CartLine,
   type CatalogItem,
   type DriverJob,
+  type IconName,
   type PaymentMethod,
   type Role,
   type ServiceKey,
@@ -35,7 +36,7 @@ import { CustomerDashboard } from "./customer-dashboard";
 import { AdminDashboard } from "./admin-dashboard";
 import { DriverDashboard } from "./driver-dashboard";
 import { VendorDashboard } from "./vendor-dashboard";
-import { Icon, serviceLabel } from "./ui";
+import { Icon, serviceLabel, Surface } from "./ui";
 import { AppHeader, RoleRail } from "./app-shell";
 import { CartDrawer } from "./cart-drawer";
 import { CheckoutModal } from "./checkout-modal";
@@ -49,6 +50,10 @@ const vendorStatusOrder: VendorOrder["status"][] = [
   "Ready",
   "Dispatched",
 ];
+
+const driverStageStorageKey = "biloo.driver-active-stage";
+
+type DriverStage = "accepted" | "at_pickup" | "picked_up" | "at_dropoff";
 
 function useStoredState<T>(
   key: string,
@@ -107,6 +112,31 @@ function paymentMethodLabel(method: PaymentMethod) {
   return "cash on delivery";
 }
 
+function linkedOrderIdFromJob(job: DriverJob | null) {
+  if (!job?.id.startsWith("JOB-BL-")) return null;
+  return job.id.slice(4);
+}
+
+function linkedJobId(orderId: string) {
+  return `JOB-${orderId}`;
+}
+
+function orderStageLabel(
+  order: ActiveOrder,
+  vendorOrders: VendorOrder[],
+  driverJobs: DriverJob[],
+  activeDriverJob: DriverJob | null,
+) {
+  if (order.progress >= 100) return "Completed";
+  if (activeDriverJob?.id === linkedJobId(order.id)) return "Driver active";
+  if (driverJobs.some((job) => job.id === linkedJobId(order.id))) {
+    return "Awaiting driver";
+  }
+  const vendorOrder = vendorOrders.find((item) => item.id === order.id);
+  if (vendorOrder) return `Vendor · ${vendorOrder.status}`;
+  return order.service === "taxi" ? "Matching driver" : "Customer order";
+}
+
 export function BilooApp({
   viewer = null,
   initialRemoteOrders = [],
@@ -162,16 +192,42 @@ export function BilooApp({
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<ActiveOrder | null>(null);
   const [toast, setToast] = useState<string | null>(null);
-  const [locationLabel, setLocationLabel] = useState(
+  const [locationLabel, setLocationLabel] = useStoredState(
+    "biloo.customer-location",
     "Home · Bole, Addis Ababa",
+    !liveData,
   );
 
-  const [driverOnline, setDriverOnline] = useState(true);
-  const [driverJobs, setDriverJobs] = useState<DriverJob[]>(initialDriverJobs);
-  const [activeDriverJob, setActiveDriverJob] = useState<DriverJob | null>(null);
-  const [driverEarnings, setDriverEarnings] = useState(2460);
-  const [driverCompleted, setDriverCompleted] = useState(14);
-  const [storeOpen, setStoreOpen] = useState(true);
+  const [driverOnline, setDriverOnline] = useStoredState(
+    "biloo.driver-online",
+    true,
+    !liveData,
+  );
+  const [driverJobs, setDriverJobs] = useStoredState<DriverJob[]>(
+    "biloo.driver-jobs",
+    initialDriverJobs,
+    !liveData,
+  );
+  const [activeDriverJob, setActiveDriverJob] = useStoredState<DriverJob | null>(
+    "biloo.driver-active-job",
+    null,
+    !liveData,
+  );
+  const [driverEarnings, setDriverEarnings] = useStoredState(
+    "biloo.driver-earnings",
+    2460,
+    !liveData,
+  );
+  const [driverCompleted, setDriverCompleted] = useStoredState(
+    "biloo.driver-completed",
+    14,
+    !liveData,
+  );
+  const [storeOpen, setStoreOpen] = useStoredState(
+    "biloo.store-open",
+    true,
+    !liveData,
+  );
 
   const catalogItems = useMemo(() => {
     const normalized = search.trim().toLowerCase();
@@ -189,14 +245,19 @@ export function BilooApp({
   ).length;
   const cartCount = cart.reduce((total, line) => total + line.quantity, 0);
 
-  const upsertRealtimeOrder = useCallback((incoming: ActiveOrder) => {
-    setOrders((current) => {
-      const exists = current.some((order) => order.id === incoming.id);
-      return exists
-        ? current.map((order) => (order.id === incoming.id ? incoming : order))
-        : [incoming, ...current];
-    });
-  }, [setOrders]);
+  const upsertRealtimeOrder = useCallback(
+    (incoming: ActiveOrder) => {
+      setOrders((current) => {
+        const exists = current.some((order) => order.id === incoming.id);
+        return exists
+          ? current.map((order) =>
+              order.id === incoming.id ? incoming : order,
+            )
+          : [incoming, ...current];
+      });
+    },
+    [setOrders],
+  );
 
   const prependRealtimeNotification = useCallback(
     (incoming: BilooNotification) => {
@@ -234,15 +295,107 @@ export function BilooApp({
     };
   }, [cartOpen, checkoutOpen, notificationsOpen, selectedOrder]);
 
+  useEffect(() => {
+    if (!selectedOrder) return;
+    const latest = orders.find((order) => order.id === selectedOrder.id);
+    if (latest) setSelectedOrder(latest);
+  }, [orders, selectedOrder?.id]);
+
+  useEffect(() => {
+    if (liveData || !activeDriverJob) return;
+    const currentJob = activeDriverJob;
+    const orderId = linkedOrderIdFromJob(currentJob);
+    if (!orderId) return;
+
+    let previousStage: DriverStage | null = null;
+
+    function syncDriverStage() {
+      try {
+        const stored = window.localStorage.getItem(driverStageStorageKey);
+        if (!stored) return;
+        const parsed = JSON.parse(stored) as {
+          jobId?: string;
+          stage?: DriverStage;
+        };
+        if (
+          parsed.jobId !== currentJob.id ||
+          !parsed.stage ||
+          parsed.stage === previousStage
+        ) {
+          return;
+        }
+
+        previousStage = parsed.stage;
+        const taxi = currentJob.type === "Taxi";
+        const presentation: Record<
+          DriverStage,
+          { status: string; progress: number; eta: string }
+        > = {
+          accepted: {
+            status: taxi
+              ? "Driver accepted your ride"
+              : "Driver assigned and heading to pickup",
+            progress: taxi ? 28 : 66,
+            eta: taxi ? "3 min" : currentJob.eta,
+          },
+          at_pickup: {
+            status: taxi
+              ? "Driver arrived at your pickup"
+              : "Driver arrived at the vendor",
+            progress: taxi ? 42 : 72,
+            eta: taxi ? "1 min" : currentJob.eta,
+          },
+          picked_up: {
+            status: taxi
+              ? "Your ride is in progress"
+              : "Driver picked up your order",
+            progress: taxi ? 68 : 84,
+            eta: currentJob.eta,
+          },
+          at_dropoff: {
+            status: taxi
+              ? "Driver arrived at your destination"
+              : "Driver arrived at your address",
+            progress: taxi ? 94 : 96,
+            eta: "1 min",
+          },
+        };
+        const next = presentation[parsed.stage];
+        setOrders((current) =>
+          current.map((order) =>
+            order.id === orderId ? { ...order, ...next } : order,
+          ),
+        );
+      } catch {
+        // The lifecycle remains usable even when storage is unavailable.
+      }
+    }
+
+    syncDriverStage();
+    const interval = window.setInterval(syncDriverStage, 450);
+    return () => window.clearInterval(interval);
+  }, [activeDriverJob, liveData, setOrders]);
+
   function notify(title: string, message: string) {
     const notification: BilooNotification = {
-      id: `notification-${Date.now()}`,
+      id: `notification-${Date.now()}-${Math.random().toString(16).slice(2)}`,
       title,
       message,
       time: "Now",
       read: false,
     };
     setNotifications((current) => [notification, ...current]);
+  }
+
+  function updateOrder(
+    orderId: string,
+    patch: Partial<Pick<ActiveOrder, "status" | "eta" | "progress">>,
+  ) {
+    setOrders((current) =>
+      current.map((order) =>
+        order.id === orderId ? { ...order, ...patch } : order,
+      ),
+    );
   }
 
   function addToCart(item: CatalogItem) {
@@ -337,6 +490,7 @@ export function BilooApp({
     const total = subtotal + 75 + Math.round(subtotal * 0.025);
     const orderService = cart[0].item.service;
     const merchant = cart[0].item.merchant;
+    const lineCount = cart.reduce((totalItems, line) => totalItems + line.quantity, 0);
     const order: ActiveOrder = {
       id: createOrderId(),
       service: orderService,
@@ -347,16 +501,25 @@ export function BilooApp({
       total,
       createdAt: currentTime(),
     };
+    const vendorOrder: VendorOrder = {
+      id: order.id,
+      customer: viewer?.displayName ?? "BILOO customer",
+      total,
+      items: lineCount,
+      status: "New",
+      placed: "Now",
+    };
 
     setOrders((current) => [order, ...current]);
+    setVendorOrders((current) => [vendorOrder, ...current]);
     setCart([]);
     setCheckoutOpen(false);
     setCartOpen(false);
     notify(
       "Order placed",
-      `${order.id} was placed using ${paymentMethodLabel(paymentMethod)}.`,
+      `${order.id} was sent to ${merchant} using ${paymentMethodLabel(paymentMethod)}.`,
     );
-    setToast(`Order ${order.id} placed successfully.`);
+    setToast(`Order ${order.id} entered the vendor queue.`);
     setSelectedOrder(order);
   }
 
@@ -415,13 +578,24 @@ export function BilooApp({
       total: booking.fare,
       createdAt: currentTime(),
     };
+    const driverJob: DriverJob = {
+      id: linkedJobId(order.id),
+      type: "Taxi",
+      service: "taxi",
+      pickup: booking.pickup,
+      dropoff: booking.dropoff,
+      amount: Math.max(220, Math.round(booking.fare * 0.72)),
+      distance: "7.1 km",
+      eta: "22 min",
+    };
 
     setOrders((current) => [order, ...current]);
+    setDriverJobs((current) => [driverJob, ...current]);
     notify(
       "Ride requested",
-      `We are finding a driver from ${booking.pickup} to ${booking.dropoff}.`,
+      `${order.id} is now visible to nearby BILOO drivers.`,
     );
-    setToast("Ride request sent. A driver is being matched.");
+    setToast("Ride request sent to the driver queue.");
     setSelectedOrder(order);
   }
 
@@ -450,15 +624,51 @@ export function BilooApp({
   function acceptDriverJob(job: DriverJob) {
     setActiveDriverJob(job);
     setDriverJobs((current) => current.filter((item) => item.id !== job.id));
-    setToast(`${job.id} accepted. Navigation is ready.`);
+
+    const orderId = linkedOrderIdFromJob(job);
+    if (orderId) {
+      updateOrder(orderId, {
+        status:
+          job.type === "Taxi"
+            ? "Driver accepted your ride"
+            : "Driver assigned and heading to pickup",
+        progress: job.type === "Taxi" ? 28 : 66,
+        eta: job.type === "Taxi" ? "3 min" : job.eta,
+      });
+      notify(
+        "Driver assigned",
+        `${job.id} accepted ${orderId} and is heading to pickup.`,
+      );
+    }
+
+    setToast(`${job.id} accepted. Customer tracking is now connected.`);
   }
 
   function completeDriverJob() {
     if (!activeDriverJob) return;
-    setDriverEarnings((current) => current + activeDriverJob.amount);
+    const completedJob = activeDriverJob;
+    const orderId = linkedOrderIdFromJob(completedJob);
+
+    setDriverEarnings((current) => current + completedJob.amount);
     setDriverCompleted((current) => current + 1);
-    setToast(`${activeDriverJob.id} completed and earnings updated.`);
     setActiveDriverJob(null);
+
+    if (orderId) {
+      updateOrder(orderId, {
+        status:
+          completedJob.type === "Taxi"
+            ? "Ride completed"
+            : "Order delivered successfully",
+        progress: 100,
+        eta: "Completed",
+      });
+      notify(
+        completedJob.type === "Taxi" ? "Ride completed" : "Order delivered",
+        `${orderId} completed successfully.`,
+      );
+    }
+
+    setToast(`${completedJob.id} completed and all workspaces were updated.`);
   }
 
   function advanceVendorOrder(order: VendorOrder) {
@@ -469,7 +679,70 @@ export function BilooApp({
         item.id === order.id ? { ...item, status: nextStatus } : item,
       ),
     );
-    setToast(`${order.id} moved to ${nextStatus}.`);
+
+    const customerOrder = orders.find((item) => item.id === order.id);
+    if (customerOrder) {
+      const presentation: Record<
+        VendorOrder["status"],
+        { status: string; progress: number; eta: string }
+      > = {
+        New: {
+          status: "Vendor is confirming your order",
+          progress: 16,
+          eta: customerOrder.eta,
+        },
+        Accepted: {
+          status: "Vendor accepted your order",
+          progress: 30,
+          eta: customerOrder.service === "construction" ? "2–4 hrs" : "26 min",
+        },
+        Preparing: {
+          status: "Vendor is preparing your order",
+          progress: 45,
+          eta: customerOrder.service === "construction" ? "2–3 hrs" : "20 min",
+        },
+        Ready: {
+          status: "Order is ready; finding a driver",
+          progress: 58,
+          eta: customerOrder.service === "construction" ? "90 min" : "14 min",
+        },
+        Dispatched: {
+          status: "Courier pickup requested",
+          progress: 62,
+          eta: customerOrder.service === "construction" ? "75 min" : "12 min",
+        },
+      };
+      updateOrder(customerOrder.id, presentation[nextStatus]);
+
+      if (nextStatus === "Ready") {
+        const job: DriverJob = {
+          id: linkedJobId(customerOrder.id),
+          type: "Delivery",
+          service: customerOrder.service,
+          pickup: customerOrder.title.replace(/ order$/i, ""),
+          dropoff: locationLabel,
+          amount: Math.max(180, Math.round(customerOrder.total * 0.12)),
+          distance: customerOrder.service === "construction" ? "13.2 km" : "6.8 km",
+          eta: customerOrder.service === "construction" ? "44 min" : "24 min",
+        };
+        setDriverJobs((current) =>
+          current.some((item) => item.id === job.id)
+            ? current
+            : [job, ...current],
+        );
+        notify(
+          "Order ready",
+          `${customerOrder.id} entered the driver delivery queue.`,
+        );
+      } else {
+        notify(
+          `Vendor ${nextStatus.toLowerCase()}`,
+          `${customerOrder.id} moved to ${nextStatus}.`,
+        );
+      }
+    }
+
+    setToast(`${order.id} moved to ${nextStatus} across BILOO.`);
   }
 
   function resolveIncident(incident: AdminIncident) {
@@ -552,10 +825,18 @@ export function BilooApp({
           ) : null}
 
           {role === "admin" ? (
-            <AdminDashboard
-              incidents={incidents}
-              onResolveIncident={resolveIncident}
-            />
+            <div className="space-y-5 sm:space-y-6">
+              <AdminDashboard
+                incidents={incidents}
+                onResolveIncident={resolveIncident}
+              />
+              <OperationsLifecycle
+                activeDriverJob={activeDriverJob}
+                driverJobs={driverJobs}
+                orders={orders}
+                vendorOrders={vendorOrders}
+              />
+            </div>
           ) : null}
         </section>
       </div>
@@ -579,11 +860,22 @@ export function BilooApp({
         open={notificationsOpen}
       />
       <TrackingModal
-        onAdvance={(order) => {
+        onAdvance={(order: ActiveOrder) => {
           if (liveData) {
             setToast("Live order status updates automatically.");
             return;
           }
+          const isConnected =
+            vendorOrders.some((item) => item.id === order.id) ||
+            driverJobs.some((job) => job.id === linkedJobId(order.id)) ||
+            activeDriverJob?.id === linkedJobId(order.id);
+          if (isConnected) {
+            setToast(
+              "This order is connected. Continue it from the vendor or driver workspace.",
+            );
+            return;
+          }
+
           const nextProgress = Math.min(order.progress + 18, 96);
           const updated: ActiveOrder = {
             ...order,
@@ -620,5 +912,110 @@ export function BilooApp({
         </div>
       ) : null}
     </main>
+  );
+}
+
+function OperationsLifecycle({
+  orders,
+  vendorOrders,
+  driverJobs,
+  activeDriverJob,
+}: {
+  orders: ActiveOrder[];
+  vendorOrders: VendorOrder[];
+  driverJobs: DriverJob[];
+  activeDriverJob: DriverJob | null;
+}) {
+  const recentOrders = orders.slice(0, 8);
+  const linkedVendorOrders = vendorOrders.filter((item) =>
+    orders.some((order) => order.id === item.id),
+  ).length;
+  const linkedDriverJobs = driverJobs.filter((job) =>
+    Boolean(linkedOrderIdFromJob(job)),
+  ).length;
+  const completedOrders = orders.filter((order) => order.progress >= 100).length;
+
+  return (
+    <Surface className="p-5 sm:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">
+            Phase 2.1 connected operations
+          </p>
+          <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
+            End-to-end order lifecycle
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Customer, vendor, driver and admin now share one persistent demo workflow.
+          </p>
+        </div>
+        <span className="rounded-full bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
+          Live demo state
+        </span>
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          [String(orders.length), "Customer orders", "receipt" as const],
+          [String(linkedVendorOrders), "Vendor-linked", "vendor" as const],
+          [String(linkedDriverJobs), "Driver queue", "driver" as const],
+          [String(completedOrders), "Completed", "check" as const],
+        ].map(([value, label, icon]) => (
+          <div className="rounded-2xl bg-[#f5f8fa] p-4" key={label}>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-2xl font-black">{value}</p>
+                <p className="mt-1 text-xs font-bold text-slate-400">{label}</p>
+              </div>
+              <Icon
+                className="size-5 text-[#082640]"
+                name={icon as IconName}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 overflow-hidden rounded-[1.4rem] border border-slate-200">
+        <div className="hidden grid-cols-[0.7fr_1.2fr_0.8fr_1fr_0.65fr] gap-4 bg-slate-50 px-5 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 md:grid">
+          <span>Order</span>
+          <span>Customer view</span>
+          <span>Service</span>
+          <span>Operational stage</span>
+          <span>Progress</span>
+        </div>
+        {recentOrders.map((order) => (
+          <div
+            className="grid gap-3 border-t border-slate-100 px-5 py-4 first:border-t-0 md:grid-cols-[0.7fr_1.2fr_0.8fr_1fr_0.65fr] md:items-center"
+            key={order.id}
+          >
+            <span className="text-sm font-black">{order.id}</span>
+            <span>
+              <span className="block text-sm font-bold text-slate-700">
+                {order.status}
+              </span>
+              <span className="mt-1 block text-[10px] text-slate-400">
+                {order.eta}
+              </span>
+            </span>
+            <span className="text-sm font-black capitalize">
+              {serviceLabel(order.service)}
+            </span>
+            <span className="text-xs font-black text-[#082640]">
+              {orderStageLabel(order, vendorOrders, driverJobs, activeDriverJob)}
+            </span>
+            <span>
+              <span className="block text-sm font-black">{order.progress}%</span>
+              <span className="mt-2 block h-2 overflow-hidden rounded-full bg-slate-100">
+                <span
+                  className="block h-full rounded-full bg-emerald-500"
+                  style={{ width: `${Math.min(order.progress, 100)}%` }}
+                />
+              </span>
+            </span>
+          </div>
+        ))}
+      </div>
+    </Surface>
   );
 }
