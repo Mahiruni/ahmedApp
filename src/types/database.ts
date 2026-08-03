@@ -119,6 +119,7 @@ export interface Database {
         user_id: string;
         requested_role: "driver" | "vendor_owner";
         status: "pending" | "approved" | "rejected";
+        application_data: Json;
         notes: string | null;
         created_at: string;
         reviewed_at: string | null;
