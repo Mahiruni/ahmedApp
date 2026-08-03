@@ -98,6 +98,13 @@ export function CustomerDashboard({
     return { active, completed };
   }, [orders]);
 
+  function openTaxiSearch() {
+    const target = document.getElementById("biloo-taxi-booking");
+    if (!target) return;
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <div className="space-y-7 sm:space-y-8">
       <section className="pt-1" data-biloo-customer-home>
@@ -114,28 +121,61 @@ export function CustomerDashboard({
           What do you need?
         </h1>
 
-        <label className="mt-5 flex h-14 items-center gap-3 rounded-xl bg-[#f3f3f3] px-4 transition focus-within:ring-2 focus-within:ring-black/10">
-          <Icon className="size-5 shrink-0 text-black" name="search" />
-          <input
-            className="min-w-0 flex-1 border-0 bg-transparent text-[15px] font-normal text-black outline-none placeholder:text-[#777777] focus:shadow-none"
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setSearch(event.target.value)
-            }
-            placeholder={searchPlaceholders[service]}
-            value={search}
-          />
+        {service === "taxi" ? (
           <button
-            aria-label="Use current location"
-            className="grid size-9 shrink-0 place-items-center rounded-full bg-white text-black shadow-[0_1px_2px_rgba(0,0,0,0.08)] transition hover:bg-[#e8e8e8]"
-            onClick={(event) => {
-              event.preventDefault();
-              onLocate();
-            }}
+            className="biloo-standard-search mt-5 flex h-[52px] w-full items-center gap-3 px-3.5 text-left"
+            onClick={openTaxiSearch}
             type="button"
           >
-            <Icon className="size-4" name="navigation" />
+            <Icon className="size-5 shrink-0 text-[#5f636b]" name="search" />
+            <span className="min-w-0 flex-1 truncate text-[16px] font-medium text-[#656971]">
+              Where to?
+            </span>
+            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#eaf1ff] text-[#276ef1]">
+              <Icon className="size-4" name="arrow" />
+            </span>
           </button>
-        </label>
+        ) : (
+          <div className="mt-5 flex items-center gap-2.5">
+            <div className="biloo-standard-search flex h-[52px] min-w-0 flex-1 items-center gap-3 px-3.5">
+              <Icon
+                className="biloo-search-icon size-5 shrink-0 text-[#6d7078]"
+                name="search"
+              />
+              <input
+                aria-label={searchPlaceholders[service]}
+                autoComplete="off"
+                className="biloo-standard-search-input min-w-0 flex-1"
+                enterKeyHint="search"
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setSearch(event.target.value)
+                }
+                placeholder={searchPlaceholders[service]}
+                spellCheck={false}
+                type="search"
+                value={search}
+              />
+              {search ? (
+                <button
+                  aria-label="Clear search"
+                  className="biloo-search-clear grid size-8 shrink-0 place-items-center rounded-full text-[#5f636b]"
+                  onClick={() => setSearch("")}
+                  type="button"
+                >
+                  <Icon className="size-4" name="close" />
+                </button>
+              ) : null}
+            </div>
+            <button
+              aria-label="Use current location"
+              className="biloo-search-location grid size-[52px] shrink-0 place-items-center rounded-[14px]"
+              onClick={onLocate}
+              type="button"
+            >
+              <Icon className="size-5" name="navigation" />
+            </button>
+          </div>
+        )}
       </section>
 
       <section>
