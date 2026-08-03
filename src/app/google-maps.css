@@ -1,0 +1,71 @@
+/* Google Maps Platform surfaces inside the BILOO mobility workflow. */
+
+.biloo-google-place {
+  display: block;
+  width: 100%;
+  min-height: 24px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #000000;
+  color-scheme: light;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  outline: none;
+}
+
+.biloo-google-place:focus-within {
+  outline: none;
+}
+
+.biloo-google-place::part(input-container) {
+  min-height: 24px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.biloo-google-place::part(input) {
+  padding: 0;
+  color: #000000;
+  font: inherit;
+}
+
+.biloo-google-place::part(prediction-list) {
+  overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.14);
+}
+
+.biloo-google-place::part(prediction-item) {
+  min-height: 48px;
+  padding: 10px 12px;
+  color: #000000;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.biloo-google-place::part(prediction-item-selected) {
+  background: #f3f3f3;
+}
+
+.gm-style .gm-style-iw-c,
+.gm-style .gm-style-iw-d {
+  border-radius: 10px;
+  font-family: inherit;
+}
+
+.gm-style button {
+  border-radius: 8px !important;
+}
+
+@media (max-width: 639px) {
+  .biloo-google-place {
+    font-size: 16px;
+  }
+}
