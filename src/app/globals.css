@@ -2,14 +2,26 @@
 
 :root {
   color-scheme: light;
-  --background: #f5f7fb;
-  --foreground: #101828;
-  --biloo-ink: #07111f;
-  --biloo-navy: #0a1b31;
-  --biloo-blue: #123b66;
-  --biloo-mint: #55e6b1;
-  --biloo-amber: #ffca68;
-  --biloo-cloud: #eef3f8;
+  --background: #f4f4f1;
+  --foreground: #090a0c;
+  --biloo-black: #000308;
+  --biloo-ink: #090a0c;
+  --biloo-yellow: #f2d019;
+  --biloo-yellow-bright: #f4ff00;
+  --biloo-yellow-soft: #fff9c8;
+  --biloo-white: #ffffff;
+  --biloo-surface: #ffffff;
+  --biloo-subtle: #f2f2ef;
+  --biloo-border: #deded8;
+  --biloo-muted: #6c6d70;
+  --biloo-danger: #d92d20;
+  --biloo-success: #087443;
+  --biloo-radius-sm: 12px;
+  --biloo-radius-md: 16px;
+  --biloo-radius-lg: 22px;
+  --biloo-shadow-sm: 0 1px 2px rgba(0, 3, 8, 0.06);
+  --biloo-shadow-md: 0 12px 32px rgba(0, 3, 8, 0.08);
+  --biloo-shadow-lg: 0 24px 64px rgba(0, 3, 8, 0.14);
 }
 
 * {
@@ -25,17 +37,22 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
-  background:
-    radial-gradient(circle at 0% 0%, rgba(85, 230, 177, 0.11), transparent 28rem),
-    radial-gradient(circle at 100% 3%, rgba(255, 202, 104, 0.13), transparent 30rem),
-    linear-gradient(180deg, #f8fafc 0%, #f3f6fa 45%, #eef3f8 100%);
-  background-attachment: fixed;
+  background: var(--background);
   color: var(--foreground);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+button {
+  letter-spacing: -0.02em;
 }
 
 button,
@@ -52,6 +69,7 @@ button,
 
 button:disabled {
   cursor: not-allowed;
+  opacity: 0.56;
 }
 
 button,
@@ -67,13 +85,14 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid rgba(85, 230, 177, 0.45);
-  outline-offset: 2px;
+  outline: 2px solid var(--biloo-black);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(242, 208, 25, 0.7);
 }
 
 ::selection {
-  background: var(--biloo-mint);
-  color: var(--biloo-ink);
+  background: var(--biloo-yellow);
+  color: var(--biloo-black);
 }
 
 ::-webkit-scrollbar {
@@ -88,129 +107,192 @@ textarea:focus-visible {
 ::-webkit-scrollbar-thumb {
   border: 3px solid transparent;
   border-radius: 999px;
-  background: rgba(10, 27, 49, 0.18);
+  background: rgba(0, 3, 8, 0.24);
   background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(10, 27, 49, 0.34);
+  background: rgba(0, 3, 8, 0.44);
   background-clip: padding-box;
 }
 
-/* Shared premium treatment for every BILOO workspace. */
-main[class*="min-h-screen"][class*="bg-[#f2f5f7]"] {
-  position: relative;
-  isolation: isolate;
-  background: transparent !important;
-}
-
-main[class*="min-h-screen"][class*="bg-[#f2f5f7]"]::before {
-  position: fixed;
-  z-index: -1;
-  inset: 0;
-  content: "";
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(10, 27, 49, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(10, 27, 49, 0.025) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: linear-gradient(to bottom, black, transparent 78%);
-}
-
-main[class*="min-h-screen"] section[class*="rounded-[1.8rem]"] {
-  border-color: rgba(255, 255, 255, 0.85) !important;
-  background: rgba(255, 255, 255, 0.86) !important;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 24px 70px rgba(26, 43, 68, 0.08) !important;
-  backdrop-filter: blur(24px);
-}
-
-main[class*="min-h-screen"] section[class*="bg-[#082640]"] {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background:
-    radial-gradient(circle at 86% 14%, rgba(85, 230, 177, 0.2), transparent 21rem),
-    radial-gradient(circle at 30% 110%, rgba(255, 202, 104, 0.16), transparent 25rem),
-    linear-gradient(135deg, #07111f 0%, #0a2039 50%, #103c61 100%) !important;
-  box-shadow: 0 32px 90px rgba(7, 17, 31, 0.24) !important;
-}
-
-main[class*="min-h-screen"] article[class*="rounded-[1.55rem]"],
-main[class*="min-h-screen"] article[class*="rounded-[1.45rem]"] {
-  border-color: rgba(204, 214, 226, 0.68) !important;
-  box-shadow: 0 14px 45px rgba(26, 43, 68, 0.055);
-}
-
+/* Product-wide form standard. */
 main[class*="min-h-screen"] input,
 main[class*="min-h-screen"] select,
 main[class*="min-h-screen"] textarea {
-  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  border-color: var(--biloo-border) !important;
+  border-radius: var(--biloo-radius-sm) !important;
+  background-color: var(--biloo-white);
+  color: var(--biloo-ink);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+main[class*="min-h-screen"] input:not([type="radio"]):not([type="checkbox"]),
+main[class*="min-h-screen"] select {
+  min-height: 48px;
 }
 
 main[class*="min-h-screen"] input:focus,
 main[class*="min-h-screen"] select:focus,
 main[class*="min-h-screen"] textarea:focus {
-  border-color: rgba(18, 59, 102, 0.42) !important;
-  box-shadow: 0 0 0 4px rgba(85, 230, 177, 0.11);
+  border-color: var(--biloo-black) !important;
+  box-shadow: 0 0 0 4px rgba(242, 208, 25, 0.32) !important;
+}
+
+main[class*="min-h-screen"] input::placeholder,
+main[class*="min-h-screen"] textarea::placeholder {
+  color: #9b9b98;
+}
+
+/* Shared workspace canvas and card standard. */
+main[class*="min-h-screen"][class*="bg-[#f2f5f7]"],
+main[class*="min-h-screen"][class*="bg-[#eef3f8]"] {
+  position: relative;
+  isolation: isolate;
+  background: var(--background) !important;
+}
+
+main[class*="min-h-screen"] section[class*="rounded-[1.8rem]"],
+main[class*="min-h-screen"] section[class*="rounded-[2rem]"],
+main[class*="min-h-screen"] article[class*="rounded-[1.55rem]"],
+main[class*="min-h-screen"] article[class*="rounded-[1.45rem]"] {
+  border-color: var(--biloo-border) !important;
+  border-radius: var(--biloo-radius-lg) !important;
+  background-color: var(--biloo-surface);
+  box-shadow: var(--biloo-shadow-sm) !important;
+}
+
+main[class*="min-h-screen"] section[class*="bg-[#082640]"],
+main[class*="min-h-screen"] section[class*="bg-[#07111f]"],
+main[class*="min-h-screen"] section[class*="bg-[#0a1b31]"] {
+  border: 1px solid #191b20 !important;
+  background: var(--biloo-black) !important;
+  box-shadow: var(--biloo-shadow-lg) !important;
+}
+
+/* Compatibility mapping from the previous navy/mint palette. */
+.bg-\[\#07111f\],
+.bg-\[\#082640\],
+.bg-\[\#0a1b31\] {
+  background-color: var(--biloo-black) !important;
+}
+
+.text-\[\#07111f\],
+.text-\[\#082640\],
+.text-\[\#0a1b31\],
+.text-\[\#10243a\],
+.text-\[\#123b66\] {
+  color: var(--biloo-ink) !important;
+}
+
+.bg-\[\#55e6b1\],
+.bg-\[\#ffca68\],
+.bg-\[\#f2bd4b\] {
+  background-color: var(--biloo-yellow) !important;
+  color: var(--biloo-black) !important;
+}
+
+.text-\[\#55e6b1\],
+.text-\[\#ffca68\],
+.text-\[\#f2bd4b\] {
+  color: #807000 !important;
+}
+
+.bg-\[\#07111f\] .text-\[\#55e6b1\],
+.bg-\[\#07111f\] .text-\[\#ffca68\],
+.bg-\[\#07111f\] .text-\[\#f2bd4b\],
+.bg-\[\#082640\] .text-\[\#55e6b1\],
+.bg-\[\#082640\] .text-\[\#ffca68\],
+.bg-\[\#082640\] .text-\[\#f2bd4b\] {
+  color: var(--biloo-yellow-bright) !important;
+}
+
+.bg-\[\#eef3f8\],
+.bg-\[\#eef3f6\],
+.bg-\[\#f2f5f7\],
+.bg-\[\#f3f6f9\],
+.bg-\[\#f5f8fa\] {
+  background-color: var(--biloo-subtle) !important;
+}
+
+/* Header: calm, standard, product-first. */
+[data-biloo-header] {
+  border-bottom-color: rgba(0, 3, 8, 0.1) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: saturate(160%) blur(18px) !important;
+}
+
+[data-biloo-header] button,
+[data-biloo-header] a {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+/* Command menu and active workspace accents. */
+#biloo-command-menu [aria-current="page"] {
+  border-color: var(--biloo-black) !important;
+  background: var(--biloo-black) !important;
+  color: var(--biloo-white) !important;
+}
+
+#biloo-command-menu [aria-current="page"] svg {
+  color: var(--biloo-yellow-bright) !important;
+}
+
+/* Desktop role switcher. */
+[data-biloo-role-rail] {
+  background: var(--biloo-black) !important;
+}
+
+[data-biloo-role-rail] button[aria-current="page"] {
+  background: var(--biloo-yellow) !important;
+  color: var(--biloo-black) !important;
+  box-shadow: 0 10px 28px rgba(242, 208, 25, 0.22) !important;
+}
+
+[data-biloo-role-rail] button[aria-current="page"] > span:first-child {
+  background: var(--biloo-black) !important;
+  color: var(--biloo-yellow-bright) !important;
 }
 
 [data-biloo-role-rail] ~ section {
   padding-bottom: 7.75rem !important;
 }
 
-.biloo-float {
-  animation: biloo-float 5.5s ease-in-out infinite;
+/* Decorative effects are intentionally restrained for a standard product UI. */
+.biloo-float,
+.biloo-shine::after {
+  animation: none !important;
 }
 
 .biloo-pulse {
-  animation: biloo-pulse 2.4s ease-in-out infinite;
-}
-
-.biloo-shine {
-  position: relative;
-  overflow: hidden;
-}
-
-.biloo-shine::after {
-  position: absolute;
-  top: -80%;
-  left: -45%;
-  width: 28%;
-  height: 260%;
-  content: "";
-  transform: rotate(22deg);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
-  animation: biloo-shine 6s ease-in-out infinite;
-}
-
-@keyframes biloo-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  animation: biloo-pulse 2.8s ease-in-out infinite;
 }
 
 @keyframes biloo-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(85, 230, 177, 0.34); }
-  50% { box-shadow: 0 0 0 8px rgba(85, 230, 177, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(242, 208, 25, 0.36); }
+  50% { box-shadow: 0 0 0 7px rgba(242, 208, 25, 0); }
 }
 
-@keyframes biloo-shine {
-  0%, 64% { transform: translateX(-220%) rotate(22deg); }
-  100% { transform: translateX(660%) rotate(22deg); }
-}
-
-/* X/Twitter-inspired mobile footer navigation. */
+/* Mobile navigation: familiar five-tab behavior and safe-area support. */
 @media (max-width: 1023px) {
   [data-biloo-role-rail] {
     inset: auto 0 0 !important;
     border: 0 !important;
-    border-top: 1px solid #eff3f4 !important;
+    border-top: 1px solid #26282d !important;
     border-radius: 0 !important;
-    background: rgba(255, 255, 255, 0.98) !important;
+    background: rgba(0, 3, 8, 0.98) !important;
     padding: 0 0 max(env(safe-area-inset-bottom), 0px) !important;
-    box-shadow:
-      0 -1px 0 rgba(15, 20, 25, 0.02),
-      0 -8px 24px rgba(15, 20, 25, 0.04) !important;
-    backdrop-filter: saturate(180%) blur(18px) !important;
+    box-shadow: 0 -8px 28px rgba(0, 3, 8, 0.18) !important;
+    backdrop-filter: saturate(160%) blur(18px) !important;
   }
 
   [data-biloo-role-rail] > div:nth-child(2) {
@@ -219,22 +301,22 @@ main[class*="min-h-screen"] textarea:focus {
   }
 
   [data-biloo-role-rail] button {
-    min-height: 58px !important;
+    min-height: 60px !important;
     border-radius: 0 !important;
     padding: 0 !important;
     background: transparent !important;
-    color: #536471 !important;
+    color: #a9aaad !important;
     box-shadow: none !important;
   }
 
   [data-biloo-role-rail] button:hover {
-    background: rgba(15, 20, 25, 0.05) !important;
-    color: #0f1419 !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: var(--biloo-white) !important;
   }
 
   [data-biloo-role-rail] button[aria-current="page"] {
     background: transparent !important;
-    color: #0f1419 !important;
+    color: var(--biloo-yellow-bright) !important;
     box-shadow: none !important;
   }
 
@@ -242,7 +324,7 @@ main[class*="min-h-screen"] textarea:focus {
     position: relative !important;
     display: flex !important;
     width: 100% !important;
-    height: 58px !important;
+    height: 60px !important;
     align-items: center !important;
     justify-content: center !important;
     border-radius: 0 !important;
@@ -251,18 +333,18 @@ main[class*="min-h-screen"] textarea:focus {
   }
 
   [data-biloo-role-rail] button > span:first-child svg {
-    width: 25px !important;
-    height: 25px !important;
+    width: 24px !important;
+    height: 24px !important;
     stroke-width: 2 !important;
   }
 
   [data-biloo-role-rail] button[aria-current="page"] > span:first-child::after {
     position: absolute;
-    bottom: 4px;
-    width: 4px;
-    height: 4px;
+    bottom: 5px;
+    width: 18px;
+    height: 3px;
     border-radius: 999px;
-    background: #1d9bf0;
+    background: var(--biloo-yellow-bright);
     content: "";
   }
 
@@ -271,7 +353,14 @@ main[class*="min-h-screen"] textarea:focus {
   }
 
   [data-biloo-role-rail] ~ section {
-    padding-bottom: calc(5.25rem + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="rounded-[1.8rem]"],
+  main[class*="min-h-screen"] section[class*="rounded-[2rem]"],
+  main[class*="min-h-screen"] article[class*="rounded-[1.55rem]"],
+  main[class*="min-h-screen"] article[class*="rounded-[1.45rem]"] {
+    border-radius: 18px !important;
   }
 }
 
