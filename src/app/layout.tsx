@@ -9,14 +9,14 @@ export const metadata: Metadata = {
     template: "%s · BILOO",
   },
   description:
-    "One connected platform for taxi booking, food delivery, supermarket shopping, construction materials, and car parts.",
+    "One beautifully connected platform for taxi booking, food delivery, supermarket shopping, construction materials, and car parts.",
   applicationName: "BILOO",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#082640",
+  themeColor: "#07111f",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
