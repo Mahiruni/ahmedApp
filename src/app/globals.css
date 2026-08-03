@@ -165,15 +165,20 @@ main[class*="min-h-screen"] article[class*="rounded-[1.45rem]"] {
   box-shadow: var(--biloo-shadow-sm) !important;
 }
 
+/* Dark product surfaces must win over the generic white-card treatment. */
+main[class*="min-h-screen"] section[class*="bg-[#000308]"],
 main[class*="min-h-screen"] section[class*="bg-[#082640]"],
 main[class*="min-h-screen"] section[class*="bg-[#07111f]"],
 main[class*="min-h-screen"] section[class*="bg-[#0a1b31]"] {
   border: 1px solid #191b20 !important;
-  background: var(--biloo-black) !important;
+  background-color: var(--biloo-black) !important;
+  background-image: none !important;
+  color: var(--biloo-white);
   box-shadow: var(--biloo-shadow-lg) !important;
 }
 
 /* Compatibility mapping from the previous navy/mint palette. */
+.bg-\[\#000308\],
 .bg-\[\#07111f\],
 .bg-\[\#082640\],
 .bg-\[\#0a1b31\] {
@@ -282,7 +287,7 @@ main[class*="min-h-screen"] section[class*="bg-[#0a1b31]"] {
   50% { box-shadow: 0 0 0 7px rgba(242, 208, 25, 0); }
 }
 
-/* Mobile navigation: familiar five-tab behavior and safe-area support. */
+/* Mobile navigation and customer hero. */
 @media (max-width: 1023px) {
   [data-biloo-role-rail] {
     inset: auto 0 0 !important;
@@ -353,7 +358,7 @@ main[class*="min-h-screen"] section[class*="bg-[#0a1b31]"] {
   }
 
   [data-biloo-role-rail] ~ section {
-    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom)) !important;
   }
 
   main[class*="min-h-screen"] section[class*="rounded-[1.8rem]"],
@@ -361,6 +366,81 @@ main[class*="min-h-screen"] section[class*="bg-[#0a1b31]"] {
   main[class*="min-h-screen"] article[class*="rounded-[1.55rem]"],
   main[class*="min-h-screen"] article[class*="rounded-[1.45rem]"] {
     border-radius: 18px !important;
+  }
+
+  /* The main customer hero should read as a compact mobile product header. */
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"][class*="rounded-[1.8rem]"] {
+    padding: 20px 18px 22px !important;
+    border-radius: 20px !important;
+    background-color: var(--biloo-black) !important;
+    color: var(--biloo-white) !important;
+    box-shadow: 0 16px 40px rgba(0, 3, 8, 0.2) !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] > div[class*="relative"][class*="grid"] {
+    gap: 20px !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] h1 {
+    margin-top: 24px !important;
+    font-size: clamp(2.35rem, 11vw, 3.15rem) !important;
+    line-height: 0.96 !important;
+    letter-spacing: -0.055em !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] h1 + p {
+    margin-top: 14px !important;
+    max-width: 32rem;
+    color: rgba(255, 255, 255, 0.68) !important;
+    line-height: 1.6 !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] label[class*="mt-7"] {
+    min-height: 56px;
+    margin-top: 20px !important;
+    overflow: hidden;
+    border-radius: 14px !important;
+    padding-right: 12px !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24) !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] label[class*="mt-7"] input {
+    width: 0;
+    min-width: 0;
+    min-height: 44px;
+    padding-right: 0;
+    font-size: 13px;
+    text-overflow: ellipsis;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] div[class*="mt-6"][class*="flex"][class*="flex-wrap"] {
+    margin-top: 18px !important;
+    gap: 10px 16px !important;
+  }
+
+  /* Keep wallet useful without letting it dominate the first phone viewport. */
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] > div[class*="relative"][class*="grid"] > div:nth-child(2) {
+    border-radius: 16px !important;
+    padding: 10px !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] > div[class*="relative"][class*="grid"] > div:nth-child(2) > div:first-child {
+    border-radius: 14px !important;
+    padding: 16px !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] > div[class*="relative"][class*="grid"] > div:nth-child(2) > div:first-child > div[class*="mt-6"][class*="grid"] {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  [data-biloo-header] > div {
+    height: 68px !important;
+  }
+
+  main[class*="min-h-screen"] section[class*="bg-[#000308]"] h1 {
+    font-size: clamp(2.15rem, 10.5vw, 2.8rem) !important;
   }
 }
 
