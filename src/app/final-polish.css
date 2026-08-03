@@ -1,0 +1,198 @@
+/* Final BILOO production polish.
+   This layer resolves legacy-style collisions without changing application logic. */
+
+:root {
+  --biloo-mobile-gutter: clamp(12px, 3.8vw, 18px);
+  --biloo-control-height: 48px;
+  --biloo-footer-height: 66px;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+body {
+  font-synthesis: none;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+/* Keep compact controls compact when older global input rules are present. */
+.biloo-route-field input {
+  min-height: 24px !important;
+  height: 24px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.biloo-route-field input:focus {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.biloo-route-field {
+  min-height: 60px;
+}
+
+.biloo-google-place {
+  contain: layout style;
+}
+
+/* Stable, refined map surface and Google control treatment. */
+.biloo-map-card {
+  isolation: isolate;
+  padding: 8px !important;
+}
+
+.biloo-map-card > div {
+  min-height: clamp(420px, 58svh, 600px) !important;
+  border-radius: 14px !important;
+}
+
+.gm-style .gm-bundled-control,
+.gm-style .gmnoprint {
+  font-family: var(--font-biloo-sans), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.gm-style button {
+  overflow: hidden !important;
+  border: 1px solid rgba(11, 11, 13, 0.08) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 6px 20px rgba(11, 11, 13, 0.12) !important;
+}
+
+/* Avoid visual jumps on fixed navigation and embedded map controls. */
+[data-biloo-role-rail] button:active,
+[data-biloo-header] button:active,
+.gm-style button:active,
+.biloo-gps-button:active {
+  transform: none !important;
+}
+
+.biloo-primary-button {
+  min-height: var(--biloo-control-height);
+  transition:
+    background-color 180ms var(--biloo-ease),
+    box-shadow 180ms var(--biloo-ease),
+    transform 120ms var(--biloo-ease) !important;
+}
+
+.biloo-primary-button:active {
+  transform: scale(0.992) !important;
+}
+
+/* Prevent fixed feedback messages from hiding behind the mobile footer. */
+main > div.fixed[class*="bottom-5"][class*="left-1/2"] {
+  bottom: calc(var(--biloo-footer-height) + env(safe-area-inset-bottom) + 14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px !important;
+  background: rgba(17, 17, 19, 0.97) !important;
+  box-shadow: 0 18px 48px rgba(11, 11, 13, 0.22) !important;
+  backdrop-filter: blur(18px);
+}
+
+@media (max-width: 1023px) {
+  [data-biloo-header] {
+    padding-inline: var(--biloo-mobile-gutter) !important;
+  }
+
+  [data-biloo-header] > div {
+    height: 60px !important;
+  }
+
+  [data-biloo-role-rail] ~ section {
+    padding:
+      14px var(--biloo-mobile-gutter)
+      calc(var(--biloo-footer-height) + env(safe-area-inset-bottom) + 26px) !important;
+  }
+
+  [data-biloo-role-rail] {
+    min-height: calc(var(--biloo-footer-height) + env(safe-area-inset-bottom));
+    padding-top: 3px !important;
+    padding-bottom: max(3px, env(safe-area-inset-bottom)) !important;
+  }
+
+  [data-biloo-role-rail] button {
+    min-height: 59px !important;
+  }
+
+  [data-biloo-role-rail] button > span:first-child {
+    width: 27px !important;
+    height: 27px !important;
+  }
+
+  [data-biloo-role-rail] button > span:nth-child(2) > span:first-child {
+    font-size: 9px !important;
+    font-weight: 620 !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] > span:nth-child(2) > span:first-child {
+    font-weight: 720 !important;
+  }
+
+  #biloo-command-menu > section[role="dialog"] {
+    width: min(88vw, 348px) !important;
+    border-radius: 22px 0 0 22px !important;
+  }
+
+  .biloo-map-card {
+    padding: 6px !important;
+    border-radius: 16px !important;
+  }
+
+  .biloo-map-card > div {
+    min-height: clamp(360px, 52svh, 480px) !important;
+    border-radius: 12px !important;
+  }
+
+  .biloo-route-field {
+    min-height: 58px;
+    border-radius: 13px;
+  }
+
+  .biloo-primary-button {
+    min-height: 50px;
+    border-radius: 12px;
+  }
+
+  main > div.fixed[class*="bottom-5"][class*="left-1/2"] {
+    width: calc(100vw - (var(--biloo-mobile-gutter) * 2)) !important;
+    max-width: 520px;
+    padding: 11px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --biloo-mobile-gutter: 11px;
+  }
+
+  .biloo-map-card > div {
+    min-height: 340px !important;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .biloo-map-card,
+  .biloo-route-field,
+  .biloo-primary-button {
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-primary-button,
+  .biloo-route-field,
+  .biloo-map-card {
+    will-change: auto;
+  }
+}
