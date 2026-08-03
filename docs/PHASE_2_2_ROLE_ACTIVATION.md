@@ -23,6 +23,8 @@ activation.
 - Approval updates the user's role, creates the operational record, notifies the
   applicant, and writes an audit event atomically.
 - Reviewed applications cannot be processed twice.
+- GitHub Actions now runs dependency installation, TypeScript, ESLint, and the
+  production build for every push and pull request.
 
 ## Security model
 
@@ -43,10 +45,25 @@ activation.
 
 - `20260803120000_phase2_2_role_activation.sql`
 - `20260803121000_phase2_2_onboarding_transaction.sql`
+- `20260803122000_phase2_2_application_index_cleanup.sql`
 
-Both migrations have been applied to the connected `Biloo App` Supabase project.
+All three migrations have been applied to the connected `Biloo App` Supabase
+project. The security advisor reports no findings. The duplicate application
+status index found during performance review was removed and the reviewer
+foreign key received a covering index.
 
-## Verification checklist
+## Verification completed
+
+- Supabase project status: healthy.
+- Supabase security advisor: no findings.
+- Dependency installation: passed.
+- TypeScript: passed.
+- ESLint: passed.
+- Next.js production build: passed.
+- Vercel deployment for `gulitshop/ahmed-app`: passed.
+- Temporary marker-only verification PR closed without merging.
+
+## Functional checklist
 
 - Customer onboarding completes without creating a role application.
 - Driver onboarding rejects missing vehicle or plate information.
