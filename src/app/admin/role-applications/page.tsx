@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import type { IconName } from "@/data/biloo";
 import { BrandMark, Icon, StatusPill } from "@/components/biloo/ui";
 import { requireViewer } from "@/lib/biloo/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -13,6 +14,12 @@ export const dynamic = "force-dynamic";
 type ApplicationRow =
   Database["public"]["Tables"]["biloo_role_applications"]["Row"];
 type ApplicationStatus = ApplicationRow["status"] | "all";
+type SummaryMetric = {
+  value: string;
+  label: string;
+  helper: string;
+  icon: IconName;
+};
 
 const filters: Array<{ value: ApplicationStatus; label: string }> = [
   { value: "pending", label: "Pending" },
@@ -78,10 +85,14 @@ export default async function RoleApplicationsPage({
     .order("created_at", { ascending: false })
     .limit(150);
 
-  if (error) throw new Error(`Unable to load role applications: ${error.message}`);
+  if (error) {
+    throw new Error(`Unable to load role applications: ${error.message}`);
+  }
 
   const applications = (data ?? []) as ApplicationRow[];
-  const profileIds = [...new Set(applications.map((application) => application.user_id))];
+  const profileIds = [
+    ...new Set(applications.map((application) => application.user_id)),
+  ];
   const profiles = new Map<string, ProfileRow>();
 
   if (profileIds.length) {
@@ -91,7 +102,9 @@ export default async function RoleApplicationsPage({
       .in("id", profileIds);
 
     if (profileError) {
-      throw new Error(`Unable to load applicant profiles: ${profileError.message}`);
+      throw new Error(
+        `Unable to load applicant profiles: ${profileError.message}`,
+      );
     }
 
     for (const profile of (profileData ?? []) as ProfileRow[]) {
@@ -100,7 +113,8 @@ export default async function RoleApplicationsPage({
   }
 
   const visibleApplications = applications.filter(
-    (application) => activeStatus === "all" || application.status === activeStatus,
+    (application) =>
+      activeStatus === "all" || application.status === activeStatus,
   );
   const pendingCount = applications.filter(
     (application) => application.status === "pending",
@@ -111,6 +125,33 @@ export default async function RoleApplicationsPage({
   const rejectedCount = applications.filter(
     (application) => application.status === "rejected",
   ).length;
+
+  const summaryMetrics: SummaryMetric[] = [
+    {
+      value: String(applications.length),
+      label: "Total applications",
+      helper: "All recorded",
+      icon: "receipt",
+    },
+    {
+      value: String(pendingCount),
+      label: "Pending review",
+      helper: "Action required",
+      icon: "clock",
+    },
+    {
+      value: String(approvedCount),
+      label: "Approved",
+      helper: "Access activated",
+      icon: "check",
+    },
+    {
+      value: String(rejectedCount),
+      label: "Rejected",
+      helper: "Decision recorded",
+      icon: "alert",
+    },
+  ];
 
   return (
     <main className="min-h-screen bg-[#eef3f8] text-[#101828]">
@@ -148,7 +189,9 @@ export default async function RoleApplicationsPage({
                 Verification that activates the business.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
-                Review driver and vendor applications, record a decision, create the operational profile atomically, and notify the applicant from one secure command center.
+                Review driver and vendor applications, record a decision, create
+                the operational profile atomically, and notify the applicant from
+                one secure command center.
               </p>
             </div>
             <div className="rounded-[1.5rem] border border-white/10 bg-white/7 p-4 backdrop-blur-xl">
@@ -156,7 +199,9 @@ export default async function RoleApplicationsPage({
                 Signed in as
               </p>
               <p className="mt-2 text-sm font-black">{viewer.displayName}</p>
-              <p className="mt-1 text-xs text-white/40">Administrator · Addis operations</p>
+              <p className="mt-1 text-xs text-white/40">
+                Administrator · Addis operations
+              </p>
             </div>
           </div>
         </section>
@@ -173,26 +218,25 @@ export default async function RoleApplicationsPage({
         ) : null}
 
         <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            [String(applications.length), "Total applications", "All recorded", "receipt" as const],
-            [String(pendingCount), "Pending review", "Action required", "clock" as const],
-            [String(approvedCount), "Approved", "Access activated", "check" as const],
-            [String(rejectedCount), "Rejected", "Decision recorded", "alert" as const],
-          ].map(([value, label, helper, icon]) => (
+          {summaryMetrics.map((metric) => (
             <article
               className="rounded-[1.55rem] border border-white bg-white/90 p-5 shadow-[0_14px_45px_rgba(24,39,65,0.06)]"
-              key={label}
+              key={metric.label}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-bold text-slate-400">{label}</p>
-                  <p className="mt-3 text-3xl font-black tracking-[-0.04em]">{value}</p>
+                  <p className="text-xs font-bold text-slate-400">
+                    {metric.label}
+                  </p>
+                  <p className="mt-3 text-3xl font-black tracking-[-0.04em]">
+                    {metric.value}
+                  </p>
                   <p className="mt-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">
-                    {helper}
+                    {metric.helper}
                   </p>
                 </div>
                 <span className="grid size-11 place-items-center rounded-2xl bg-[#eef3f8] text-[#0a1b31]">
-                  <Icon name={icon} />
+                  <Icon name={metric.icon} />
                 </span>
               </div>
             </article>
@@ -204,7 +248,7 @@ export default async function RoleApplicationsPage({
             const active = activeStatus === filter.value;
             return (
               <Link
-                className={`min-h-11 shrink-0 rounded-xl px-4 text-xs font-black transition ${
+                className={`flex min-h-11 shrink-0 items-center rounded-xl px-4 text-xs font-black transition ${
                   active
                     ? "bg-[#0a1b31] text-white shadow-md"
                     : "text-slate-500 hover:bg-slate-100 hover:text-[#0a1b31]"
@@ -212,7 +256,7 @@ export default async function RoleApplicationsPage({
                 href={`/admin/role-applications?status=${filter.value}`}
                 key={filter.value}
               >
-                <span className="flex h-full items-center">{filter.label}</span>
+                {filter.label}
               </Link>
             );
           })}
@@ -222,7 +266,6 @@ export default async function RoleApplicationsPage({
           {visibleApplications.map((application) => {
             const profile = profiles.get(application.user_id);
             const isDriver = application.requested_role === "driver";
-            const title = isDriver ? "Driver application" : "Vendor application";
             const data = application.application_data;
 
             return (
@@ -253,7 +296,11 @@ export default async function RoleApplicationsPage({
                             </StatusPill>
                           </div>
                           <p className="mt-1 text-xs font-bold text-slate-400">
-                            {title} · Submitted {formatDate(application.created_at)}
+                            {isDriver
+                              ? "Driver application"
+                              : "Vendor application"}
+                            {" · Submitted "}
+                            {formatDate(application.created_at)}
                           </p>
                         </div>
                       </div>
@@ -269,7 +316,10 @@ export default async function RoleApplicationsPage({
                         ["City", profile?.city ?? "Not supplied"],
                         ["Account", profile?.status ?? "Unknown"],
                       ].map(([label, value]) => (
-                        <div className="rounded-2xl bg-[#f3f6f9] p-4" key={label}>
+                        <div
+                          className="rounded-2xl bg-[#f3f6f9] p-4"
+                          key={label}
+                        >
                           <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">
                             {label}
                           </p>
@@ -287,15 +337,33 @@ export default async function RoleApplicationsPage({
                       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {isDriver ? (
                           <>
-                            <Detail label="Vehicle type" value={detail(data, "vehicle_type")} />
-                            <Detail label="Plate number" value={detail(data, "plate_number")} />
-                            <Detail label="Activation result" value="Verified driver profile" />
+                            <Detail
+                              label="Vehicle type"
+                              value={detail(data, "vehicle_type")}
+                            />
+                            <Detail
+                              label="Plate number"
+                              value={detail(data, "plate_number")}
+                            />
+                            <Detail
+                              label="Activation result"
+                              value="Verified driver profile"
+                            />
                           </>
                         ) : (
                           <>
-                            <Detail label="Legal name" value={detail(data, "legal_name")} />
-                            <Detail label="Storefront" value={detail(data, "display_name")} />
-                            <Detail label="Service" value={detail(data, "service_type")} />
+                            <Detail
+                              label="Legal name"
+                              value={detail(data, "legal_name")}
+                            />
+                            <Detail
+                              label="Storefront"
+                              value={detail(data, "display_name")}
+                            />
+                            <Detail
+                              label="Service"
+                              value={detail(data, "service_type")}
+                            />
                           </>
                         )}
                       </div>
@@ -312,7 +380,8 @@ export default async function RoleApplicationsPage({
                           </StatusPill>
                         </div>
                         <p className="mt-3 text-sm leading-6 text-slate-500">
-                          {application.notes || "No reviewer note was recorded."}
+                          {application.notes ||
+                            "No reviewer note was recorded."}
                         </p>
                       </div>
                     ) : null}
@@ -321,8 +390,16 @@ export default async function RoleApplicationsPage({
                   <aside className="border-t border-slate-200/70 bg-[#f8fafc] p-5 sm:p-6 lg:border-l lg:border-t-0">
                     {application.status === "pending" ? (
                       <form action={reviewRoleApplicationAction}>
-                        <input name="applicationId" type="hidden" value={application.id} />
-                        <input name="currentFilter" type="hidden" value={activeStatus} />
+                        <input
+                          name="applicationId"
+                          type="hidden"
+                          value={application.id}
+                        />
+                        <input
+                          name="currentFilter"
+                          type="hidden"
+                          value={activeStatus}
+                        />
                         <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
                           Admin decision
                         </p>
@@ -330,7 +407,9 @@ export default async function RoleApplicationsPage({
                           Activate this workspace?
                         </h3>
                         <p className="mt-3 text-xs leading-5 text-slate-500">
-                          Approval changes the account role, creates the verified operational record, sends a notification, and writes an audit event in one transaction.
+                          Approval changes the account role, creates the verified
+                          operational record, sends a notification, and writes an
+                          audit event in one transaction.
                         </p>
                         <label className="mt-5 block text-xs font-black text-slate-600">
                           Reviewer notes
@@ -361,7 +440,7 @@ export default async function RoleApplicationsPage({
                         </div>
                       </form>
                     ) : (
-                      <div className="flex h-full min-h-64 flex-col justify-between">
+                      <div className="flex min-h-64 flex-col justify-between">
                         <div>
                           <span
                             className={`grid size-12 place-items-center rounded-2xl ${
@@ -370,13 +449,20 @@ export default async function RoleApplicationsPage({
                                 : "bg-rose-100 text-rose-700"
                             }`}
                           >
-                            <Icon name={application.status === "approved" ? "check" : "close"} />
+                            <Icon
+                              name={
+                                application.status === "approved"
+                                  ? "check"
+                                  : "close"
+                              }
+                            />
                           </span>
                           <h3 className="mt-5 text-xl font-black tracking-[-0.035em]">
                             Review complete
                           </h3>
                           <p className="mt-3 text-sm leading-6 text-slate-500">
-                            This application is immutable through the review workflow and cannot be processed twice.
+                            This application is immutable through the review
+                            workflow and cannot be processed twice.
                           </p>
                         </div>
                         <Link
@@ -402,7 +488,8 @@ export default async function RoleApplicationsPage({
                 No {activeStatus === "all" ? "role" : activeStatus} applications
               </h2>
               <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500">
-                New driver and vendor submissions will appear here after account onboarding. The production review workflow is ready.
+                New driver and vendor submissions will appear here after account
+                onboarding. The production review workflow is ready.
               </p>
             </div>
           ) : null}
@@ -418,7 +505,9 @@ function Detail({ label, value }: { label: string; value: string }) {
       <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">
         {label}
       </p>
-      <p className="mt-2 text-sm font-black capitalize text-[#10243a]">{value}</p>
+      <p className="mt-2 text-sm font-black capitalize text-[#10243a]">
+        {value}
+      </p>
     </div>
   );
 }
