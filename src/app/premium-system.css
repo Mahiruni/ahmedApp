@@ -1,0 +1,347 @@
+/* BILOO premium product system.
+   Imported last so semantic typography, color and motion stay consistent across
+   customer, mobility, driver, vendor and admin experiences. */
+
+:root {
+  --biloo-canvas: #f7f7f5;
+  --biloo-surface: #ffffff;
+  --biloo-surface-raised: #fbfbfa;
+  --biloo-ink: #0b0b0d;
+  --biloo-ink-soft: #25262a;
+  --biloo-muted: #6d7078;
+  --biloo-muted-soft: #91949b;
+  --biloo-line: #e6e6e3;
+  --biloo-line-strong: #d4d5d1;
+  --biloo-action: #111113;
+  --biloo-mobility: #276ef1;
+  --biloo-mobility-soft: #eaf1ff;
+  --biloo-signal: #c7f000;
+  --biloo-success: #11884f;
+  --biloo-success-soft: #e8f7ef;
+  --biloo-warning: #a66300;
+  --biloo-warning-soft: #fff3dd;
+  --biloo-danger: #c9352b;
+  --biloo-danger-soft: #fdeceb;
+  --biloo-radius-control: 12px;
+  --biloo-radius-card: 18px;
+  --biloo-radius-sheet: 24px;
+  --biloo-shadow-control: 0 1px 2px rgba(10, 11, 13, 0.06);
+  --biloo-shadow-card: 0 10px 30px rgba(10, 11, 13, 0.055);
+  --biloo-shadow-float: 0 22px 64px rgba(10, 11, 13, 0.14);
+  --biloo-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  background: var(--biloo-canvas);
+}
+
+body {
+  background: var(--biloo-canvas);
+  color: var(--biloo-ink);
+  font-family: var(--font-biloo-sans), Inter, ui-sans-serif, system-ui, sans-serif;
+  font-variation-settings: "opsz" 14;
+}
+
+h1,
+h2,
+h3,
+h4,
+.biloo-display {
+  font-family: var(--font-biloo-display), var(--font-biloo-sans), ui-sans-serif,
+    system-ui, sans-serif;
+  text-wrap: balance;
+}
+
+h1,
+h2 {
+  letter-spacing: -0.045em;
+}
+
+h3,
+h4 {
+  letter-spacing: -0.025em;
+}
+
+.font-black {
+  font-weight: 760 !important;
+}
+
+.font-bold {
+  font-weight: 680 !important;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  transition-timing-function: var(--biloo-ease) !important;
+}
+
+button:not(:disabled):active,
+a:active {
+  transform: scale(0.985);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--biloo-mobility) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(39, 110, 241, 0.16) !important;
+}
+
+::selection {
+  background: var(--biloo-signal);
+  color: var(--biloo-ink);
+}
+
+main[class*="min-h-screen"] {
+  background: var(--biloo-canvas) !important;
+  color: var(--biloo-ink) !important;
+}
+
+main[class*="min-h-screen"] input,
+main[class*="min-h-screen"] select,
+main[class*="min-h-screen"] textarea {
+  min-height: 48px;
+  border: 1px solid var(--biloo-line) !important;
+  border-radius: var(--biloo-radius-control) !important;
+  background: var(--biloo-surface) !important;
+  color: var(--biloo-ink) !important;
+  font-weight: 520;
+  box-shadow: var(--biloo-shadow-control);
+}
+
+main[class*="min-h-screen"] input:focus,
+main[class*="min-h-screen"] select:focus,
+main[class*="min-h-screen"] textarea:focus {
+  border-color: var(--biloo-mobility) !important;
+  box-shadow: 0 0 0 4px rgba(39, 110, 241, 0.12) !important;
+}
+
+main[class*="min-h-screen"] input::placeholder,
+main[class*="min-h-screen"] textarea::placeholder {
+  color: var(--biloo-muted-soft) !important;
+  font-weight: 450;
+}
+
+/* Shared premium surfaces. */
+main[class*="min-h-screen"] section[class*="bg-white"],
+main[class*="min-h-screen"] article[class*="bg-white"] {
+  border-color: var(--biloo-line) !important;
+}
+
+main[class*="min-h-screen"] section[class*="rounded-2xl"],
+main[class*="min-h-screen"] article[class*="rounded-2xl"] {
+  border-radius: var(--biloo-radius-card) !important;
+}
+
+[data-biloo-header] {
+  border-bottom: 1px solid rgba(11, 11, 13, 0.08) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: saturate(180%) blur(22px) !important;
+}
+
+[data-biloo-header] > div {
+  height: 62px !important;
+}
+
+[data-biloo-header] button[aria-controls="biloo-command-menu"] {
+  border-color: var(--biloo-line) !important;
+  background: var(--biloo-surface) !important;
+  color: var(--biloo-ink) !important;
+  box-shadow: var(--biloo-shadow-control) !important;
+}
+
+[data-biloo-header] button[aria-controls="biloo-command-menu"]:hover {
+  border-color: var(--biloo-line-strong) !important;
+  background: var(--biloo-surface-raised) !important;
+  box-shadow: 0 8px 22px rgba(10, 11, 13, 0.08) !important;
+}
+
+#biloo-command-menu > button {
+  background: rgba(11, 11, 13, 0.36) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+#biloo-command-menu > section[role="dialog"] {
+  border-color: rgba(11, 11, 13, 0.08) !important;
+  border-radius: var(--biloo-radius-sheet) !important;
+  background: rgba(255, 255, 255, 0.985) !important;
+  box-shadow: var(--biloo-shadow-float) !important;
+}
+
+#biloo-command-menu [aria-current="page"] {
+  border-color: var(--biloo-ink) !important;
+  background: var(--biloo-ink) !important;
+  color: #ffffff !important;
+}
+
+#biloo-command-menu [aria-current="page"] svg {
+  color: var(--biloo-signal) !important;
+}
+
+/* Desktop workspace rail keeps the product identity while avoiding loud color. */
+@media (min-width: 1024px) {
+  [data-biloo-role-rail] {
+    border: 1px solid #202125 !important;
+    background: #111214 !important;
+    box-shadow: 0 18px 54px rgba(10, 11, 13, 0.12) !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] {
+    background: #ffffff !important;
+    color: var(--biloo-ink) !important;
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] > span:first-child {
+    background: var(--biloo-mobility-soft) !important;
+    color: var(--biloo-mobility) !important;
+  }
+}
+
+/* X-like bottom navigation with a meaningful mobility-blue active indicator. */
+@media (max-width: 1023px) {
+  [data-biloo-role-rail] {
+    border-top-color: rgba(11, 11, 13, 0.09) !important;
+    background: rgba(255, 255, 255, 0.975) !important;
+    box-shadow: 0 -8px 26px rgba(10, 11, 13, 0.055) !important;
+  }
+
+  [data-biloo-role-rail] button {
+    color: #68707a !important;
+  }
+
+  [data-biloo-role-rail] button:hover,
+  [data-biloo-role-rail] button:active {
+    color: var(--biloo-ink) !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] {
+    color: var(--biloo-ink) !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"]::before {
+    background: var(--biloo-mobility) !important;
+  }
+
+  [data-biloo-role-rail] button:hover > span:first-child,
+  [data-biloo-role-rail] button:active > span:first-child {
+    background: var(--biloo-mobility-soft) !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] > span:first-child {
+    color: var(--biloo-mobility) !important;
+  }
+}
+
+/* Semantic utilities used by mobility and future operational screens. */
+.biloo-tone-mobility {
+  background: var(--biloo-mobility-soft);
+  color: var(--biloo-mobility);
+}
+
+.biloo-tone-success {
+  background: var(--biloo-success-soft);
+  color: var(--biloo-success);
+}
+
+.biloo-tone-warning {
+  background: var(--biloo-warning-soft);
+  color: var(--biloo-warning);
+}
+
+.biloo-tone-danger {
+  background: var(--biloo-danger-soft);
+  color: var(--biloo-danger);
+}
+
+.biloo-primary-button {
+  min-height: 50px;
+  border: 1px solid var(--biloo-ink);
+  border-radius: var(--biloo-radius-control);
+  background: var(--biloo-action);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 650;
+  box-shadow: 0 10px 24px rgba(11, 11, 13, 0.14);
+}
+
+.biloo-primary-button:hover {
+  background: #25262a;
+  box-shadow: 0 14px 30px rgba(11, 11, 13, 0.18);
+}
+
+.biloo-map-card {
+  overflow: hidden;
+  border: 1px solid var(--biloo-line);
+  border-radius: 20px;
+  background: var(--biloo-surface);
+  box-shadow: var(--biloo-shadow-card);
+}
+
+.biloo-route-field {
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: #f1f2f3;
+  box-shadow: inset 0 0 0 1px rgba(11, 11, 13, 0.015);
+  transition:
+    border-color 180ms var(--biloo-ease),
+    background-color 180ms var(--biloo-ease),
+    box-shadow 180ms var(--biloo-ease),
+    transform 180ms var(--biloo-ease);
+}
+
+.biloo-route-field:focus-within {
+  border-color: rgba(39, 110, 241, 0.55);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(39, 110, 241, 0.1);
+}
+
+.biloo-route-dot-pickup {
+  border-radius: 3px;
+  background: var(--biloo-mobility);
+  box-shadow: 0 0 0 4px rgba(39, 110, 241, 0.1);
+}
+
+.biloo-route-dot-destination {
+  border-radius: 999px;
+  background: var(--biloo-ink);
+  box-shadow: 0 0 0 4px rgba(11, 11, 13, 0.08);
+}
+
+.biloo-gps-button {
+  border: 1px solid rgba(39, 110, 241, 0.12);
+  background: var(--biloo-mobility-soft);
+  color: var(--biloo-mobility);
+  box-shadow: none;
+}
+
+.biloo-gps-button:hover {
+  background: #dfe9ff;
+}
+
+@media (hover: hover) {
+  main article,
+  main section,
+  main button,
+  main a {
+    transition-duration: 180ms !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
