@@ -1,2 +1,3 @@
 Phase 2.2 build verification branch.
 Verification rerun after typed admin metrics fix.
+Full verification rerun after documenting browser-storage hydration effects.
