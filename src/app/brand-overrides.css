@@ -1,0 +1,115 @@
+/* BILOO 2026 compatibility layer.
+   Keeps existing operational components consistent while they are progressively
+   migrated to the shared black, white and electric-yellow design system. */
+
+.bg-\[\#082640\].text-\[\#f2bd4b\] {
+  background-color: var(--biloo-yellow) !important;
+  color: var(--biloo-black) !important;
+  box-shadow: 0 10px 24px rgba(242, 208, 25, 0.2) !important;
+}
+
+.bg-\[\#e9f1f7\] {
+  background-color: var(--biloo-yellow-soft) !important;
+}
+
+.text-\[\#b77a05\],
+.text-\[\#d99a1f\] {
+  color: #746600 !important;
+}
+
+.border-\[\#d99a1f\] {
+  border-color: var(--biloo-yellow) !important;
+}
+
+.ring-\[\#f2bd4b\]\/15,
+.ring-\[\#f2bd4b\]\/20 {
+  --tw-ring-color: rgba(242, 208, 25, 0.3) !important;
+}
+
+/* Standard primary actions from the previous dark-navy system. */
+button.bg-\[\#082640\],
+button.bg-\[\#0a1b31\],
+button.bg-\[\#07111f\],
+a.bg-\[\#082640\],
+a.bg-\[\#0a1b31\],
+a.bg-\[\#07111f\] {
+  border-radius: 12px !important;
+  background-color: var(--biloo-yellow) !important;
+  color: var(--biloo-black) !important;
+  box-shadow: 0 10px 24px rgba(242, 208, 25, 0.18) !important;
+}
+
+button.bg-\[\#082640\]:hover,
+button.bg-\[\#0a1b31\]:hover,
+button.bg-\[\#07111f\]:hover,
+a.bg-\[\#082640\]:hover,
+a.bg-\[\#0a1b31\]:hover,
+a.bg-\[\#07111f\]:hover {
+  background-color: var(--biloo-yellow-bright) !important;
+}
+
+/* Do not recolor dark structural surfaces that are not interactive. */
+section.bg-\[\#082640\],
+section.bg-\[\#0a1b31\],
+section.bg-\[\#07111f\],
+aside.bg-\[\#082640\],
+aside.bg-\[\#0a1b31\],
+aside.bg-\[\#07111f\],
+div.bg-\[\#082640\],
+div.bg-\[\#0a1b31\],
+div.bg-\[\#07111f\] {
+  background-color: var(--biloo-black) !important;
+}
+
+/* Header action buttons remain neutral; yellow is reserved for active state. */
+[data-biloo-header] button.bg-\[\#07111f\] {
+  background-color: var(--biloo-black) !important;
+  color: var(--biloo-white) !important;
+  box-shadow: var(--biloo-shadow-md) !important;
+}
+
+[data-biloo-header] button.bg-\[\#07111f\] > span:first-child {
+  background-color: var(--biloo-yellow) !important;
+  color: var(--biloo-black) !important;
+}
+
+/* Consistent drawer and modal actions. */
+[role="dialog"] button[class*="bg-[#082640]"],
+[role="dialog"] button[class*="bg-[#0a1b31]"],
+[role="dialog"] button[class*="bg-[#07111f]"] {
+  background-color: var(--biloo-yellow) !important;
+  color: var(--biloo-black) !important;
+}
+
+/* Standard tap targets and pressed feedback for full-width controls. */
+main button[class*="min-h-12"],
+main a[class*="min-h-12"] {
+  min-height: 48px;
+}
+
+main button:active:not(:disabled),
+main a:active {
+  transform: scale(0.985);
+}
+
+/* Yellow status and count badges. */
+.bg-\[\#ffca68\],
+.bg-\[\#f2bd4b\] {
+  background-color: var(--biloo-yellow) !important;
+  color: var(--biloo-black) !important;
+}
+
+/* Product cards use the same restrained geometry everywhere. */
+main article[class*="rounded-[1.65rem]"],
+main article[class*="rounded-[1.8rem]"],
+main div[class*="rounded-[1.65rem]"] {
+  border-radius: 20px !important;
+}
+
+@media (max-width: 639px) {
+  main article[class*="rounded-[1.65rem]"],
+  main article[class*="rounded-[1.8rem]"],
+  main div[class*="rounded-[1.65rem]"] {
+    border-radius: 16px !important;
+  }
+}
