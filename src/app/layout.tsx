@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import "./globals.css";
 import "./brand-overrides.css";
+import "./navigation.css";
 
 export const metadata: Metadata = {
   title: {
