@@ -8,9 +8,23 @@ import { roles, type Role } from "@/data/biloo";
 import { BrandMark, Icon } from "./ui";
 
 const roleChangeEvent = "biloo:role-change";
+const roleStateEvent = "biloo:role-state";
+
+type RoleState = {
+  role: Role;
+  availableRoles: Role[];
+};
 
 function announceRoleChange(role: Role) {
   window.dispatchEvent(new CustomEvent<Role>(roleChangeEvent, { detail: role }));
+}
+
+function announceRoleState(role: Role, availableRoles: Role[]) {
+  window.dispatchEvent(
+    new CustomEvent<RoleState>(roleStateEvent, {
+      detail: { role, availableRoles },
+    }),
+  );
 }
 
 export function AppHeader({
@@ -31,20 +45,27 @@ export function AppHeader({
   liveData?: boolean;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeRole, setActiveRole] = useState<Role>(availableRoles[0] ?? "customer");
+  const [roleState, setRoleState] = useState<RoleState>({
+    role: availableRoles[0] ?? "customer",
+    availableRoles,
+  });
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const visibleRoles = roles.filter((item) => availableRoles.includes(item.key));
-  const currentRole = roles.find((item) => item.key === activeRole) ?? roles[0];
+  const visibleRoles = roles.filter((item) =>
+    roleState.availableRoles.includes(item.key),
+  );
+  const currentRole =
+    roles.find((item) => item.key === roleState.role) ?? roles[0];
 
   useEffect(() => {
-    function syncActiveRole(event: Event) {
-      const nextRole = (event as CustomEvent<Role>).detail;
-      if (availableRoles.includes(nextRole)) setActiveRole(nextRole);
+    function syncRoleState(event: Event) {
+      const detail = (event as CustomEvent<RoleState>).detail;
+      if (!detail?.availableRoles?.length) return;
+      setRoleState(detail);
     }
 
-    window.addEventListener(roleChangeEvent, syncActiveRole);
-    return () => window.removeEventListener(roleChangeEvent, syncActiveRole);
-  }, [availableRoles]);
+    window.addEventListener(roleStateEvent, syncRoleState);
+    return () => window.removeEventListener(roleStateEvent, syncRoleState);
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -71,7 +92,8 @@ export function AppHeader({
   }
 
   function switchWorkspace(nextRole: Role) {
-    setActiveRole(nextRole);
+    if (!roleState.availableRoles.includes(nextRole)) return;
+    setRoleState((current) => ({ ...current, role: nextRole }));
     setMenuOpen(false);
     announceRoleChange(nextRole);
   }
@@ -245,7 +267,7 @@ export function AppHeader({
 
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {visibleRoles.map((item) => {
-                const active = item.key === activeRole;
+                const active = item.key === roleState.role;
                 return (
                   <button
                     aria-current={active ? "page" : undefined}
@@ -434,8 +456,8 @@ export function RoleRail({
   const visibleRoles = roles.filter((item) => availableRoles.includes(item.key));
 
   useEffect(() => {
-    announceRoleChange(role);
-  }, [role]);
+    announceRoleState(role, availableRoles);
+  }, [availableRoles, role]);
 
   useEffect(() => {
     function switchFromHeader(event: Event) {
@@ -449,7 +471,7 @@ export function RoleRail({
 
   function selectRole(nextRole: Role) {
     setRole(nextRole);
-    announceRoleChange(nextRole);
+    announceRoleState(nextRole, availableRoles);
   }
 
   return (
