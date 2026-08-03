@@ -16,6 +16,7 @@ The repository contains:
   Realtime publications.
 - Database-backed customer orders and notifications when Supabase is configured.
 - A local demo fallback for interface development without credentials.
+- GitHub Actions validation for TypeScript, ESLint, and the production build.
 
 ## Local development
 
@@ -50,6 +51,7 @@ Phase 2.2 role activation:
 
 - `20260803120000_phase2_2_role_activation.sql`
 - `20260803121000_phase2_2_onboarding_transaction.sql`
+- `20260803122000_phase2_2_application_index_cleanup.sql`
 
 Read these implementation notes before connecting or changing production:
 
