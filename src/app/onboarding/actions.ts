@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 
+import type { Json } from "@/types/database";
 import { createClient } from "@/lib/supabase/server";
 
 function value(formData: FormData, key: string) {
@@ -20,37 +21,65 @@ export async function completeOnboardingAction(formData: FormData) {
     );
   }
 
-  const supabase = await createClient();
-  const { data: claimsData } = await supabase.auth.getClaims();
-  const userId = claimsData?.claims?.sub;
-  if (!userId) redirect("/auth/login");
-
-  const { error: profileError } = await supabase
-    .from("biloo_profiles")
-    .update({
-      display_name: displayName,
-      phone,
-      city,
-      onboarding_completed_at: new Date().toISOString(),
-    })
-    .eq("id", userId);
-
-  if (profileError) {
-    redirect(`/onboarding?error=${encodeURIComponent(profileError.message)}`);
+  if (
+    requestedRole !== "customer" &&
+    requestedRole !== "driver" &&
+    requestedRole !== "vendor_owner"
+  ) {
+    redirect("/onboarding?error=Choose%20a%20valid%20BILOO%20workspace.");
   }
 
-  if (requestedRole === "driver" || requestedRole === "vendor_owner") {
-    const { error: applicationError } = await supabase
-      .from("biloo_role_applications")
-      .insert({
-        user_id: userId,
-        requested_role: requestedRole,
-        status: "pending",
-      });
+  let applicationData: Json = {};
 
-    if (applicationError && applicationError.code !== "23505") {
-      redirect(`/onboarding?error=${encodeURIComponent(applicationError.message)}`);
+  if (requestedRole === "driver") {
+    const vehicleType = value(formData, "vehicleType");
+    const plateNumber = value(formData, "plateNumber").toUpperCase();
+
+    if (!vehicleType || plateNumber.length < 3) {
+      redirect(
+        "/onboarding?error=Driver%20applications%20require%20a%20vehicle%20type%20and%20plate%20number.",
+      );
     }
+
+    applicationData = {
+      vehicle_type: vehicleType,
+      plate_number: plateNumber,
+    };
+  }
+
+  if (requestedRole === "vendor_owner") {
+    const legalName = value(formData, "legalName");
+    const businessDisplayName = value(formData, "businessDisplayName");
+    const serviceType = value(formData, "vendorServiceType");
+
+    if (
+      legalName.length < 2 ||
+      businessDisplayName.length < 2 ||
+      !["food", "market", "construction", "parts"].includes(serviceType)
+    ) {
+      redirect(
+        "/onboarding?error=Vendor%20applications%20require%20complete%20business%20details%20and%20a%20valid%20service.",
+      );
+    }
+
+    applicationData = {
+      legal_name: legalName,
+      display_name: businessDisplayName,
+      service_type: serviceType,
+    };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("complete_biloo_onboarding", {
+    p_display_name: displayName,
+    p_phone: phone,
+    p_city: city,
+    p_requested_role: requestedRole,
+    p_application_data: applicationData,
+  });
+
+  if (error) {
+    redirect(`/onboarding?error=${encodeURIComponent(error.message)}`);
   }
 
   redirect("/biloo");
