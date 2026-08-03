@@ -10,6 +10,7 @@ import "./premium-system.css";
 import "./final-polish.css";
 import "./notifications.css";
 import "./analytics-polish.css";
+import "./award-experience.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
