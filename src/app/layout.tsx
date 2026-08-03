@@ -2,8 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter_Tight, Manrope } from "next/font/google";
 import type { ReactNode } from "react";
 
-import { BilooCallLinkTarget } from "@/components/biloo/call-link-target";
-
 import "./globals.css";
 import "./brand-overrides.css";
 import "./navigation.css";
@@ -43,7 +41,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en">
       <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
-        <BilooCallLinkTarget />
         {children}
       </body>
     </html>
