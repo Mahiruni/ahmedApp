@@ -32,7 +32,7 @@ export function Drawer({
       />
       <section
         aria-label={title}
-        className={`absolute inset-y-2 right-2 flex w-[calc(100%-1rem)] max-w-[490px] flex-col overflow-hidden rounded-[1.9rem] border border-white/70 bg-white/94 shadow-[0_34px_100px_rgba(7,17,31,0.32)] backdrop-blur-2xl transition duration-300 sm:inset-y-3 sm:right-3 sm:w-[min(100%-1.5rem,490px)] ${
+        className={`absolute inset-y-2 right-2 flex w-[calc(100%_-_1rem)] max-w-[490px] flex-col overflow-hidden rounded-[1.9rem] border border-white/70 bg-white/94 shadow-[0_34px_100px_rgba(7,17,31,0.32)] backdrop-blur-2xl transition duration-300 sm:inset-y-3 sm:right-3 sm:w-[calc(100%_-_1.5rem)] ${
           open ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0"
         }`}
       >
@@ -89,7 +89,7 @@ export function Modal({
             <Icon name="close" />
           </button>
         </div>
-        <div className="max-h-[calc(100svh-110px)] overflow-y-auto">{children}</div>
+        <div className="max-h-[calc(100svh_-_110px)] overflow-y-auto">{children}</div>
       </section>
     </div>
   );
