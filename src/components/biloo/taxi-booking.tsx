@@ -32,7 +32,11 @@ export function TaxiBooking({
   const [routeMetrics, setRouteMetrics] = useState<RouteMetrics | null>(null);
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]">
+    <div
+      className="grid scroll-mt-20 gap-4 outline-none xl:grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)]"
+      id="biloo-taxi-booking"
+      tabIndex={-1}
+    >
       <Surface className="overflow-hidden p-4 sm:p-5 lg:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
