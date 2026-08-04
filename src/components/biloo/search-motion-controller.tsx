@@ -28,6 +28,18 @@ function promptsFor(input: HTMLInputElement) {
   return purpose.includes("pickup") ? pickupPrompts : destinationPrompts;
 }
 
+function clearLegacyDestination(input: HTMLInputElement) {
+  if (input.value.trim().toLowerCase() !== "bole international airport") return;
+
+  const nativeValueSetter = Object.getOwnPropertyDescriptor(
+    HTMLInputElement.prototype,
+    "value",
+  )?.set;
+
+  nativeValueSetter?.call(input, "");
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
 export function SearchMotionController() {
   useEffect(() => {
     const cleanups = new Set<() => void>();
@@ -70,6 +82,8 @@ export function SearchMotionController() {
       preparedInputs.add(input);
 
       const prompts = promptsFor(input);
+      if (prompts === destinationPrompts) clearLegacyDestination(input);
+
       const stablePrompt = prompts[0] ?? "Search";
       if (reducedMotion) {
         input.placeholder = stablePrompt;
