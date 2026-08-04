@@ -18,10 +18,16 @@ import { Icon } from "./ui";
 const ADDIS_CENTER = { lat: 9.03, lng: 38.74 };
 const ADDIS_SEARCH_RADIUS_METERS = 140000;
 const GOOGLE_MAPS_SCRIPT_ID = "biloo-google-maps-script";
+const LIVE_LOCATION_MIN_DISTANCE_METERS = 8;
+const LIVE_LOCATION_MAX_SILENCE_MS = 12000;
 
 type LatLngLiteral = {
   lat: number;
   lng: number;
+};
+
+type LivePosition = LatLngLiteral & {
+  updatedAt: number;
 };
 
 type GoogleText = {
@@ -118,6 +124,15 @@ function localPlaceValue(place: AddisPlace) {
   );
 }
 
+function distanceBetween(previous: LivePosition, next: LatLngLiteral) {
+  const latitudeMeters = (next.lat - previous.lat) * 111320;
+  const longitudeMeters =
+    (next.lng - previous.lng) *
+    111320 *
+    Math.cos(((previous.lat + next.lat) / 2) * (Math.PI / 180));
+  return Math.hypot(latitudeMeters, longitudeMeters);
+}
+
 function loadGoogleMaps(apiKey: string) {
   const mapsWindow = window as unknown as MapsWindow;
   if (mapsWindow.google?.maps?.importLibrary) {
@@ -204,12 +219,15 @@ export function AddisPlaceSearch({
   const placesLibraryRef = useRef<PlacesLibrary | null>(null);
   const sessionTokenRef = useRef<unknown>(null);
   const requestIdRef = useRef(0);
+  const watchIdRef = useRef<number | null>(null);
+  const lastPositionRef = useRef<LivePosition | null>(null);
   const [focused, setFocused] = useState(false);
   const [remoteResults, setRemoteResults] = useState<GoogleResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [loadingRemote, setLoadingRemote] = useState(false);
   const [mapsReady, setMapsReady] = useState(false);
   const [locating, setLocating] = useState(false);
+  const [trackingLocation, setTrackingLocation] = useState(false);
   const apiKey = mapsKey();
 
   const localResults = useMemo<LocalResult[]>(
@@ -236,7 +254,7 @@ export function AddisPlaceSearch({
       .slice(0, 9);
   }, [localResults, remoteResults]);
 
-  const listOpen = focused && results.length > 0;
+  const listOpen = focused && !trackingLocation && results.length > 0;
 
   useEffect(() => {
     if (!apiKey) return;
@@ -276,7 +294,7 @@ export function AddisPlaceSearch({
   useEffect(() => {
     const query = value.trim();
     const library = placesLibraryRef.current;
-    if (!mapsReady || !library || query.length < 2) {
+    if (trackingLocation || !mapsReady || !library || query.length < 2) {
       setRemoteResults([]);
       setLoadingRemote(false);
       return;
@@ -321,9 +339,28 @@ export function AddisPlaceSearch({
     }, 190);
 
     return () => window.clearTimeout(timeout);
-  }, [mapsReady, value]);
+  }, [mapsReady, trackingLocation, value]);
+
+  useEffect(() => {
+    return () => {
+      if (watchIdRef.current !== null && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
+  }, []);
+
+  function stopLiveLocation() {
+    if (watchIdRef.current !== null && navigator.geolocation) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+    }
+    watchIdRef.current = null;
+    lastPositionRef.current = null;
+    setLocating(false);
+    setTrackingLocation(false);
+  }
 
   async function chooseResult(result: PlaceResult) {
+    stopLiveLocation();
     let nextValue = result.value;
 
     if (result.kind === "google") {
@@ -376,36 +413,48 @@ export function AddisPlaceSearch({
   }
 
   function useCurrentLocation() {
-    if (!navigator.geolocation || locating) return;
-    setLocating(true);
+    if (!navigator.geolocation) return;
+    if (trackingLocation || watchIdRef.current !== null) {
+      stopLiveLocation();
+      return;
+    }
 
-    navigator.geolocation.getCurrentPosition(
+    setLocating(true);
+    setTrackingLocation(true);
+    setFocused(false);
+    setActiveIndex(-1);
+    setRemoteResults([]);
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
       (position) => {
-        void (async () => {
-          try {
-            if (!apiKey) throw new Error("Maps key unavailable");
-            const google = await loadGoogleMaps(apiKey);
-            const geocoding = (await google.maps.importLibrary(
-              "geocoding",
-            )) as GeocodingLibrary;
-            const geocoder = new geocoding.Geocoder();
-            const response = await geocoder.geocode({
-              location: {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              },
-            });
-            const address = response.results?.[0]?.formatted_address;
-            if (address) onChange(cleanAddress(address));
-          } catch {
-            // Preserve the saved place instead of exposing raw coordinates.
-          } finally {
-            setLocating(false);
-          }
-        })();
+        const nextPosition = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        const now = Date.now();
+        const previous = lastPositionRef.current;
+        const shouldUpdate =
+          !previous ||
+          distanceBetween(previous, nextPosition) >=
+            LIVE_LOCATION_MIN_DISTANCE_METERS ||
+          now - previous.updatedAt >= LIVE_LOCATION_MAX_SILENCE_MS;
+
+        if (!shouldUpdate) return;
+
+        lastPositionRef.current = { ...nextPosition, updatedAt: now };
+        setLocating(false);
+        onChange(
+          `${nextPosition.lat.toFixed(6)}, ${nextPosition.lng.toFixed(6)}`,
+        );
       },
-      () => setLocating(false),
-      { enableHighAccuracy: true, maximumAge: 30000, timeout: 10000 },
+      () => {
+        stopLiveLocation();
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 3000,
+        timeout: 15000,
+      },
     );
   }
 
@@ -414,6 +463,7 @@ export function AddisPlaceSearch({
       className={`biloo-place-search relative flex min-h-[64px] items-center gap-3 px-3.5 ${
         listOpen ? "z-40" : "z-10"
       }`}
+      data-live-location={trackingLocation ? "true" : undefined}
       ref={rootRef}
     >
       <span
@@ -426,7 +476,9 @@ export function AddisPlaceSearch({
       />
 
       <label className="min-w-0 flex-1 py-2.5">
-        <span className="biloo-place-search-label block">{label}</span>
+        <span className="biloo-place-search-label block">
+          {trackingLocation ? `${label} · Live` : label}
+        </span>
         <span className="relative mt-0.5 block min-h-6">
           <input
             aria-autocomplete="list"
@@ -437,6 +489,7 @@ export function AddisPlaceSearch({
             className="biloo-place-search-input"
             enterKeyHint="search"
             onChange={(event) => {
+              stopLiveLocation();
               onChange(event.target.value);
               setFocused(true);
               setActiveIndex(-1);
@@ -444,9 +497,11 @@ export function AddisPlaceSearch({
             onFocus={() => setFocused(true)}
             onKeyDown={handleKeyDown}
             placeholder={
-              tone === "pickup"
-                ? "Search pickup place"
-                : "Search destination, street or landmark"
+              trackingLocation
+                ? "Waiting for a GPS update"
+                : tone === "pickup"
+                  ? "Search pickup place"
+                  : "Search destination, street or landmark"
             }
             ref={inputRef}
             spellCheck={false}
@@ -463,11 +518,12 @@ export function AddisPlaceSearch({
             className="biloo-place-search-spinner"
             role="status"
           />
-        ) : value ? (
+        ) : value && !trackingLocation ? (
           <button
             aria-label={`Clear ${label.toLowerCase()}`}
             className="biloo-place-search-clear"
             onClick={() => {
+              stopLiveLocation();
               onChange("");
               setRemoteResults([]);
               setActiveIndex(-1);
@@ -481,15 +537,26 @@ export function AddisPlaceSearch({
 
         {allowCurrentLocation ? (
           <button
-            aria-label="Use current GPS location"
+            aria-label={
+              trackingLocation
+                ? "Stop live GPS location"
+                : "Use live GPS location"
+            }
+            aria-pressed={trackingLocation}
             className="biloo-place-search-gps"
-            disabled={locating}
+            data-active={trackingLocation}
             onClick={useCurrentLocation}
-            title="Use my current location"
+            title={
+              trackingLocation
+                ? "Stop live location"
+                : "Use and continuously update my location"
+            }
             type="button"
           >
             <Icon
-              className={`size-4 ${locating ? "animate-pulse" : ""}`}
+              className={`size-4 ${
+                locating || trackingLocation ? "animate-pulse" : ""
+              }`}
               name="navigation"
             />
           </button>
