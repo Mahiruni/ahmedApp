@@ -17,6 +17,7 @@ import {
   type IconName,
   type ServiceKey,
 } from "@/data/biloo";
+import { useTypewriterCycle } from "@/hooks/use-typewriter-cycle";
 
 import { formatETB, Icon, serviceLabel, StatusPill, Surface } from "./ui";
 import { OrdersPanel } from "./orders-panel";
@@ -99,6 +100,36 @@ const heroServices: HeroService[] = [
   },
 ];
 
+const heroServiceLabels = heroServices.map((item) => item.label);
+
+const searchTypingPrompts: Record<ServiceKey, readonly string[]> = {
+  taxi: [
+    "Search Bole Airport",
+    "Try CMC, Ayat or Piassa",
+    "Enter a street, gate or landmark",
+  ],
+  food: [
+    "Search restaurants or meals",
+    "Try pizza, burger or injera",
+    "Find food near your location",
+  ],
+  market: [
+    "Search groceries and stores",
+    "Try milk, bread or vegetables",
+    "Find daily essentials",
+  ],
+  construction: [
+    "Search cement, steel or tools",
+    "Try blocks, sand or hardware",
+    "Find verified suppliers",
+  ],
+  parts: [
+    "Search vehicle parts",
+    "Try brake pads or filters",
+    "Find parts by vehicle model",
+  ],
+};
+
 const serviceCopy: Record<ServiceKey, { title: string; description: string }> = {
   food: {
     title: "Food near you",
@@ -122,11 +153,11 @@ const serviceCopy: Record<ServiceKey, { title: string; description: string }> = 
   },
 };
 
-const searchPlaceholders: Record<ServiceKey, string> = {
+const searchLabels: Record<ServiceKey, string> = {
   food: "Search restaurants or meals",
-  taxi: "Where to?",
+  taxi: "Search a destination",
   market: "Search groceries and stores",
-  construction: "Search cement, steel or tools",
+  construction: "Search construction materials",
   parts: "Search vehicle parts",
 };
 
@@ -244,17 +275,28 @@ export function CustomerDashboard({
   const [dropoff, setDropoff] = useState("Bole International Airport");
   const [rideId, setRideId] =
     useState<(typeof rideTypes)[number]["id"]>("standard");
-  const [heroServiceIndex, setHeroServiceIndex] = useState(0);
   const [exactLocationLabel, setExactLocationLabel] = useState(() =>
     initialNamedLocation(locationLabel),
   );
   const [resolvingLocation, setResolvingLocation] = useState(false);
   const lastNamedLocationRef = useRef(initialNamedLocation(locationLabel));
 
+  const heroTypewriter = useTypewriterCycle(heroServiceLabels, {
+    typingMs: 54,
+    deletingMs: 30,
+    pauseMs: 1200,
+  });
+  const searchTypewriter = useTypewriterCycle(searchTypingPrompts[service], {
+    typingMs: 48,
+    deletingMs: 25,
+    pauseMs: 1350,
+  });
+
   const selectedRide =
     rideTypes.find((ride) => ride.id === rideId) ?? rideTypes[0];
   const copy = serviceCopy[service];
   const cartCount = cart.reduce((total, line) => total + line.quantity, 0);
+  const heroServiceIndex = heroTypewriter.index % heroServices.length;
   const animatedService = heroServices[heroServiceIndex] ?? heroServices[0];
 
   const serviceStats = useMemo(() => {
@@ -262,21 +304,6 @@ export function CustomerDashboard({
     const completed = orders.filter((order) => order.progress >= 100).length;
     return { active, completed };
   }, [orders]);
-
-  useEffect(() => {
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    );
-    if (reducedMotion.matches) return;
-
-    const interval = window.setInterval(() => {
-      setHeroServiceIndex(
-        (current) => (current + 1) % heroServices.length,
-      );
-    }, 2600);
-
-    return () => window.clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const coordinates = coordinatePair(locationLabel);
@@ -383,12 +410,11 @@ export function CustomerDashboard({
           <span className="biloo-service-loop-icon" aria-hidden="true">
             <Icon className="size-5" name={animatedService.icon} />
           </span>
-          <span
-            className="biloo-service-loop-copy"
-            key={animatedService.key}
-          >
+          <span className="biloo-service-loop-copy">
             <span className="biloo-service-loop-label">
-              {animatedService.label}
+              <span aria-hidden="true">{heroTypewriter.text || "\u00a0"}</span>
+              <span aria-hidden="true" className="biloo-typewriter-caret" />
+              <span className="sr-only">{animatedService.label}</span>
             </span>
             <span className="biloo-service-loop-detail">
               {animatedService.detail}
@@ -411,42 +437,54 @@ export function CustomerDashboard({
 
         {service === "taxi" ? (
           <button
-            className="biloo-standard-search mt-4 flex h-[52px] w-full items-center gap-3 px-3.5 text-left"
+            aria-label="Open detailed destination search"
+            className="biloo-standard-search biloo-search-premium mt-4 flex h-[54px] w-full items-center gap-3 px-3.5 text-left"
             onClick={openTaxiSearch}
             type="button"
           >
-            <Icon className="size-5 shrink-0 text-[#5f636b]" name="search" />
-            <span className="min-w-0 flex-1 truncate text-[16px] font-medium text-[#656971]">
-              Where to?
+            <span className="biloo-search-leading">
+              <Icon className="size-[18px]" name="search" />
             </span>
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[#eaf1ff] text-[#276ef1]">
+            <span className="biloo-search-typewriter min-w-0 flex-1 truncate">
+              <span>{searchTypewriter.text || "\u00a0"}</span>
+              <span aria-hidden="true" className="biloo-typewriter-caret" />
+            </span>
+            <span className="biloo-search-action">
               <Icon className="size-4" name="arrow" />
             </span>
           </button>
         ) : (
           <div className="mt-4 flex items-center gap-2.5">
-            <div className="biloo-standard-search flex h-[52px] min-w-0 flex-1 items-center gap-3 px-3.5">
-              <Icon
-                className="biloo-search-icon size-5 shrink-0 text-[#6d7078]"
-                name="search"
-              />
+            <div className="biloo-standard-search biloo-search-premium relative flex h-[54px] min-w-0 flex-1 items-center gap-3 px-3.5">
+              <span className="biloo-search-leading">
+                <Icon className="size-[18px]" name="search" />
+              </span>
               <input
-                aria-label={searchPlaceholders[service]}
+                aria-label={searchLabels[service]}
                 autoComplete="off"
-                className="biloo-standard-search-input min-w-0 flex-1"
+                className="biloo-standard-search-input relative z-10 min-w-0 flex-1"
                 enterKeyHint="search"
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   setSearch(event.target.value)
                 }
-                placeholder={searchPlaceholders[service]}
+                placeholder=""
                 spellCheck={false}
                 type="search"
                 value={search}
               />
+              {!search ? (
+                <span
+                  aria-hidden="true"
+                  className="biloo-search-typewriter-overlay"
+                >
+                  <span>{searchTypewriter.text || "\u00a0"}</span>
+                  <span className="biloo-typewriter-caret" />
+                </span>
+              ) : null}
               {search ? (
                 <button
                   aria-label="Clear search"
-                  className="biloo-search-clear grid size-8 shrink-0 place-items-center rounded-full text-[#5f636b]"
+                  className="biloo-search-clear relative z-20 grid size-8 shrink-0 place-items-center rounded-full text-[#5f636b]"
                   onClick={() => setSearch("")}
                   type="button"
                 >
@@ -456,7 +494,7 @@ export function CustomerDashboard({
             </div>
             <button
               aria-label="Use current location"
-              className="biloo-search-location grid size-[52px] shrink-0 place-items-center rounded-[14px]"
+              className="biloo-search-location grid size-[54px] shrink-0 place-items-center rounded-[16px]"
               onClick={onLocate}
               type="button"
             >
