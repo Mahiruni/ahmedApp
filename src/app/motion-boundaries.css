@@ -1,0 +1,60 @@
+/* Keep service discovery motion and search typing visually distinct. */
+
+.biloo-service-loop[data-motion-controller="ready"]
+  .biloo-service-loop-label
+  > span:not(.sr-only) {
+  display: none !important;
+}
+
+.biloo-service-loop[data-motion-controller="ready"]
+  .biloo-service-loop-label
+  .sr-only {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  white-space: nowrap !important;
+}
+
+.biloo-service-loop[data-motion-controller="ready"]
+  .biloo-service-loop-copy {
+  animation: none !important;
+  will-change: opacity, transform !important;
+}
+
+.biloo-service-loop[data-motion-controller="ready"]
+  .biloo-service-loop-copy.biloo-service-motion-enter {
+  animation: biloo-service-motion-enter 560ms cubic-bezier(0.2, 0.8, 0.2, 1)
+    both !important;
+}
+
+@keyframes biloo-service-motion-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Detailed route inputs use typed purpose text only while empty. */
+.biloo-place-search-input::placeholder {
+  color: #858390 !important;
+  opacity: 1;
+}
+
+.biloo-place-search:focus-within .biloo-place-search-input::placeholder {
+  color: #686576 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-service-loop[data-motion-controller="ready"]
+    .biloo-service-loop-copy.biloo-service-motion-enter {
+    animation: none !important;
+  }
+}
