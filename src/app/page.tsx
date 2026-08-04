@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -9,6 +10,14 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { signInWithGoogleAction } from "./auth/actions";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "BILOO",
+  description:
+    "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.",
+  applicationName: "BILOO",
+  robots: { index: true, follow: true },
+};
 
 export default async function HomePage({
   searchParams,
@@ -34,7 +43,7 @@ export default async function HomePage({
       <section className="biloo-entry-shell" aria-labelledby="biloo-entry-title">
         <header className="biloo-entry-brand">
           <Image
-            alt=""
+            alt="BILOO app logo"
             height={48}
             priority
             src="/icons/biloo-mark.svg"
@@ -48,14 +57,15 @@ export default async function HomePage({
 
         <div className="biloo-entry-hero">
           <p className="biloo-entry-eyebrow">ETHIOPIA&apos;S CONNECTED SUPER APP</p>
-          <h1 id="biloo-entry-title">
-            <strong>Move.</strong> Order.
-            <br />
-            <strong>Live.</strong> BILOO.
-          </h1>
+          <h1 id="biloo-entry-title">BILOO</h1>
           <p className="biloo-entry-description">
-            Rides, food, groceries, construction materials and car parts—one
-            trusted account for every everyday move.
+            BILOO helps people in Ethiopia book taxi rides, order food and
+            groceries, buy construction materials and find car parts through one
+            secure account.
+          </p>
+          <p className="biloo-entry-description">
+            Customers can choose a service, place a ride or delivery request,
+            review prices, receive status updates and manage activity in one app.
           </p>
         </div>
 
@@ -69,7 +79,7 @@ export default async function HomePage({
           />
           <div>
             <strong>BILOO</strong>
-            <span>Ride · Deliver · Shop</span>
+            <span>Taxi · Food · Grocery · Materials · Car parts</span>
           </div>
         </div>
 
@@ -113,10 +123,8 @@ export default async function HomePage({
           )}
 
           <p className="biloo-entry-legal">
-            By continuing, you agree to BILOO&apos;s
-            {" "}
-            <Link href="/terms">Terms of Service</Link> and
-            {" "}
+            By continuing, you agree to BILOO&apos;s{" "}
+            <Link href="/terms">Terms of Service</Link> and{" "}
             <Link href="/privacy">Privacy Policy</Link>.
           </p>
 
