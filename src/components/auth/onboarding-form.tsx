@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { completeOnboardingAction } from "@/app/onboarding/actions";
+import { Icon } from "@/components/biloo/ui";
 import { authButtonClass, authInputClass } from "./auth-shell";
 
 type RequestedRole = "customer" | "driver" | "vendor_owner";
@@ -11,25 +12,25 @@ const roleOptions: Array<{
   value: RequestedRole;
   label: string;
   description: string;
-  number: string;
+  icon: "customer" | "driver" | "vendor";
 }> = [
   {
     value: "customer",
     label: "Customer",
-    description: "Order products and book rides immediately.",
-    number: "01",
+    description: "Book rides and order from every BILOO service immediately.",
+    icon: "customer",
   },
   {
     value: "driver",
     label: "Driver",
-    description: "Complete trips and deliveries after verification.",
-    number: "02",
+    description: "Complete trips and deliveries after operations verification.",
+    icon: "driver",
   },
   {
     value: "vendor_owner",
     label: "Vendor",
-    description: "Sell and fulfil orders after business verification.",
-    number: "03",
+    description: "Manage products, orders and fulfilment after business review.",
+    icon: "vendor",
   },
 ];
 
@@ -37,61 +38,58 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
   const [requestedRole, setRequestedRole] = useState<RequestedRole>("customer");
 
   return (
-    <form action={completeOnboardingAction} className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="block text-sm font-black text-[#10243a]">
-          Full name
-          <input
-            autoComplete="name"
-            className={authInputClass}
-            defaultValue={displayName}
-            name="displayName"
-            required
-          />
-        </label>
-        <label className="block text-sm font-black text-[#10243a]">
-          Phone number
-          <input
-            autoComplete="tel"
-            className={authInputClass}
-            name="phone"
-            placeholder="+251 9..."
-            required
-            type="tel"
-          />
-        </label>
-      </div>
+    <form action={completeOnboardingAction} className="biloo-onboarding-form">
+      <section className="biloo-onboarding-section">
+        <div className="biloo-form-section-heading">
+          <span>Personal details</span>
+          <h2>Tell us who you are</h2>
+        </div>
+        <div className="biloo-form-grid two-column">
+          <label className="biloo-auth-field">
+            <span>Full name</span>
+            <input
+              autoComplete="name"
+              className={authInputClass}
+              defaultValue={displayName}
+              name="displayName"
+              required
+            />
+          </label>
+          <label className="biloo-auth-field">
+            <span>Phone number</span>
+            <input
+              autoComplete="tel"
+              className={authInputClass}
+              name="phone"
+              placeholder="+251 9..."
+              required
+              type="tel"
+            />
+          </label>
+          <label className="biloo-auth-field full-width">
+            <span>City</span>
+            <input
+              autoComplete="address-level2"
+              className={authInputClass}
+              defaultValue="Addis Ababa"
+              name="city"
+              required
+            />
+          </label>
+        </div>
+      </section>
 
-      <label className="block text-sm font-black text-[#10243a]">
-        City
-        <input
-          autoComplete="address-level2"
-          className={authInputClass}
-          defaultValue="Addis Ababa"
-          name="city"
-          required
-        />
-      </label>
-
-      <fieldset>
-        <legend className="text-sm font-black text-[#10243a]">
-          Choose your BILOO workspace
-        </legend>
-        <p className="mt-1 text-xs leading-5 text-slate-400">
-          Customer access is immediate. Driver and vendor workspaces require an admin review.
-        </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <fieldset className="biloo-onboarding-section">
+        <div className="biloo-form-section-heading">
+          <span>Workspace</span>
+          <legend>Choose how you use BILOO</legend>
+          <p>Customer access is immediate. Driver and vendor workspaces require verification.</p>
+        </div>
+        <div className="biloo-role-options">
           {roleOptions.map((option) => {
             const active = requestedRole === option.value;
             return (
-              <label
-                className={`relative cursor-pointer overflow-hidden rounded-[1.4rem] border p-4 transition ${
-                  active
-                    ? "border-[#0a1b31] bg-[#0a1b31] text-white shadow-[0_18px_45px_rgba(7,17,31,0.16)]"
-                    : "border-slate-200 bg-white text-[#10243a] hover:border-slate-300"
-                }`}
-                key={option.value}
-              >
+              <label className="biloo-role-option" data-active={active} key={option.value}>
                 <input
                   checked={active}
                   className="sr-only"
@@ -100,20 +98,13 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
                   type="radio"
                   value={option.value}
                 />
-                <span
-                  className={`absolute right-3 top-3 text-[10px] font-black ${
-                    active ? "text-white/25" : "text-slate-300"
-                  }`}
-                >
-                  {option.number}
+                <span className="biloo-role-option-icon"><Icon name={option.icon} /></span>
+                <span className="biloo-role-option-copy">
+                  <strong>{option.label}</strong>
+                  <small>{option.description}</small>
                 </span>
-                <span className="block text-sm font-black">{option.label}</span>
-                <span
-                  className={`mt-2 block text-xs leading-5 ${
-                    active ? "text-white/50" : "text-slate-400"
-                  }`}
-                >
-                  {option.description}
+                <span className="biloo-role-option-check">
+                  {active ? <Icon className="size-3" name="check" /> : null}
                 </span>
               </label>
             );
@@ -122,16 +113,15 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
       </fieldset>
 
       {requestedRole === "driver" ? (
-        <section className="rounded-[1.45rem] border border-emerald-100 bg-emerald-50/70 p-5">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700">
-            Driver verification
-          </p>
-          <h2 className="mt-2 text-lg font-black tracking-[-0.03em] text-[#10243a]">
-            Tell operations what you drive.
-          </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <label className="block text-sm font-black text-[#10243a]">
-              Vehicle type
+        <section className="biloo-verification-card" data-tone="driver">
+          <div className="biloo-form-section-heading">
+            <span>Driver verification</span>
+            <h2>Tell operations what you drive</h2>
+            <p>Your workspace activates after the submitted details are reviewed.</p>
+          </div>
+          <div className="biloo-form-grid two-column">
+            <label className="biloo-auth-field">
+              <span>Vehicle type</span>
               <select className={authInputClass} name="vehicleType" required>
                 <option value="">Select vehicle</option>
                 <option value="Motorcycle">Motorcycle</option>
@@ -142,8 +132,8 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
                 <option value="Heavy truck">Heavy truck</option>
               </select>
             </label>
-            <label className="block text-sm font-black text-[#10243a]">
-              Plate number
+            <label className="biloo-auth-field">
+              <span>Plate number</span>
               <input
                 autoComplete="off"
                 className={authInputClass}
@@ -157,16 +147,15 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
       ) : null}
 
       {requestedRole === "vendor_owner" ? (
-        <section className="rounded-[1.45rem] border border-amber-100 bg-amber-50/70 p-5">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-700">
-            Vendor verification
-          </p>
-          <h2 className="mt-2 text-lg font-black tracking-[-0.03em] text-[#10243a]">
-            Create the business identity operations will review.
-          </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <label className="block text-sm font-black text-[#10243a]">
-              Registered business name
+        <section className="biloo-verification-card" data-tone="vendor">
+          <div className="biloo-form-section-heading">
+            <span>Vendor verification</span>
+            <h2>Create your business identity</h2>
+            <p>These details are reviewed before the vendor workspace becomes operational.</p>
+          </div>
+          <div className="biloo-form-grid two-column">
+            <label className="biloo-auth-field">
+              <span>Registered business name</span>
               <input
                 autoComplete="organization"
                 className={authInputClass}
@@ -175,8 +164,8 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
                 required
               />
             </label>
-            <label className="block text-sm font-black text-[#10243a]">
-              Storefront name
+            <label className="biloo-auth-field">
+              <span>Storefront name</span>
               <input
                 className={authInputClass}
                 name="businessDisplayName"
@@ -184,22 +173,25 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
                 required
               />
             </label>
+            <label className="biloo-auth-field full-width">
+              <span>Primary service</span>
+              <select className={authInputClass} name="vendorServiceType" required>
+                <option value="">Select service</option>
+                <option value="food">Food delivery</option>
+                <option value="market">Supermarket</option>
+                <option value="construction">Construction materials</option>
+                <option value="parts">Car parts</option>
+              </select>
+            </label>
           </div>
-          <label className="mt-4 block text-sm font-black text-[#10243a]">
-            Primary service
-            <select className={authInputClass} name="vendorServiceType" required>
-              <option value="">Select service</option>
-              <option value="food">Food delivery</option>
-              <option value="market">Supermarket</option>
-              <option value="construction">Construction materials</option>
-              <option value="parts">Car parts</option>
-            </select>
-          </label>
         </section>
       ) : null}
 
-      <div className="rounded-2xl bg-[#f3f6f9] px-4 py-3 text-xs leading-5 text-slate-500">
-        By continuing, you confirm that the submitted information is accurate. Approved driver and vendor applications create an operational profile automatically.
+      <div className="biloo-form-disclosure">
+        <Icon className="size-[17px]" name="shield" />
+        <p>
+          By continuing, you confirm that the submitted information is accurate. Approved driver and vendor applications create an operational profile automatically.
+        </p>
       </div>
 
       <button className={authButtonClass} type="submit">
