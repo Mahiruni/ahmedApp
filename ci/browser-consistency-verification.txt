@@ -1,0 +1,1 @@
+Verification marker for the Firefox-safe viewport and persistent navigation shell.
