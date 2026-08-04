@@ -1,0 +1,1 @@
+Verify Ethiopia-ready customer signup schema, form, validation, username uniqueness, TypeScript, ESLint and production build.
