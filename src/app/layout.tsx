@@ -21,6 +21,7 @@ import "./search-experience.css";
 import "./motion-boundaries.css";
 import "./cart-experience.css";
 import "./payment-experience.css";
+import "./post-order-experience.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
