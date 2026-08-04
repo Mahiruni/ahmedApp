@@ -23,6 +23,7 @@ import "./cart-experience.css";
 import "./payment-experience.css";
 import "./post-order-experience.css";
 import "./operations-experience.css";
+import "./completion-system.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
