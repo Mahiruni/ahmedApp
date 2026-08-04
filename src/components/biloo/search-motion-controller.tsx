@@ -40,6 +40,20 @@ function clearLegacyDestination(input: HTMLInputElement) {
   input.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
+function markTransientFieldActions() {
+  document
+    .querySelectorAll<HTMLButtonElement>(
+      ".biloo-place-search button, .biloo-search-premium button",
+    )
+    .forEach((button) => {
+      const label = button.getAttribute("aria-label")?.trim();
+      if (!label || !/^Clear\b/i.test(label)) return;
+
+      button.setAttribute("aria-label", label.replace(/^Clear\b/i, "Reset"));
+      button.dataset.transientFieldAction = "true";
+    });
+}
+
 export function SearchMotionController() {
   useEffect(() => {
     const cleanups = new Set<() => void>();
@@ -193,6 +207,7 @@ export function SearchMotionController() {
 
     function scan() {
       prepareHero();
+      markTransientFieldActions();
       document
         .querySelectorAll<HTMLInputElement>(".biloo-place-search-input")
         .forEach(prepareInput);
