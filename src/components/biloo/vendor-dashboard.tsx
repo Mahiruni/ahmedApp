@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { IconName, VendorOrder } from "@/data/biloo";
 
-import { formatETB, Icon, StatusPill, Surface } from "./ui";
+import { formatETB, Icon, serviceLabel } from "./ui";
 
 interface InventoryItem {
   id: string;
@@ -57,6 +57,13 @@ const initialInventory: InventoryItem[] = [
 
 const inventoryStorageKey = "biloo.vendor-inventory";
 const storeStorageKey = "biloo.vendor-store-open";
+const vendorStages: VendorOrder["status"][] = [
+  "New",
+  "Accepted",
+  "Preparing",
+  "Ready",
+  "Dispatched",
+];
 
 export function VendorDashboard({
   storeOpen,
@@ -84,7 +91,7 @@ export function VendorDashboard({
         setStoreOpen(storedOpen === "true");
       }
     } catch {
-      // The demo continues with seeded data when local storage is unavailable.
+      // Seeded data keeps the vendor workspace usable when storage is blocked.
     }
   }, [setStoreOpen]);
 
@@ -114,8 +121,49 @@ export function VendorDashboard({
     () => inventory.filter((item) => item.stock <= item.reorderAt),
     [inventory],
   );
-
+  const newOrders = orders.filter((order) => order.status === "New").length;
+  const preparingOrders = orders.filter(
+    (order) => order.status === "Accepted" || order.status === "Preparing",
+  ).length;
+  const readyOrders = orders.filter((order) => order.status === "Ready").length;
   const salesToday = orders.reduce((sum, order) => sum + order.total, 0) + 42000;
+
+  const metrics: Array<{
+    value: string;
+    label: string;
+    detail: string;
+    icon: IconName;
+    tone: "default" | "brand" | "success" | "danger";
+  }> = [
+    {
+      value: formatETB(salesToday),
+      label: "Sales today",
+      detail: "Across completed and active orders",
+      icon: "wallet",
+      tone: "brand",
+    },
+    {
+      value: String(orders.length + 34),
+      label: "Orders today",
+      detail: `${newOrders} waiting for action`,
+      icon: "receipt",
+      tone: newOrders ? "danger" : "default",
+    },
+    {
+      value: String(preparingOrders),
+      label: "In preparation",
+      detail: `${readyOrders} ready for dispatch`,
+      icon: "clock",
+      tone: readyOrders ? "success" : "default",
+    },
+    {
+      value: String(lowStockItems.length),
+      label: "Stock alerts",
+      detail: lowStockItems.length ? "Restock recommended" : "Inventory healthy",
+      icon: "inventory",
+      tone: lowStockItems.length ? "danger" : "success",
+    },
+  ];
 
   function adjustStock(item: InventoryItem, change: number) {
     const nextStock = Math.max(0, item.stock + change);
@@ -139,220 +187,237 @@ export function VendorDashboard({
   }
 
   return (
-    <div className="space-y-5 sm:space-y-6">
-      <Surface className="p-6 sm:p-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-700">
+    <div className="biloo-vendor-workspace">
+      <section className="biloo-vendor-hero">
+        <div className="biloo-vendor-hero-main">
+          <div className="biloo-vendor-store-mark" aria-hidden="true">
+            <Icon name="vendor" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="biloo-vendor-kicker">
+              <span className={storeOpen ? "is-live" : ""} />
               Fresh Corner · Bole branch
-            </p>
-            <h1 className="mt-3 text-4xl font-black tracking-[-0.055em] sm:text-5xl">
-              Store operations
-            </h1>
-            <p className="mt-3 text-sm text-slate-500 sm:text-base">
-              Manage orders, preparation, inventory and payouts in real time.
-            </p>
+            </div>
+            <h1>Store command center</h1>
+            <p>Orders, preparation, inventory and store availability in one focused workspace.</p>
           </div>
           <button
-            className={`min-h-12 rounded-2xl px-5 text-sm font-black ${
-              storeOpen
-                ? "bg-emerald-50 text-emerald-700"
-                : "bg-slate-100 text-slate-600"
-            }`}
+            aria-pressed={storeOpen}
+            className="biloo-vendor-availability"
+            data-open={storeOpen}
             onClick={() => setStoreOpen(!storeOpen)}
             type="button"
           >
-            ● Store {storeOpen ? "open" : "closed"}
+            <span className="biloo-vendor-availability-copy">
+              <small>Store status</small>
+              <strong>{storeOpen ? "Open for orders" : "Orders paused"}</strong>
+            </span>
+            <span className="biloo-vendor-switch" aria-hidden="true">
+              <i />
+            </span>
           </button>
         </div>
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            [formatETB(salesToday), "Sales today", "wallet" as const],
-            [String(orders.length + 34), "Orders today", "receipt" as const],
-            [
-              String(orders.filter((order) => order.status === "Preparing").length),
-              "Preparing now",
-              "clock" as const,
-            ],
-            [String(lowStockItems.length), "Low-stock items", "inventory" as const],
-          ].map(([value, label, icon]) => (
-            <div className="rounded-2xl bg-[#f5f8fa] p-5" key={label}>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-2xl font-black">{value}</p>
-                  <p className="mt-2 text-xs font-bold text-slate-400">{label}</p>
-                </div>
-                <Icon className="size-5 text-[#082640]" name={icon as IconName} />
-              </div>
-            </div>
+        <div className="biloo-vendor-metrics">
+          {metrics.map((metric) => (
+            <article data-tone={metric.tone} key={metric.label}>
+              <span className="biloo-vendor-metric-icon">
+                <Icon name={metric.icon} />
+              </span>
+              <span className="min-w-0">
+                <strong>{metric.value}</strong>
+                <small>{metric.label}</small>
+                <em>{metric.detail}</em>
+              </span>
+            </article>
           ))}
         </div>
-      </Surface>
+      </section>
 
       {inventoryNotice ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">
-          {inventoryNotice}
+        <div className="biloo-vendor-notice" role="status">
+          <Icon name="check" />
+          <span>{inventoryNotice}</span>
         </div>
       ) : null}
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)]">
-        <Surface className="p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#082640]">
-                Order queue
-              </p>
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">Live orders</h2>
-            </div>
-            <StatusPill tone={storeOpen ? "success" : "neutral"}>
-              {storeOpen ? "Accepting" : "Paused"}
-            </StatusPill>
-          </div>
+      {(newOrders > 0 || lowStockItems.length > 0) && (
+        <section className="biloo-vendor-attention" aria-label="Needs attention">
+          <span className="biloo-vendor-attention-icon">
+            <Icon name="inventory" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <small>Needs attention</small>
+            <strong>
+              {newOrders > 0 ? `${newOrders} new ${newOrders === 1 ? "order" : "orders"}` : "Orders are clear"}
+              {newOrders > 0 && lowStockItems.length > 0 ? " · " : ""}
+              {lowStockItems.length > 0
+                ? `${lowStockItems.length} low-stock ${lowStockItems.length === 1 ? "item" : "items"}`
+                : ""}
+            </strong>
+          </span>
+          <span className="biloo-vendor-attention-status">Review now</span>
+        </section>
+      )}
 
-          <div className="mt-6 overflow-hidden rounded-[1.35rem] border border-slate-200">
-            <div className="hidden grid-cols-[0.6fr_1fr_0.7fr_0.75fr_0.8fr] gap-4 bg-slate-50 px-5 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-slate-400 md:grid">
-              <span>Order</span>
-              <span>Customer</span>
-              <span>Total</span>
-              <span>Status</span>
-              <span>Action</span>
+      <div className="biloo-vendor-grid">
+        <section className="biloo-vendor-panel biloo-vendor-orders-panel">
+          <header className="biloo-vendor-panel-header">
+            <div>
+              <span>Live workflow</span>
+              <h2>Order queue</h2>
+              <p>Prioritized by the next action required from your team.</p>
             </div>
-            {orders.map((order) => (
-              <div
-                className="grid gap-3 border-t border-slate-100 px-5 py-4 first:border-t-0 md:grid-cols-[0.6fr_1fr_0.7fr_0.75fr_0.8fr] md:items-center"
-                key={order.id}
-              >
-                <span>
-                  <span className="block text-sm font-black">{order.id}</span>
-                  <span className="mt-1 block text-[10px] text-slate-400">
-                    {order.placed}
-                  </span>
-                </span>
-                <span>
-                  <span className="block text-sm font-bold text-slate-700">
-                    {order.customer}
-                  </span>
-                  <span className="mt-1 block text-[10px] text-slate-400">
-                    {order.items} items
-                  </span>
-                </span>
-                <span className="text-sm font-black">{formatETB(order.total)}</span>
-                <StatusPill
-                  tone={
-                    order.status === "New"
-                      ? "warning"
-                      : order.status === "Ready"
-                        ? "success"
-                        : "brand"
-                  }
-                >
-                  {order.status}
-                </StatusPill>
-                <button
-                  className="min-h-10 rounded-xl bg-[#082640] px-3 text-xs font-black text-white disabled:opacity-40"
-                  disabled={!storeOpen || order.status === "Dispatched"}
-                  onClick={() => onAdvanceOrder(order)}
-                  type="button"
-                >
-                  {nextVendorAction(order.status)}
-                </button>
+            <span className="biloo-vendor-panel-count">
+              {storeOpen ? `${orders.length} active` : "Paused"}
+            </span>
+          </header>
+
+          <div className="biloo-vendor-orders">
+            {orders.map((order) => {
+              const stageIndex = vendorStages.indexOf(order.status);
+              const progress = Math.max(12, ((stageIndex + 1) / vendorStages.length) * 100);
+              const actionDisabled = !storeOpen || order.status === "Dispatched";
+
+              return (
+                <article className="biloo-vendor-order" data-status={order.status} key={order.id}>
+                  <div className="biloo-vendor-order-top">
+                    <div className="min-w-0">
+                      <span className="biloo-vendor-order-id">{order.id}</span>
+                      <h3>{order.customer}</h3>
+                      <p>{order.items} items · {order.placed}</p>
+                    </div>
+                    <div className="biloo-vendor-order-value">
+                      <strong>{formatETB(order.total)}</strong>
+                      <span>{order.status}</span>
+                    </div>
+                  </div>
+
+                  <div className="biloo-vendor-order-progress" aria-label={`${order.status} stage`}>
+                    <span style={{ width: `${progress}%` }} />
+                  </div>
+
+                  <div className="biloo-vendor-order-stages" aria-hidden="true">
+                    {vendorStages.map((stage, index) => (
+                      <span data-done={index <= stageIndex} key={stage}>
+                        {stage === "Dispatched" ? "Sent" : stage}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="biloo-vendor-order-footer">
+                    <span>
+                      <Icon name={order.status === "Ready" ? "driver" : "clock"} />
+                      {vendorActionHint(order.status)}
+                    </span>
+                    <button
+                      disabled={actionDisabled}
+                      onClick={() => onAdvanceOrder(order)}
+                      type="button"
+                    >
+                      {nextVendorAction(order.status)}
+                      <Icon name={order.status === "Dispatched" ? "check" : "arrow"} />
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+
+            {orders.length === 0 ? (
+              <div className="biloo-vendor-empty">
+                <span><Icon name="receipt" /></span>
+                <h3>No active orders</h3>
+                <p>New customer orders will appear here automatically.</p>
               </div>
-            ))}
+            ) : null}
           </div>
-        </Surface>
+        </section>
 
-        <Surface className="p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
+        <section className="biloo-vendor-panel biloo-vendor-inventory-panel">
+          <header className="biloo-vendor-panel-header">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-rose-600">
-                Inventory control
-              </p>
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
-                Stock levels
-              </h2>
+              <span>Inventory health</span>
+              <h2>Stock control</h2>
+              <p>Update quantities and restore target stock in a few taps.</p>
             </div>
-            <StatusPill tone={lowStockItems.length ? "danger" : "success"}>
+            <span className="biloo-vendor-panel-count" data-danger={lowStockItems.length > 0}>
               {lowStockItems.length} low
-            </StatusPill>
-          </div>
+            </span>
+          </header>
 
-          <div className="mt-6 space-y-3">
+          <div className="biloo-vendor-inventory">
             {inventory.map((item) => {
               const low = item.stock <= item.reorderAt;
               const stockPercent = Math.min(100, Math.round((item.stock / item.target) * 100));
+
               return (
-                <article
-                  className={`rounded-2xl border p-4 ${
-                    low ? "border-rose-100 bg-rose-50/55" : "border-slate-100 bg-[#f5f8fa]"
-                  }`}
-                  key={item.id}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-white text-[#082640] shadow-sm">
+                <article className="biloo-vendor-stock" data-low={low} key={item.id}>
+                  <div className="biloo-vendor-stock-top">
+                    <span className="biloo-vendor-stock-icon">
                       <Icon name="inventory" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-black">{item.name}</span>
-                      <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
-                        {item.sku}
-                      </span>
+                      <h3>{item.name}</h3>
+                      <p>{item.sku}</p>
                     </span>
-                    <StatusPill tone={low ? "danger" : "success"}>
-                      {item.stock} {item.unit}
-                    </StatusPill>
+                    <span className="biloo-vendor-stock-quantity">
+                      <strong>{item.stock}</strong>
+                      <small>{item.unit}</small>
+                    </span>
                   </div>
 
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-white">
-                    <div
-                      className={`h-full rounded-full ${low ? "bg-rose-500" : "bg-emerald-500"}`}
-                      style={{ width: `${stockPercent}%` }}
-                    />
+                  <div className="biloo-vendor-stock-meter">
+                    <span style={{ width: `${stockPercent}%` }} />
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-[10px] font-bold text-slate-400">
-                    <span>Reorder at {item.reorderAt}</span>
+                  <div className="biloo-vendor-stock-meta">
+                    <span>{low ? "Below reorder point" : "Healthy stock"}</span>
                     <span>Target {item.target}</span>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-[44px_44px_1fr] gap-2">
-                    <button
-                      aria-label={`Decrease ${item.name} stock`}
-                      className="min-h-10 rounded-xl bg-white text-sm font-black text-[#082640] shadow-sm"
-                      onClick={() => adjustStock(item, -1)}
-                      type="button"
-                    >
-                      −
-                    </button>
-                    <button
-                      aria-label={`Increase ${item.name} stock`}
-                      className="min-h-10 rounded-xl bg-white text-sm font-black text-[#082640] shadow-sm"
-                      onClick={() => adjustStock(item, 1)}
-                      type="button"
-                    >
-                      +
-                    </button>
-                    <button
-                      className="min-h-10 rounded-xl bg-[#082640] px-3 text-xs font-black text-white"
-                      onClick={() => restock(item)}
-                      type="button"
-                    >
-                      Restock to target
+                  <div className="biloo-vendor-stock-actions">
+                    <div>
+                      <button
+                        aria-label={`Decrease ${item.name} stock`}
+                        onClick={() => adjustStock(item, -1)}
+                        type="button"
+                      >
+                        −
+                      </button>
+                      <span>{item.stock}</span>
+                      <button
+                        aria-label={`Increase ${item.name} stock`}
+                        onClick={() => adjustStock(item, 1)}
+                        type="button"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button onClick={() => restock(item)} type="button">
+                      Restock to {item.target}
                     </button>
                   </div>
                 </article>
               );
             })}
           </div>
-        </Surface>
+        </section>
       </div>
     </div>
   );
 }
 
 function nextVendorAction(status: VendorOrder["status"]) {
-  if (status === "New") return "Accept";
-  if (status === "Accepted") return "Prepare";
+  if (status === "New") return "Accept order";
+  if (status === "Accepted") return "Start preparing";
   if (status === "Preparing") return "Mark ready";
-  if (status === "Ready") return "Dispatch";
-  return "Done";
+  if (status === "Ready") return "Request courier";
+  return "Completed";
+}
+
+function vendorActionHint(status: VendorOrder["status"]) {
+  if (status === "New") return "Customer is waiting for confirmation";
+  if (status === "Accepted") return "Begin preparing the order";
+  if (status === "Preparing") return "Complete packing and quality check";
+  if (status === "Ready") return "Order is ready for courier pickup";
+  return "Courier workflow has started";
 }
