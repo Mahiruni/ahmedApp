@@ -58,20 +58,22 @@ export function TrackingModal({
       const merchantMatches =
         typeof parsed.merchant === "string" &&
         orderTitle.toLowerCase().includes(parsed.merchant.toLowerCase());
-      const validPayment =
+      const payment: PaymentMethod | null =
         parsed.payment === "wallet" ||
         parsed.payment === "card" ||
-        parsed.payment === "cash";
+        parsed.payment === "cash"
+          ? parsed.payment
+          : null;
 
       if (
         recent &&
         merchantMatches &&
-        validPayment &&
+        payment &&
         createdAt !== null &&
         orderService !== "taxi"
       ) {
         setConfirmation({
-          payment: parsed.payment,
+          payment,
           itemCount:
             typeof parsed.itemCount === "number" ? parsed.itemCount : 1,
           merchant: parsed.merchant ?? "BILOO partner",
