@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter_Tight, Manrope } from "next/font/google";
 import type { ReactNode } from "react";
 
+import { SearchMotionController } from "@/components/biloo/search-motion-controller";
+
 import "./globals.css";
 import "./brand-overrides.css";
 import "./navigation.css";
@@ -16,6 +18,7 @@ import "./signature-color.css";
 import "./hero-service-motion.css";
 import "./responsive-shell.css";
 import "./search-experience.css";
+import "./motion-boundaries.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -50,6 +53,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en">
       <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
+        <SearchMotionController />
         {children}
       </body>
     </html>
