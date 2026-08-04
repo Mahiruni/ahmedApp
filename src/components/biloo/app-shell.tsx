@@ -15,6 +15,8 @@ type RoleState = {
   availableRoles: Role[];
 };
 
+type CustomerSection = "home" | "explore";
+
 function announceRoleChange(role: Role) {
   window.dispatchEvent(new CustomEvent<Role>(roleChangeEvent, { detail: role }));
 }
@@ -100,41 +102,38 @@ export function AppHeader({
 
   return (
     <>
-      <header
-        className="sticky top-0 z-50 border-b border-[#e8e8e8] bg-white/95 px-4 backdrop-blur-xl sm:px-6"
-        data-biloo-header
-      >
-        <div className="mx-auto flex h-16 max-w-[1500px] items-center gap-3">
+      <header className="biloo-app-header" data-biloo-header>
+        <div className="biloo-app-header-inner">
           <Link
             aria-label="BILOO home"
-            className="shrink-0 rounded-lg transition-opacity hover:opacity-70"
+            className="biloo-header-brand"
             href="/biloo"
           >
             <BrandMark />
           </Link>
 
-          <div className="hidden min-w-0 flex-1 justify-center lg:flex">
-            <span className="inline-flex h-9 items-center gap-2 rounded-full bg-[#f3f3f3] px-3 text-[12px] font-medium text-[#333333]">
-              <Icon className="size-4" name={currentRole.icon} />
-              {currentRole.label}
-              <span className="size-1.5 rounded-full bg-[#06c167]" />
+          <div className="biloo-header-workspace">
+            <span className="biloo-header-workspace-pill">
+              <Icon className="size-[17px]" name={currentRole.icon} />
+              <span>{currentRole.label}</span>
+              <i aria-hidden="true" />
             </span>
           </div>
 
-          <div className="ml-auto flex items-center gap-1.5">
+          <div className="biloo-header-actions">
             <HeaderAction
               badge={cartCount ? String(cartCount) : undefined}
               label="Open cart"
               onClick={onOpenCart}
             >
-              <Icon className="size-[19px]" name="cart" />
+              <Icon className="size-[21px]" name="cart" />
             </HeaderAction>
             <HeaderAction
               alert={Boolean(unreadCount)}
               label="Open notifications"
               onClick={onOpenNotifications}
             >
-              <Icon className="size-[19px]" name="bell" />
+              <Icon className="size-[21px]" name="bell" />
             </HeaderAction>
 
             <button
@@ -142,25 +141,14 @@ export function AppHeader({
               aria-controls="biloo-command-menu"
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close BILOO menu" : "Open BILOO menu"}
-              className={`group ml-0.5 flex size-10 items-center justify-center rounded-full transition ${
-                menuOpen
-                  ? "bg-[#333333] text-white"
-                  : "bg-black text-white hover:bg-[#333333]"
-              }`}
+              className="biloo-header-menu-button"
+              data-open={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
               type="button"
             >
-              <span className="relative block h-4 w-[18px]" aria-hidden="true">
-                <span
-                  className={`absolute left-0 top-[4px] h-[1.5px] w-[18px] rounded-full bg-current transition-transform duration-200 ${
-                    menuOpen ? "translate-y-[3.5px] rotate-45" : ""
-                  }`}
-                />
-                <span
-                  className={`absolute bottom-[4px] left-0 h-[1.5px] w-[18px] rounded-full bg-current transition-transform duration-200 ${
-                    menuOpen ? "-translate-y-[3.5px] -rotate-45" : ""
-                  }`}
-                />
+              <span className="biloo-header-menu-lines" aria-hidden="true">
+                <i />
+                <i />
               </span>
             </button>
           </div>
@@ -169,16 +157,13 @@ export function AppHeader({
 
       <div
         aria-hidden={!menuOpen}
-        className={`fixed inset-0 z-[80] transition-opacity duration-200 ${
-          menuOpen
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
-        }`}
+        className="biloo-command-overlay"
+        data-open={menuOpen}
         id="biloo-command-menu"
       >
         <button
           aria-label="Close BILOO menu"
-          className="absolute inset-0 bg-black/35"
+          className="biloo-command-backdrop"
           onClick={() => setMenuOpen(false)}
           tabIndex={menuOpen ? 0 : -1}
           type="button"
@@ -187,79 +172,71 @@ export function AppHeader({
         <section
           aria-label="BILOO navigation"
           aria-modal="true"
-          className={`absolute inset-y-0 right-0 flex w-[min(90vw,360px)] flex-col bg-white shadow-[-16px_0_48px_rgba(0,0,0,0.16)] transition-transform duration-300 ease-out ${
-            menuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className="biloo-command-panel"
+          data-open={menuOpen}
           role="dialog"
         >
-          <div className="flex items-center justify-between border-b border-[#eeeeee] px-5 pb-4 pt-[max(18px,env(safe-area-inset-top))]">
+          <div className="biloo-command-head">
             <BrandMark />
             <button
               aria-label="Close menu"
-              className="grid size-9 place-items-center rounded-full bg-[#f3f3f3] text-black transition hover:bg-[#e8e8e8]"
+              className="biloo-command-close"
               onClick={() => setMenuOpen(false)}
               type="button"
             >
-              <Icon className="size-[17px]" name="close" />
+              <Icon className="size-[19px]" name="close" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4">
-            <div className="flex items-center gap-3 rounded-xl bg-[#f3f3f3] p-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-black text-[11px] font-semibold text-white">
-                {accountInitials}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-semibold text-black">
-                  BILOO account
-                </span>
-                <span className="mt-0.5 block truncate text-[11px] text-[#6b6b6b]">
+          <div className="biloo-command-scroll">
+            <div className="biloo-command-account">
+              <span className="biloo-command-avatar">{accountInitials}</span>
+              <span className="biloo-command-account-copy">
+                <strong>BILOO account</strong>
+                <small>
                   {currentRole.label} workspace · {liveData ? "Connected" : "Demo"}
-                </span>
+                </small>
               </span>
-              <span className={`size-2 rounded-full ${liveData ? "bg-[#06c167]" : "bg-[#9b9b9b]"}`} />
+              <span
+                aria-label={liveData ? "Connected" : "Demo mode"}
+                className="biloo-command-status"
+                data-live={liveData}
+                role="status"
+              />
             </div>
 
-            <p className="mb-2 mt-6 px-2 text-[11px] font-semibold text-[#6b6b6b]">
-              Workspaces
-            </p>
-            <div className="overflow-hidden rounded-xl border border-[#e8e8e8]">
-              {visibleRoles.map((item, index) => {
+            <p className="biloo-command-label">Workspaces</p>
+            <div className="biloo-command-group">
+              {visibleRoles.map((item) => {
                 const active = item.key === roleState.role;
                 return (
                   <button
                     aria-current={active ? "page" : undefined}
-                    className={`flex min-h-[54px] w-full items-center gap-3 px-3.5 text-left transition ${
-                      active ? "bg-[#f3f3f3]" : "bg-white hover:bg-[#f8f8f8]"
-                    } ${index ? "border-t border-[#eeeeee]" : ""}`}
+                    className="biloo-command-row"
+                    data-active={active}
                     key={item.key}
                     onClick={() => switchWorkspace(item.key)}
                     type="button"
                   >
-                    <span
-                      className={`grid size-8 shrink-0 place-items-center rounded-lg ${
-                        active ? "bg-black text-white" : "bg-[#eeeeee] text-black"
-                      }`}
-                    >
-                      <Icon className="size-4" name={item.icon} />
+                    <span className="biloo-command-row-icon">
+                      <Icon className="size-[20px]" name={item.icon} />
                     </span>
-                    <span className="min-w-0 flex-1 text-[13px] font-medium text-black">
-                      {item.label}
+                    <span className="biloo-command-row-copy">
+                      <strong>{item.label}</strong>
+                      <small>{active ? "Current workspace" : "Open workspace"}</small>
                     </span>
                     {active ? (
-                      <span className="size-2 rounded-full bg-[#06c167]" />
+                      <span className="biloo-command-current" aria-hidden="true" />
                     ) : (
-                      <Icon className="size-4 text-[#a0a0a0]" name="arrow" />
+                      <Icon className="size-[18px]" name="arrow" />
                     )}
                   </button>
                 );
               })}
             </div>
 
-            <p className="mb-2 mt-6 px-2 text-[11px] font-semibold text-[#6b6b6b]">
-              Account
-            </p>
-            <div className="overflow-hidden rounded-xl border border-[#e8e8e8]">
+            <p className="biloo-command-label">Account and activity</p>
+            <div className="biloo-command-group">
               <MenuAction
                 badge={cartCount ? String(cartCount) : undefined}
                 icon="cart"
@@ -287,11 +264,9 @@ export function AppHeader({
             </div>
           </div>
 
-          <footer className="border-t border-[#eeeeee] px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
-            <div className="flex items-center justify-between text-[10px] text-[#777777]">
-              <span>{liveData ? "Supabase connected" : "Local preview"}</span>
-              <span>Addis Ababa</span>
-            </div>
+          <footer className="biloo-command-footer">
+            <span>{liveData ? "Supabase connected" : "Local preview"}</span>
+            <span>Addis Ababa</span>
           </footer>
         </section>
       </div>
@@ -315,19 +290,13 @@ function HeaderAction({
   return (
     <button
       aria-label={label}
-      className="relative grid size-10 place-items-center rounded-full bg-[#f3f3f3] text-black transition hover:bg-[#e8e8e8]"
+      className="biloo-header-action"
       onClick={onClick}
       type="button"
     >
       {children}
-      {badge ? (
-        <span className="absolute -right-0.5 -top-0.5 grid min-h-4 min-w-4 place-items-center rounded-full bg-black px-1 text-[8px] font-semibold text-white ring-2 ring-white">
-          {badge}
-        </span>
-      ) : null}
-      {alert ? (
-        <span className="absolute right-1 top-1 size-2 rounded-full bg-[#d92d20] ring-2 ring-[#f3f3f3]" />
-      ) : null}
+      {badge ? <span className="biloo-header-badge">{badge}</span> : null}
+      {alert ? <span className="biloo-header-alert" /> : null}
     </button>
   );
 }
@@ -346,24 +315,19 @@ function MenuAction({
   alert?: boolean;
 }) {
   return (
-    <button
-      className="flex min-h-[52px] w-full items-center gap-3 border-b border-[#eeeeee] bg-white px-3.5 text-left transition last:border-b-0 hover:bg-[#f8f8f8]"
-      onClick={onClick}
-      type="button"
-    >
-      <span className="relative grid size-8 place-items-center rounded-lg bg-[#eeeeee] text-black">
-        <Icon className="size-4" name={icon} />
-        {alert ? (
-          <span className="absolute right-0 top-0 size-2 rounded-full bg-[#d92d20] ring-2 ring-[#eeeeee]" />
-        ) : null}
+    <button className="biloo-command-row" onClick={onClick} type="button">
+      <span className="biloo-command-row-icon">
+        <Icon className="size-[20px]" name={icon} />
+        {alert ? <span className="biloo-command-row-alert" /> : null}
       </span>
-      <span className="min-w-0 flex-1 text-[13px] font-medium text-black">{label}</span>
+      <span className="biloo-command-row-copy">
+        <strong>{label}</strong>
+        <small>Open {label.toLowerCase()}</small>
+      </span>
       {badge ? (
-        <span className="rounded-full bg-black px-2 py-0.5 text-[9px] font-semibold text-white">
-          {badge}
-        </span>
+        <span className="biloo-command-count">{badge}</span>
       ) : (
-        <Icon className="size-4 text-[#a0a0a0]" name="arrow" />
+        <Icon className="size-[18px]" name="arrow" />
       )}
     </button>
   );
@@ -381,17 +345,43 @@ function MenuLink({
   onClick: () => void;
 }) {
   return (
-    <Link
-      className="flex min-h-[52px] items-center gap-3 border-b border-[#eeeeee] bg-white px-3.5 transition last:border-b-0 hover:bg-[#f8f8f8]"
-      href={href}
-      onClick={onClick}
-    >
-      <span className="grid size-8 place-items-center rounded-lg bg-[#eeeeee] text-black">
-        <Icon className="size-4" name={icon} />
+    <Link className="biloo-command-row" href={href} onClick={onClick}>
+      <span className="biloo-command-row-icon">
+        <Icon className="size-[20px]" name={icon} />
       </span>
-      <span className="min-w-0 flex-1 text-[13px] font-medium text-black">{label}</span>
-      <Icon className="size-4 text-[#a0a0a0]" name="arrow" />
+      <span className="biloo-command-row-copy">
+        <strong>{label}</strong>
+        <small>Open {label.toLowerCase()}</small>
+      </span>
+      <Icon className="size-[18px]" name="arrow" />
     </Link>
+  );
+}
+
+function CustomerNavButton({
+  active = false,
+  icon,
+  label,
+  onClick,
+}: {
+  active?: boolean;
+  icon: "home" | "search" | "cart";
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      aria-current={active ? "page" : undefined}
+      className="biloo-customer-nav-item"
+      data-active={active}
+      onClick={onClick}
+      type="button"
+    >
+      <span className="biloo-customer-nav-icon">
+        <Icon className="size-[22px]" name={icon} />
+      </span>
+      <span>{label}</span>
+    </button>
   );
 }
 
@@ -407,6 +397,9 @@ export function RoleRail({
   liveData?: boolean;
 }) {
   const visibleRoles = roles.filter((item) => availableRoles.includes(item.key));
+  const customerOnly = role === "customer" && visibleRoles.length === 1;
+  const [customerSection, setCustomerSection] =
+    useState<CustomerSection>("home");
 
   useEffect(() => {
     announceRoleState(role, availableRoles);
@@ -422,62 +415,126 @@ export function RoleRail({
     return () => window.removeEventListener(roleChangeEvent, switchFromHeader);
   }, [availableRoles, role, setRole]);
 
+  useEffect(() => {
+    if (!customerOnly) return;
+
+    function updateSection() {
+      const home = document.querySelector<HTMLElement>(
+        "[data-biloo-customer-home]",
+      );
+      const explore = home?.nextElementSibling;
+      if (!(explore instanceof HTMLElement)) return;
+      setCustomerSection(
+        explore.getBoundingClientRect().top <= 150 ? "explore" : "home",
+      );
+    }
+
+    updateSection();
+    window.addEventListener("scroll", updateSection, { passive: true });
+    window.addEventListener("resize", updateSection);
+    return () => {
+      window.removeEventListener("scroll", updateSection);
+      window.removeEventListener("resize", updateSection);
+    };
+  }, [customerOnly]);
+
   function selectRole(nextRole: Role) {
     setRole(nextRole);
     announceRoleState(nextRole, availableRoles);
   }
 
+  function goToCustomerSection(section: CustomerSection) {
+    const home = document.querySelector<HTMLElement>(
+      "[data-biloo-customer-home]",
+    );
+    const target = section === "home" ? home : home?.nextElementSibling;
+    if (!(target instanceof HTMLElement)) return;
+    setCustomerSection(section);
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function openCart() {
+    document
+      .querySelector<HTMLButtonElement>(
+        '[data-biloo-header] button[aria-label="Open cart"]',
+      )
+      ?.click();
+  }
+
+  if (customerOnly) {
+    return (
+      <aside
+        className="biloo-customer-nav"
+        data-biloo-role-rail
+        data-mode="customer"
+      >
+        <div className="biloo-customer-nav-head">
+          <span>Customer</span>
+          <strong>Quick navigation</strong>
+        </div>
+        <nav aria-label="Customer navigation" className="biloo-customer-nav-list">
+          <CustomerNavButton
+            active={customerSection === "home"}
+            icon="home"
+            label="Home"
+            onClick={() => goToCustomerSection("home")}
+          />
+          <CustomerNavButton
+            active={customerSection === "explore"}
+            icon="search"
+            label="Explore"
+            onClick={() => goToCustomerSection("explore")}
+          />
+          <CustomerNavButton icon="cart" label="Cart" onClick={openCart} />
+          <Link
+            className="biloo-customer-nav-item"
+            href={liveData ? "/account" : "/auth/login"}
+          >
+            <span className="biloo-customer-nav-icon">
+              <Icon className="size-[22px]" name="customer" />
+            </span>
+            <span>Account</span>
+          </Link>
+        </nav>
+        <div className="biloo-customer-nav-status">
+          <i data-live={liveData} />
+          <span>{liveData ? "Production connected" : "Demo experience"}</span>
+        </div>
+      </aside>
+    );
+  }
+
   return (
-    <aside
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-[#e8e8e8] bg-white/98 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.04)] backdrop-blur-xl lg:sticky lg:inset-auto lg:top-20 lg:z-20 lg:mx-4 lg:my-5 lg:h-[calc(100vh-100px)] lg:rounded-2xl lg:border lg:pb-0 lg:shadow-none"
-      data-biloo-role-rail
-    >
-      <div className="hidden border-b border-[#eeeeee] px-4 py-4 lg:block">
-        <p className="text-[12px] font-semibold text-black">Workspaces</p>
-        <p className="mt-1 text-[11px] leading-4 text-[#777777]">
-          Switch operational views.
-        </p>
+    <aside className="biloo-workspace-rail" data-biloo-role-rail>
+      <div className="biloo-workspace-rail-head">
+        <span>Operations</span>
+        <strong>Workspaces</strong>
       </div>
 
-      <div
-        className={`grid lg:block ${
-          visibleRoles.length === 1 ? "grid-cols-1" : "grid-cols-4"
-        }`}
-      >
+      <div className="biloo-workspace-list">
         {visibleRoles.map((item) => {
           const active = role === item.key;
           return (
             <button
               aria-current={active ? "page" : undefined}
-              className={`group flex min-h-[60px] w-full flex-col items-center justify-center gap-1 px-1 text-center transition lg:min-h-[54px] lg:flex-row lg:justify-start lg:gap-3 lg:border-b lg:border-[#eeeeee] lg:px-3.5 lg:text-left ${
-                active
-                  ? "text-black"
-                  : "text-[#777777] hover:bg-[#f8f8f8] hover:text-black"
-              }`}
+              className="biloo-workspace-item"
+              data-active={active}
               key={item.key}
               onClick={() => selectRole(item.key)}
               type="button"
             >
-              <span
-                className={`relative grid size-6 shrink-0 place-items-center rounded-md lg:size-8 ${
-                  active ? "bg-black text-white" : "bg-transparent text-current lg:bg-[#eeeeee]"
-                }`}
-              >
-                <Icon className="size-[18px] lg:size-4" name={item.icon} />
+              <span className="biloo-workspace-icon">
+                <Icon className="size-[20px]" name={item.icon} />
               </span>
-              <span className="text-[10px] font-medium lg:text-[13px]">{item.label}</span>
+              <span>{item.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="mx-3 mt-auto hidden rounded-xl bg-[#f3f3f3] p-3 lg:block">
-        <div className="flex items-center gap-2">
-          <span className={`size-2 rounded-full ${liveData ? "bg-[#06c167]" : "bg-[#9b9b9b]"}`} />
-          <p className="text-[11px] font-medium text-black">
-            {liveData ? "Production connected" : "Demo experience"}
-          </p>
-        </div>
+      <div className="biloo-workspace-status">
+        <i data-live={liveData} />
+        <span>{liveData ? "Production connected" : "Demo experience"}</span>
       </div>
     </aside>
   );
