@@ -1,0 +1,1577 @@
+/* BILOO operations workspaces: premium vendor and driver experiences. */
+
+.biloo-vendor-workspace,
+.biloo-driver-workspace {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  color: #17171c;
+}
+
+.biloo-vendor-workspace *,
+.biloo-driver-workspace * {
+  box-sizing: border-box;
+}
+
+.biloo-vendor-hero,
+.biloo-driver-hero {
+  overflow: hidden;
+  border: 1px solid #25252c;
+  border-radius: 24px;
+  background: #111114;
+  color: #ffffff;
+  box-shadow: 0 18px 52px rgba(17, 17, 22, 0.16);
+}
+
+.biloo-vendor-hero-main,
+.biloo-driver-hero-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px;
+}
+
+.biloo-vendor-store-mark,
+.biloo-driver-avatar {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  place-items: center;
+  border-radius: 16px;
+  background: #5146e5;
+  color: #ffffff;
+}
+
+.biloo-vendor-store-mark svg,
+.biloo-driver-avatar svg {
+  width: 23px;
+  height: 23px;
+}
+
+.biloo-vendor-kicker,
+.biloo-driver-kicker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #a7a5b0;
+  font-size: 10px;
+  font-weight: 680;
+  letter-spacing: 0.02em;
+}
+
+.biloo-vendor-kicker > span,
+.biloo-driver-kicker > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #77757f;
+}
+
+.biloo-vendor-kicker > span.is-live,
+.biloo-driver-kicker > span.is-live {
+  background: #31c77f;
+  box-shadow: 0 0 0 4px rgba(49, 199, 127, 0.12);
+}
+
+.biloo-vendor-hero h1,
+.biloo-driver-hero h1 {
+  margin: 5px 0 0;
+  color: #ffffff;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(25px, 4vw, 36px);
+  font-weight: 740;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.biloo-vendor-hero p,
+.biloo-driver-hero p {
+  max-width: 620px;
+  margin: 7px 0 0;
+  color: #aaa8b2;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.biloo-vendor-availability,
+.biloo-driver-availability {
+  display: flex;
+  min-width: 190px;
+  min-height: 58px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid #373740;
+  border-radius: 17px;
+  background: #1d1d22;
+  padding: 9px 11px 9px 14px;
+  color: #ffffff;
+  text-align: left;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.biloo-vendor-availability:hover,
+.biloo-driver-availability:hover {
+  border-color: #51515c;
+  background: #24242a;
+}
+
+.biloo-vendor-availability-copy small,
+.biloo-vendor-availability-copy strong,
+.biloo-driver-availability small,
+.biloo-driver-availability strong {
+  display: block;
+}
+
+.biloo-vendor-availability-copy small,
+.biloo-driver-availability small {
+  color: #8f8d98;
+  font-size: 9px;
+  font-weight: 640;
+}
+
+.biloo-vendor-availability-copy strong,
+.biloo-driver-availability strong {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 740;
+}
+
+.biloo-vendor-switch,
+.biloo-driver-switch {
+  position: relative;
+  width: 43px;
+  height: 25px;
+  flex: 0 0 43px;
+  border-radius: 999px;
+  background: #474750;
+  transition: background-color 180ms ease;
+}
+
+.biloo-vendor-switch i,
+.biloo-driver-switch i {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.25);
+  transition: transform 180ms ease;
+}
+
+.biloo-vendor-availability[data-open="true"] .biloo-vendor-switch,
+.biloo-driver-availability[data-online="true"] .biloo-driver-switch {
+  background: #5146e5;
+}
+
+.biloo-vendor-availability[data-open="true"] .biloo-vendor-switch i,
+.biloo-driver-availability[data-online="true"] .biloo-driver-switch i {
+  transform: translateX(18px);
+}
+
+.biloo-vendor-metrics,
+.biloo-driver-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid #2a2a31;
+  background: #17171b;
+}
+
+.biloo-driver-metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.biloo-vendor-metrics article,
+.biloo-driver-metrics article {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 11px;
+  border-right: 1px solid #2a2a31;
+  padding: 16px 18px;
+}
+
+.biloo-vendor-metrics article:last-child,
+.biloo-driver-metrics article:last-child {
+  border-right: 0;
+}
+
+.biloo-vendor-metric-icon,
+.biloo-driver-metric-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 11px;
+  background: #24242a;
+  color: #b9b5ff;
+}
+
+.biloo-vendor-metric-icon svg,
+.biloo-driver-metric-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.biloo-vendor-metrics article[data-tone="success"] .biloo-vendor-metric-icon {
+  background: #163c2b;
+  color: #6de0a8;
+}
+
+.biloo-vendor-metrics article[data-tone="danger"] .biloo-vendor-metric-icon {
+  background: #432126;
+  color: #ff9da7;
+}
+
+.biloo-vendor-metrics strong,
+.biloo-vendor-metrics small,
+.biloo-vendor-metrics em,
+.biloo-driver-metrics strong,
+.biloo-driver-metrics small,
+.biloo-driver-metrics em {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-vendor-metrics strong,
+.biloo-driver-metrics strong {
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 780;
+  letter-spacing: -0.025em;
+}
+
+.biloo-vendor-metrics small,
+.biloo-driver-metrics small {
+  margin-top: 3px;
+  color: #c2c0c9;
+  font-size: 10px;
+  font-weight: 680;
+}
+
+.biloo-vendor-metrics em,
+.biloo-driver-metrics em {
+  margin-top: 3px;
+  color: #777580;
+  font-size: 8.5px;
+  font-style: normal;
+  font-weight: 540;
+}
+
+.biloo-vendor-notice,
+.biloo-driver-notice {
+  display: flex;
+  min-height: 46px;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #ccebd9;
+  border-radius: 15px;
+  background: #f2fbf6;
+  padding: 0 14px;
+  color: #087443;
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.biloo-vendor-notice svg,
+.biloo-driver-notice svg {
+  width: 16px;
+  height: 16px;
+}
+
+.biloo-vendor-attention {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid #f0d5ae;
+  border-radius: 17px;
+  background: #fff9ef;
+  padding: 10px 12px;
+}
+
+.biloo-vendor-attention-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border-radius: 12px;
+  background: #fff0d8;
+  color: #a65b00;
+}
+
+.biloo-vendor-attention small,
+.biloo-vendor-attention strong {
+  display: block;
+}
+
+.biloo-vendor-attention small {
+  color: #9c6a25;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.biloo-vendor-attention strong {
+  margin-top: 2px;
+  color: #432d10;
+  font-size: 12px;
+  font-weight: 740;
+}
+
+.biloo-vendor-attention-status {
+  min-height: 29px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #111114;
+  padding: 7px 10px 0;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.biloo-vendor-grid,
+.biloo-driver-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.biloo-vendor-panel,
+.biloo-driver-panel,
+.biloo-driver-active {
+  overflow: hidden;
+  border: 1px solid #e5e5ea;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 10px 34px rgba(17, 17, 22, 0.055);
+}
+
+.biloo-vendor-panel-header,
+.biloo-driver-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #ececf0;
+  padding: 18px 19px 15px;
+}
+
+.biloo-vendor-panel-header > div > span,
+.biloo-driver-panel-header > div > span {
+  color: #5146e5;
+  font-size: 9px;
+  font-weight: 740;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.biloo-vendor-panel-header h2,
+.biloo-driver-panel-header h2 {
+  margin: 4px 0 0;
+  color: #151519;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 21px;
+  font-weight: 740;
+  letter-spacing: -0.035em;
+}
+
+.biloo-vendor-panel-header p,
+.biloo-driver-panel-header p {
+  margin: 5px 0 0;
+  color: #85838d;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.biloo-vendor-panel-count,
+.biloo-driver-panel-status,
+.biloo-driver-demand-trend {
+  display: inline-flex;
+  min-height: 29px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: #f0efff;
+  padding: 0 10px;
+  color: #5146e5;
+  font-size: 9px;
+  font-weight: 720;
+}
+
+.biloo-vendor-panel-count[data-danger="true"] {
+  background: #fff0f1;
+  color: #b4232f;
+}
+
+.biloo-vendor-orders,
+.biloo-vendor-inventory,
+.biloo-driver-jobs {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.biloo-vendor-order,
+.biloo-vendor-stock,
+.biloo-driver-job {
+  border: 1px solid #e8e8ed;
+  border-radius: 18px;
+  background: #ffffff;
+  padding: 14px;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.biloo-vendor-order:hover,
+.biloo-vendor-stock:hover,
+.biloo-driver-job:hover {
+  border-color: #d7d5e3;
+  box-shadow: 0 9px 25px rgba(17, 17, 22, 0.065);
+  transform: translateY(-1px);
+}
+
+.biloo-vendor-order[data-status="New"] {
+  border-left: 4px solid #d97800;
+}
+
+.biloo-vendor-order[data-status="Ready"] {
+  border-left: 4px solid #168652;
+}
+
+.biloo-vendor-order[data-status="Dispatched"] {
+  border-left: 4px solid #5146e5;
+}
+
+.biloo-vendor-order-top,
+.biloo-vendor-stock-top,
+.biloo-driver-job-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.biloo-vendor-order-id {
+  display: block;
+  color: #5146e5;
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.035em;
+}
+
+.biloo-vendor-order h3,
+.biloo-vendor-stock h3,
+.biloo-driver-job h3 {
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: #17171c;
+  font-size: 13px;
+  font-weight: 740;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-vendor-order p,
+.biloo-vendor-stock p {
+  margin: 3px 0 0;
+  color: #85838d;
+  font-size: 9.5px;
+}
+
+.biloo-vendor-order-value {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.biloo-vendor-order-value strong,
+.biloo-vendor-order-value span {
+  display: block;
+}
+
+.biloo-vendor-order-value strong {
+  color: #16161b;
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.biloo-vendor-order-value span {
+  margin-top: 4px;
+  color: #6f6d78;
+  font-size: 9px;
+  font-weight: 680;
+}
+
+.biloo-vendor-order-progress,
+.biloo-vendor-stock-meter,
+.biloo-driver-stage-track {
+  height: 5px;
+  overflow: hidden;
+  margin-top: 13px;
+  border-radius: 999px;
+  background: #efeff3;
+}
+
+.biloo-vendor-order-progress > span,
+.biloo-vendor-stock-meter > span,
+.biloo-driver-stage-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #5146e5;
+  transition: width 300ms ease;
+}
+
+.biloo-vendor-order[data-status="New"] .biloo-vendor-order-progress > span {
+  background: #d97800;
+}
+
+.biloo-vendor-order[data-status="Ready"] .biloo-vendor-order-progress > span,
+.biloo-vendor-stock:not([data-low="true"]) .biloo-vendor-stock-meter > span {
+  background: #168652;
+}
+
+.biloo-vendor-stock[data-low="true"] .biloo-vendor-stock-meter > span {
+  background: #d92d3a;
+}
+
+.biloo-vendor-order-stages {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 7px;
+}
+
+.biloo-vendor-order-stages span {
+  overflow: hidden;
+  color: #aaa8b1;
+  font-size: 7.5px;
+  font-weight: 620;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-vendor-order-stages span[data-done="true"] {
+  color: #4b4855;
+  font-weight: 720;
+}
+
+.biloo-vendor-order-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 13px;
+  border-top: 1px solid #eeeeF2;
+  padding-top: 12px;
+}
+
+.biloo-vendor-order-footer > span {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  color: #777580;
+  font-size: 8.5px;
+  line-height: 1.35;
+}
+
+.biloo-vendor-order-footer > span svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  color: #5146e5;
+}
+
+.biloo-vendor-order-footer button {
+  display: inline-flex;
+  min-height: 38px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 12px;
+  background: #111114;
+  padding: 0 12px;
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 720;
+}
+
+.biloo-vendor-order-footer button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.biloo-vendor-order-footer button:disabled {
+  cursor: not-allowed;
+  background: #eeeeF2;
+  color: #a3a1aa;
+}
+
+.biloo-vendor-stock[data-low="true"] {
+  border-color: #f1cbd0;
+  background: #fffafb;
+}
+
+.biloo-vendor-stock-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border-radius: 12px;
+  background: #f0efff;
+  color: #5146e5;
+}
+
+.biloo-vendor-stock[data-low="true"] .biloo-vendor-stock-icon {
+  background: #fff0f1;
+  color: #b4232f;
+}
+
+.biloo-vendor-stock-quantity {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.biloo-vendor-stock-quantity strong,
+.biloo-vendor-stock-quantity small {
+  display: block;
+}
+
+.biloo-vendor-stock-quantity strong {
+  color: #17171c;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.biloo-vendor-stock-quantity small {
+  color: #8b8993;
+  font-size: 8px;
+}
+
+.biloo-vendor-stock-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 7px;
+  color: #85838d;
+  font-size: 8px;
+  font-weight: 620;
+}
+
+.biloo-vendor-stock[data-low="true"] .biloo-vendor-stock-meta span:first-child {
+  color: #b4232f;
+  font-weight: 720;
+}
+
+.biloo-vendor-stock-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.biloo-vendor-stock-actions > div {
+  display: grid;
+  grid-template-columns: 34px 30px 34px;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid #ddddE4;
+  border-radius: 11px;
+  background: #f7f7f9;
+}
+
+.biloo-vendor-stock-actions > div button {
+  height: 34px;
+  border: 0;
+  background: #ffffff;
+  color: #1d1d22;
+  font-size: 15px;
+  font-weight: 720;
+}
+
+.biloo-vendor-stock-actions > div span {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 760;
+}
+
+.biloo-vendor-stock-actions > button {
+  min-height: 36px;
+  flex: 1;
+  border: 0;
+  border-radius: 11px;
+  background: #111114;
+  padding: 0 10px;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.biloo-vendor-empty,
+.biloo-driver-empty {
+  display: grid;
+  min-height: 260px;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.biloo-vendor-empty > span,
+.biloo-driver-empty > span {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 17px;
+  background: #f0efff;
+  color: #5146e5;
+}
+
+.biloo-vendor-empty h3,
+.biloo-driver-empty h3 {
+  margin: 13px 0 0;
+  font-size: 15px;
+  font-weight: 740;
+}
+
+.biloo-vendor-empty p,
+.biloo-driver-empty p {
+  max-width: 280px;
+  margin: 5px 0 0;
+  color: #85838d;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Driver active job */
+.biloo-driver-active {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(380px, 1.08fr);
+}
+
+.biloo-driver-active-content {
+  min-width: 0;
+  padding: 19px;
+}
+
+.biloo-driver-active-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.biloo-driver-active-header > span:last-child {
+  color: #92909a;
+  font-size: 9px;
+  font-weight: 680;
+}
+
+.biloo-driver-active-badge,
+.biloo-driver-panel-status {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: #e9f8f0;
+  padding: 0 10px;
+  color: #087443;
+  font-size: 9px;
+  font-weight: 720;
+}
+
+.biloo-driver-active-badge i,
+.biloo-driver-panel-status i {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.biloo-driver-panel-status:not([data-online="true"]) {
+  background: #f0f0f3;
+  color: #777580;
+}
+
+.biloo-driver-active-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.biloo-driver-service-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border-radius: 15px;
+  background: #f0efff;
+  color: #5146e5;
+}
+
+.biloo-driver-active-title small,
+.biloo-driver-active-title h2,
+.biloo-driver-active-title p {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-driver-active-title small {
+  color: #777580;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.biloo-driver-active-title h2 {
+  margin: 2px 0 0;
+  color: #17171c;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 23px;
+  font-weight: 760;
+  letter-spacing: -0.04em;
+}
+
+.biloo-driver-active-title p {
+  margin: 3px 0 0;
+  color: #85838d;
+  font-size: 9.5px;
+}
+
+.biloo-driver-active-title > strong {
+  flex: 0 0 auto;
+  color: #17171c;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.biloo-driver-stage-progress {
+  margin-top: 18px;
+  border: 1px solid #e8e8ed;
+  border-radius: 17px;
+  background: #fafafd;
+  padding: 13px;
+}
+
+.biloo-driver-stage-progress > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.biloo-driver-stage-progress > div:first-child span {
+  color: #4f4d56;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.biloo-driver-stage-progress > div:first-child strong {
+  color: #5146e5;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.biloo-driver-stage-labels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 9px;
+}
+
+.biloo-driver-stage-labels > span {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  color: #a5a3ac;
+  font-size: 7.5px;
+  font-weight: 620;
+  text-align: center;
+}
+
+.biloo-driver-stage-labels i {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d7d6dd;
+}
+
+.biloo-driver-stage-labels > span[data-done="true"] {
+  color: #5e5c66;
+  font-weight: 700;
+}
+
+.biloo-driver-stage-labels > span[data-done="true"] i {
+  background: #5146e5;
+}
+
+.biloo-driver-stage-labels > span[data-current="true"] i {
+  box-shadow: 0 0 0 4px rgba(81, 70, 229, 0.13);
+}
+
+.biloo-driver-route-card,
+.biloo-driver-job-route {
+  position: relative;
+  display: grid;
+  gap: 13px;
+  margin-top: 14px;
+  border: 1px solid #e8e8ed;
+  border-radius: 17px;
+  background: #ffffff;
+  padding: 13px;
+}
+
+.biloo-driver-route-stop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.biloo-driver-route-stop > span {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 9px;
+  background: #f3f3f5;
+}
+
+.biloo-driver-route-stop > span i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #168652;
+}
+
+.biloo-driver-route-stop[data-tone="red"] > span i {
+  background: #d92d3a;
+}
+
+.biloo-driver-route-stop small,
+.biloo-driver-route-stop strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-driver-route-stop small {
+  color: #85838d;
+  font-size: 8px;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.biloo-driver-route-stop strong {
+  margin-top: 3px;
+  color: #1a1a1f;
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.biloo-driver-route-connector {
+  position: absolute;
+  top: 34px;
+  bottom: 34px;
+  left: 26px;
+  border-left: 1px dashed #c7c6ce;
+}
+
+.biloo-driver-job-metrics,
+.biloo-driver-job-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.biloo-driver-job-metrics article,
+.biloo-driver-job-summary > span {
+  min-width: 0;
+  border-radius: 13px;
+  background: #f7f7f9;
+  padding: 10px;
+}
+
+.biloo-driver-job-metrics small,
+.biloo-driver-job-metrics strong,
+.biloo-driver-job-summary small,
+.biloo-driver-job-summary strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-driver-job-metrics small,
+.biloo-driver-job-summary small {
+  color: #85838d;
+  font-size: 8px;
+  font-weight: 620;
+}
+
+.biloo-driver-job-metrics strong,
+.biloo-driver-job-summary strong {
+  margin-top: 4px;
+  color: #17171c;
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.biloo-driver-contact-actions,
+.biloo-driver-job-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.biloo-driver-contact-actions a,
+.biloo-driver-contact-actions button,
+.biloo-driver-job-actions button {
+  display: inline-flex;
+  min-height: 43px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #dedde4;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #25252b;
+  font-size: 10px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.biloo-driver-contact-actions > button:last-child,
+.biloo-driver-job-actions > button:last-child {
+  border-color: #111114;
+  background: #111114;
+  color: #ffffff;
+}
+
+.biloo-driver-contact-actions button:disabled,
+.biloo-driver-job-actions button:disabled {
+  cursor: not-allowed;
+  border-color: #e6e6eb;
+  background: #f4f4f6;
+  color: #aaa8b1;
+}
+
+.biloo-driver-contact-actions svg,
+.biloo-driver-job-actions svg {
+  width: 15px;
+  height: 15px;
+}
+
+.biloo-driver-primary-action {
+  display: flex;
+  width: 100%;
+  min-height: 49px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 14px;
+  background: #5146e5;
+  padding: 0 15px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 740;
+  box-shadow: 0 9px 22px rgba(81, 70, 229, 0.2);
+}
+
+.biloo-driver-contact-note {
+  margin: 7px 0 0;
+  color: #95939d;
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+.biloo-driver-route-visual,
+.biloo-driver-demand-map {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+  background: #ececf2;
+}
+
+.biloo-driver-map-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(#d7d7df 1px, transparent 1px),
+    linear-gradient(90deg, #d7d7df 1px, transparent 1px);
+  background-size: 38px 38px;
+  opacity: 0.58;
+}
+
+.biloo-driver-map-route {
+  position: absolute;
+  top: 22%;
+  left: 17%;
+  width: 64%;
+  height: 8px;
+  border-radius: 999px;
+  background: #5146e5;
+  transform: rotate(22deg);
+  transform-origin: left center;
+}
+
+.biloo-driver-map-route::after {
+  position: absolute;
+  inset: 2px 7px;
+  border-radius: inherit;
+  background: #ffffff;
+  content: "";
+  opacity: 0.45;
+}
+
+.biloo-driver-map-pin,
+.biloo-driver-map-vehicle,
+.biloo-driver-demand-position {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border: 4px solid #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(17, 17, 22, 0.17);
+}
+
+.biloo-driver-map-pin {
+  width: 45px;
+  height: 45px;
+  background: #168652;
+  color: #ffffff;
+}
+
+.biloo-driver-map-pin.is-start {
+  top: 17%;
+  left: 14%;
+}
+
+.biloo-driver-map-pin.is-end {
+  right: 12%;
+  bottom: 17%;
+  background: #d92d3a;
+}
+
+.biloo-driver-map-vehicle {
+  width: 52px;
+  height: 52px;
+  background: #111114;
+  color: #bdb8ff;
+  transform: translate(-50%, -50%);
+  transition: left 500ms ease, top 500ms ease;
+}
+
+.biloo-driver-map-card,
+.biloo-driver-demand-card {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #e1e1e7;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 12px;
+  box-shadow: 0 12px 32px rgba(17, 17, 22, 0.12);
+}
+
+.biloo-driver-map-card > span,
+.biloo-driver-demand-card > span {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border-radius: 11px;
+  background: #f0efff;
+  color: #5146e5;
+}
+
+.biloo-driver-map-card small,
+.biloo-driver-map-card strong,
+.biloo-driver-map-card p,
+.biloo-driver-demand-card small,
+.biloo-driver-demand-card strong,
+.biloo-driver-demand-card p {
+  display: block;
+  margin: 0;
+}
+
+.biloo-driver-map-card small,
+.biloo-driver-demand-card small {
+  color: #85838d;
+  font-size: 8px;
+  font-weight: 650;
+}
+
+.biloo-driver-map-card strong,
+.biloo-driver-demand-card strong {
+  margin-top: 2px;
+  color: #17171c;
+  font-size: 11px;
+  font-weight: 740;
+}
+
+.biloo-driver-map-card p,
+.biloo-driver-demand-card p {
+  margin-top: 3px;
+  color: #85838d;
+  font-size: 8.5px;
+  line-height: 1.4;
+}
+
+/* Driver job queue and demand */
+.biloo-driver-job-top > span:last-child {
+  color: #9997a1;
+  font-size: 8.5px;
+  font-weight: 650;
+}
+
+.biloo-driver-job-type {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: #f0efff;
+  padding: 0 9px;
+  color: #5146e5;
+  font-size: 9px;
+  font-weight: 720;
+}
+
+.biloo-driver-job-type svg {
+  width: 14px;
+  height: 14px;
+}
+
+.biloo-driver-jobs[data-online="false"] .biloo-driver-job {
+  opacity: 0.56;
+}
+
+.biloo-driver-demand {
+  position: sticky;
+  top: 84px;
+}
+
+.biloo-driver-demand-trend {
+  color: #087443;
+  background: #e9f8f0;
+}
+
+.biloo-driver-demand-trend svg {
+  width: 14px;
+  height: 14px;
+}
+
+.biloo-driver-demand-map {
+  min-height: 480px;
+}
+
+.biloo-driver-demand-zone {
+  position: absolute;
+  display: block;
+  border: 1px solid rgba(81, 70, 229, 0.16);
+  border-radius: 999px;
+  background: rgba(81, 70, 229, 0.15);
+}
+
+.biloo-driver-demand-zone.is-one {
+  top: 15%;
+  left: 10%;
+  width: 120px;
+  height: 120px;
+}
+
+.biloo-driver-demand-zone.is-two {
+  top: 38%;
+  right: 7%;
+  width: 150px;
+  height: 150px;
+  background: rgba(217, 120, 0, 0.16);
+  border-color: rgba(217, 120, 0, 0.19);
+}
+
+.biloo-driver-demand-zone.is-three {
+  bottom: 16%;
+  left: 29%;
+  width: 96px;
+  height: 96px;
+  background: rgba(22, 134, 82, 0.14);
+  border-color: rgba(22, 134, 82, 0.18);
+}
+
+.biloo-driver-demand-position {
+  top: 48%;
+  left: 48%;
+  width: 48px;
+  height: 48px;
+  background: #111114;
+  color: #ffffff;
+  transform: translate(-50%, -50%);
+}
+
+.biloo-driver-demand-map[data-online="false"] .biloo-driver-demand-position {
+  background: #77757f;
+}
+
+.biloo-vendor-availability:focus-visible,
+.biloo-driver-availability:focus-visible,
+.biloo-vendor-order-footer button:focus-visible,
+.biloo-vendor-stock-actions button:focus-visible,
+.biloo-driver-contact-actions a:focus-visible,
+.biloo-driver-contact-actions button:focus-visible,
+.biloo-driver-primary-action:focus-visible,
+.biloo-driver-job-actions button:focus-visible {
+  outline: 3px solid rgba(81, 70, 229, 0.25);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1100px) {
+  .biloo-vendor-grid,
+  .biloo-driver-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-driver-demand {
+    position: static;
+  }
+
+  .biloo-driver-active {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-driver-route-visual {
+    min-height: 420px;
+    border-top: 1px solid #e5e5ea;
+  }
+}
+
+@media (max-width: 760px) {
+  .biloo-vendor-workspace,
+  .biloo-driver-workspace {
+    gap: 13px;
+  }
+
+  .biloo-vendor-hero,
+  .biloo-driver-hero,
+  .biloo-vendor-panel,
+  .biloo-driver-panel,
+  .biloo-driver-active {
+    border-radius: 19px;
+  }
+
+  .biloo-vendor-hero-main,
+  .biloo-driver-hero-main {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 11px;
+    padding: 16px;
+  }
+
+  .biloo-vendor-store-mark,
+  .biloo-driver-avatar {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    border-radius: 14px;
+  }
+
+  .biloo-vendor-availability,
+  .biloo-driver-availability {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    min-height: 51px;
+    border-radius: 14px;
+  }
+
+  .biloo-vendor-metrics,
+  .biloo-driver-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .biloo-driver-metrics article:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .biloo-vendor-metrics article,
+  .biloo-driver-metrics article {
+    border-right: 1px solid #2a2a31;
+    border-bottom: 1px solid #2a2a31;
+    padding: 13px;
+  }
+
+  .biloo-vendor-metrics article:nth-child(2n),
+  .biloo-driver-metrics article:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .biloo-vendor-metrics article:nth-last-child(-n + 2),
+  .biloo-driver-metrics article:last-child {
+    border-bottom: 0;
+  }
+
+  .biloo-vendor-metrics strong,
+  .biloo-driver-metrics strong {
+    font-size: 14px;
+  }
+
+  .biloo-vendor-metrics em,
+  .biloo-driver-metrics em {
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  .biloo-vendor-attention-status {
+    display: none;
+  }
+
+  .biloo-vendor-panel-header,
+  .biloo-driver-panel-header {
+    padding: 15px;
+  }
+
+  .biloo-vendor-orders,
+  .biloo-vendor-inventory,
+  .biloo-driver-jobs {
+    padding: 10px;
+  }
+
+  .biloo-vendor-order,
+  .biloo-vendor-stock,
+  .biloo-driver-job {
+    border-radius: 16px;
+    padding: 12px;
+  }
+
+  .biloo-vendor-order-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .biloo-vendor-order-footer button {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .biloo-vendor-stock-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .biloo-vendor-stock-actions > div {
+    grid-template-columns: 42px 1fr 42px;
+  }
+
+  .biloo-vendor-stock-actions > button {
+    min-height: 42px;
+  }
+
+  .biloo-driver-active-content {
+    padding: 14px;
+  }
+
+  .biloo-driver-active-title {
+    align-items: flex-start;
+  }
+
+  .biloo-driver-active-title > strong {
+    display: none;
+  }
+
+  .biloo-driver-job-metrics,
+  .biloo-driver-job-summary {
+    gap: 6px;
+  }
+
+  .biloo-driver-contact-actions,
+  .biloo-driver-job-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .biloo-driver-route-visual,
+  .biloo-driver-demand-map {
+    min-height: 350px;
+  }
+
+  .biloo-driver-map-card,
+  .biloo-driver-demand-card {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .biloo-vendor-hero h1,
+  .biloo-driver-hero h1 {
+    font-size: 23px;
+  }
+
+  .biloo-vendor-metric-icon,
+  .biloo-driver-metric-icon {
+    width: 31px;
+    height: 31px;
+    flex-basis: 31px;
+  }
+
+  .biloo-vendor-order-stages {
+    display: none;
+  }
+
+  .biloo-driver-stage-labels > span {
+    font-size: 6.5px;
+  }
+
+  .biloo-driver-contact-actions,
+  .biloo-driver-job-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-vendor-order,
+  .biloo-vendor-stock,
+  .biloo-driver-job,
+  .biloo-vendor-switch i,
+  .biloo-driver-switch i,
+  .biloo-driver-map-vehicle,
+  .biloo-vendor-order-progress > span,
+  .biloo-vendor-stock-meter > span,
+  .biloo-driver-stage-track > span {
+    transition: none !important;
+  }
+}
