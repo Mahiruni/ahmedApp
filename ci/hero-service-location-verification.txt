@@ -1,1 +1,0 @@
-Verification marker for the animated service loop and exact place-name location update.
