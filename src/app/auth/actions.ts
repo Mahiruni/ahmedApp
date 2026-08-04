@@ -57,7 +57,9 @@ export async function signInAction(formData: FormData) {
 export async function signUpAction(formData: FormData) {
   const firstName = normalizePersonName(value(formData, "firstName"));
   const fatherName = normalizePersonName(value(formData, "fatherName"));
-  const grandfatherName = normalizePersonName(value(formData, "grandfatherName"));
+  const grandfatherName = normalizePersonName(
+    value(formData, "grandfatherName"),
+  );
   const username = normalizeUsername(value(formData, "username"));
   const phone = normalizeEthiopianPhone(value(formData, "phone"));
   const email = value(formData, "email").toLowerCase();
@@ -120,32 +122,13 @@ export async function signUpAction(formData: FormData) {
     );
   }
 
-  const supabase = await createClient();
-  const { data: usernameAvailable, error: usernameCheckError } =
-    await supabase.rpc("is_biloo_username_available", {
-      candidate_username: username,
-    });
-
-  if (usernameCheckError) {
-    authError(
-      "/auth/sign-up",
-      "Username availability could not be checked. Please try again.",
-    );
-  }
-
-  if (!usernameAvailable) {
-    authError(
-      "/auth/sign-up",
-      "That username is already taken. Choose another username.",
-    );
-  }
-
   const displayName = `${firstName} ${fatherName} ${grandfatherName}`;
   const requestHeaders = await headers();
   const origin =
     requestHeaders.get("origin") ??
     process.env.NEXT_PUBLIC_SITE_URL ??
     "http://localhost:3000";
+  const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -170,7 +153,7 @@ export async function signUpAction(formData: FormData) {
 
   if (error) {
     const message = /username|database error saving new user/i.test(error.message)
-      ? "That username was just claimed. Choose another username."
+      ? "That username is already taken. Choose another username."
       : error.message;
     authError("/auth/sign-up", message);
   }
