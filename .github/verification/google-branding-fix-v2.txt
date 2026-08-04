@@ -1,0 +1,1 @@
+Verify the strengthened BILOO public homepage for Google OAuth brand review: exact BILOO app name, clear five-service purpose, Google sign-in data explanation, privacy link, TypeScript, ESLint and production build.
