@@ -113,8 +113,20 @@ export default async function HomePage({
           )}
 
           <p className="biloo-entry-legal">
-            By continuing, you agree to BILOO&apos;s Terms and Privacy Notice.
+            By continuing, you agree to BILOO&apos;s
+            {" "}
+            <Link href="/terms">Terms of Service</Link> and
+            {" "}
+            <Link href="/privacy">Privacy Policy</Link>.
           </p>
+
+          <nav aria-label="BILOO public information" className="biloo-entry-public-links">
+            <Link href="/about">About BILOO</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/privacy">Privacy</Link>
+            <span aria-hidden="true">·</span>
+            <Link href="/terms">Terms</Link>
+          </nav>
         </div>
       </section>
     </main>
