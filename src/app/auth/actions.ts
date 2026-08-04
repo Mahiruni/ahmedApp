@@ -20,6 +20,25 @@ function authError(path: string, message: string) {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
 }
 
+function normalizePersonName(input: string) {
+  return input.replace(/\s+/g, " ").trim();
+}
+
+function normalizeUsername(input: string) {
+  return input.toLowerCase().replace(/\s+/g, "").trim();
+}
+
+function normalizeEthiopianPhone(input: string) {
+  const digits = input.replace(/\D/g, "");
+  const national = digits.startsWith("251")
+    ? digits.slice(3)
+    : digits.startsWith("0")
+      ? digits.slice(1)
+      : digits;
+
+  return /^[79]\d{8}$/.test(national) ? `+251${national}` : null;
+}
+
 export async function signInAction(formData: FormData) {
   const email = value(formData, "email").toLowerCase();
   const password = value(formData, "password");
@@ -36,36 +55,126 @@ export async function signInAction(formData: FormData) {
 }
 
 export async function signUpAction(formData: FormData) {
-  const displayName = value(formData, "displayName");
+  const firstName = normalizePersonName(value(formData, "firstName"));
+  const fatherName = normalizePersonName(value(formData, "fatherName"));
+  const grandfatherName = normalizePersonName(value(formData, "grandfatherName"));
+  const username = normalizeUsername(value(formData, "username"));
+  const phone = normalizeEthiopianPhone(value(formData, "phone"));
   const email = value(formData, "email").toLowerCase();
+  const region = value(formData, "region");
+  const city = normalizePersonName(value(formData, "city"));
+  const subCity = normalizePersonName(value(formData, "subCity"));
+  const woreda = normalizePersonName(value(formData, "woreda"));
   const password = value(formData, "password");
+  const confirmPassword = value(formData, "confirmPassword");
+  const acceptedTerms = formData.get("terms") === "on";
 
-  if (displayName.length < 2) {
-    authError("/auth/sign-up", "Enter your full name.");
-  }
-  if (!email || password.length < 8) {
+  if (
+    firstName.length < 2 ||
+    fatherName.length < 2 ||
+    grandfatherName.length < 2
+  ) {
     authError(
       "/auth/sign-up",
-      "Use a valid email and a password with at least 8 characters.",
+      "Enter your first name, father’s name and grandfather’s name.",
     );
   }
 
+  if (!/^[a-z][a-z0-9._]{2,29}$/.test(username)) {
+    authError(
+      "/auth/sign-up",
+      "Username must be 3–30 characters, start with a letter, and use only letters, numbers, dots or underscores.",
+    );
+  }
+
+  if (!phone) {
+    authError(
+      "/auth/sign-up",
+      "Enter a valid Ethiopian mobile number such as 0912 345 678 or +251 912 345 678.",
+    );
+  }
+
+  if (!email || !email.includes("@")) {
+    authError("/auth/sign-up", "Enter a valid email address.");
+  }
+
+  if (!region || city.length < 2) {
+    authError("/auth/sign-up", "Select your region and enter your city.");
+  }
+
+  if (password.length < 8) {
+    authError(
+      "/auth/sign-up",
+      "Password must contain at least 8 characters.",
+    );
+  }
+
+  if (password !== confirmPassword) {
+    authError("/auth/sign-up", "Passwords do not match.");
+  }
+
+  if (!acceptedTerms) {
+    authError(
+      "/auth/sign-up",
+      "Accept the BILOO terms and privacy notice to create your account.",
+    );
+  }
+
+  const supabase = await createClient();
+  const { data: usernameAvailable, error: usernameCheckError } =
+    await supabase.rpc("is_biloo_username_available", {
+      candidate_username: username,
+    });
+
+  if (usernameCheckError) {
+    authError(
+      "/auth/sign-up",
+      "Username availability could not be checked. Please try again.",
+    );
+  }
+
+  if (!usernameAvailable) {
+    authError(
+      "/auth/sign-up",
+      "That username is already taken. Choose another username.",
+    );
+  }
+
+  const displayName = `${firstName} ${fatherName} ${grandfatherName}`;
   const requestHeaders = await headers();
   const origin =
     requestHeaders.get("origin") ??
     process.env.NEXT_PUBLIC_SITE_URL ??
     "http://localhost:3000";
-  const supabase = await createClient();
+
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback?next=/onboarding`,
-      data: { display_name: displayName },
+      data: {
+        account_type: "customer",
+        display_name: displayName,
+        first_name: firstName,
+        father_name: fatherName,
+        grandfather_name: grandfatherName,
+        username,
+        phone,
+        region,
+        city,
+        sub_city: subCity || null,
+        woreda: woreda || null,
+      },
     },
   });
 
-  if (error) authError("/auth/sign-up", error.message);
+  if (error) {
+    const message = /username|database error saving new user/i.test(error.message)
+      ? "That username was just claimed. Choose another username."
+      : error.message;
+    authError("/auth/sign-up", message);
+  }
+
   redirect(`/auth/check-email?email=${encodeURIComponent(email)}`);
 }
 
