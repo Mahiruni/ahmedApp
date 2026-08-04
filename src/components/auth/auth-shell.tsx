@@ -2,6 +2,29 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { BrandMark, Icon } from "@/components/biloo/ui";
+import type { IconName } from "@/data/biloo";
+
+const authBenefits: Array<{
+  icon: IconName;
+  label: string;
+  detail: string;
+}> = [
+  {
+    icon: "shield",
+    label: "Protected sessions",
+    detail: "Secure account access across devices",
+  },
+  {
+    icon: "customer",
+    label: "Role-based workspace",
+    detail: "Customer, driver, vendor and admin access",
+  },
+  {
+    icon: "bell",
+    label: "Live updates",
+    detail: "Orders, payments and verification status",
+  },
+];
 
 export function AuthShell({
   eyebrow,
@@ -32,14 +55,10 @@ export function AuthShell({
           </div>
 
           <div className="biloo-auth-benefits">
-            {[
-              ["shield" as const, "Protected sessions", "Secure account access across devices"],
-              ["customer" as const, "Role-based workspace", "Customer, driver, vendor and admin access"],
-              ["bell" as const, "Live updates", "Orders, payments and verification status"],
-            ].map(([icon, label, detail]) => (
-              <article key={label}>
-                <span><Icon name={icon} /></span>
-                <div><strong>{label}</strong><small>{detail}</small></div>
+            {authBenefits.map((benefit) => (
+              <article key={benefit.label}>
+                <span><Icon name={benefit.icon} /></span>
+                <div><strong>{benefit.label}</strong><small>{benefit.detail}</small></div>
               </article>
             ))}
           </div>
