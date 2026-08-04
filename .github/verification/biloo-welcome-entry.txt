@@ -1,0 +1,1 @@
+Verify the BILOO signed-out welcome gateway, Google OAuth action, responsive styling, PWA start route, TypeScript, ESLint and production build.
