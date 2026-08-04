@@ -43,6 +43,51 @@
   }
 }
 
+/* Keep animated prompts above the empty native search input.
+   Some Chromium/WebView builds paint type=search as an opaque inner capsule. */
+.biloo-search-premium {
+  isolation: isolate;
+}
+
+.biloo-search-typewriter-overlay {
+  z-index: 20 !important;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+}
+
+.biloo-standard-search-input {
+  position: relative;
+  z-index: 10 !important;
+  min-width: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  color: #111116 !important;
+  -webkit-text-fill-color: #111116 !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  caret-color: #5146e5;
+}
+
+.biloo-standard-search-input:placeholder-shown {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.biloo-standard-search-input::-webkit-search-decoration,
+.biloo-standard-search-input::-webkit-search-cancel-button,
+.biloo-standard-search-input::-webkit-search-results-button,
+.biloo-standard-search-input::-webkit-search-results-decoration {
+  display: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
 /* Detailed route inputs use typed purpose text only while empty. */
 .biloo-place-search-input::placeholder {
   color: #858390 !important;
