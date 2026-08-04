@@ -24,9 +24,16 @@ export function useTypewriterCycle(
     () => values.filter((value) => value.trim().length > 0),
     [values],
   );
+  const signature = items.join("\u0000");
   const [index, setIndex] = useState(0);
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<Phase>("typing");
+
+  useEffect(() => {
+    setIndex(0);
+    setText("");
+    setPhase("typing");
+  }, [signature]);
 
   useEffect(() => {
     if (!items.length) {
@@ -88,7 +95,7 @@ export function useTypewriterCycle(
   ]);
 
   useEffect(() => {
-    if (index >= items.length) setIndex(0);
+    if (items.length && index >= items.length) setIndex(0);
   }, [index, items.length]);
 
   return {
