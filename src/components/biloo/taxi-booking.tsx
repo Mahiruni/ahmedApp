@@ -4,11 +4,8 @@ import { useState } from "react";
 
 import { rideTypes } from "@/data/biloo";
 
-import {
-  GooglePlaceField,
-  GoogleRouteMap,
-  type RouteMetrics,
-} from "./google-maps";
+import { AddisPlaceSearch } from "./addis-place-search";
+import { GoogleRouteMap, type RouteMetrics } from "./google-maps";
 import { formatETB, Icon, StatusPill, Surface } from "./ui";
 
 export function TaxiBooking({
@@ -37,7 +34,7 @@ export function TaxiBooking({
       id="biloo-taxi-booking"
       tabIndex={-1}
     >
-      <Surface className="overflow-hidden p-4 sm:p-5 lg:p-6">
+      <Surface className="relative z-20 overflow-visible p-4 sm:p-5 lg:p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -53,7 +50,7 @@ export function TaxiBooking({
               Where to?
             </h2>
             <p className="mt-2 max-w-md text-sm leading-6 text-[#6d7078]">
-              Search Addis Ababa and surrounding areas with live routes, distance and ETA.
+              Search detailed places, streets, landmarks and surrounding towns across Greater Addis.
             </p>
           </div>
           <span className="biloo-tone-mobility grid size-11 shrink-0 place-items-center rounded-full">
@@ -61,15 +58,15 @@ export function TaxiBooking({
           </span>
         </div>
 
-        <div className="relative mt-5 space-y-2.5 before:absolute before:left-[18px] before:top-[56px] before:h-[20px] before:border-l before:border-dashed before:border-[#c9cbd0]">
-          <GooglePlaceField
+        <div className="relative z-30 mt-5 space-y-2.5 before:absolute before:left-[18px] before:top-[59px] before:h-[22px] before:border-l before:border-dashed before:border-[#c9cbd0]">
+          <AddisPlaceSearch
             allowCurrentLocation
             label="Pickup"
             onChange={setPickup}
             tone="pickup"
             value={pickup}
           />
-          <GooglePlaceField
+          <AddisPlaceSearch
             label="Destination"
             onChange={setDropoff}
             tone="destination"
@@ -169,7 +166,7 @@ export function TaxiBooking({
         </p>
       </Surface>
 
-      <div className="biloo-map-card p-2 sm:p-3">
+      <div className="biloo-map-card relative z-10 p-2 sm:p-3">
         <GoogleRouteMap
           dropoff={dropoff}
           onMetricsChange={setRouteMetrics}
