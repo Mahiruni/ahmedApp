@@ -43,10 +43,11 @@ export function SearchMotionController() {
       if (!hero || hero.dataset.motionController === "ready") return;
 
       hero.dataset.motionController = "ready";
-      const heroCopy = hero.querySelector<HTMLElement>(
+      const heroCopyCandidate = hero.querySelector<HTMLElement>(
         ".biloo-service-loop-copy",
       );
-      if (!heroCopy) return;
+      if (!heroCopyCandidate) return;
+      const heroCopy: HTMLElement = heroCopyCandidate;
 
       function animateServiceChange() {
         heroCopy.classList.remove("biloo-service-motion-enter");
