@@ -16,7 +16,7 @@ function destination(formData: FormData) {
     : "/biloo";
 }
 
-function authError(path: string, message: string) {
+function authError(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
 }
 
