@@ -42,15 +42,15 @@ export function SearchMotionController() {
       if (!hero || hero.dataset.motionController === "ready") return;
 
       hero.dataset.motionController = "ready";
-      const copy = hero.querySelector<HTMLElement>(
+      const heroCopy = hero.querySelector<HTMLElement>(
         ".biloo-service-loop-copy",
       );
-      if (!copy) return;
+      if (!heroCopy) return;
 
       function animateServiceChange() {
-        copy.classList.remove("biloo-service-motion-enter");
-        void copy.offsetWidth;
-        copy.classList.add("biloo-service-motion-enter");
+        heroCopy.classList.remove("biloo-service-motion-enter");
+        void heroCopy.offsetWidth;
+        heroCopy.classList.add("biloo-service-motion-enter");
       }
 
       animateServiceChange();
