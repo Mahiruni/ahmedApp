@@ -20,6 +20,15 @@ function authError(path: string, message: string) {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
 }
 
+async function requestOrigin() {
+  const requestHeaders = await headers();
+  return (
+    requestHeaders.get("origin") ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    "http://localhost:3000"
+  );
+}
+
 function normalizePersonName(input: string) {
   return input.replace(/\s+/g, " ").trim();
 }
@@ -52,6 +61,28 @@ export async function signInAction(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) authError("/auth/login", error.message);
   redirect(next);
+}
+
+export async function signInWithGoogleAction(formData: FormData) {
+  const next = destination(formData);
+  const origin = await requestOrigin();
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      skipBrowserRedirect: true,
+    },
+  });
+
+  if (error || !data.url) {
+    authError(
+      "/",
+      error?.message ?? "Google sign-in is not available right now.",
+    );
+  }
+
+  redirect(data.url);
 }
 
 export async function signUpAction(formData: FormData) {
@@ -123,11 +154,7 @@ export async function signUpAction(formData: FormData) {
   }
 
   const displayName = `${firstName} ${fatherName} ${grandfatherName}`;
-  const requestHeaders = await headers();
-  const origin =
-    requestHeaders.get("origin") ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    "http://localhost:3000";
+  const origin = await requestOrigin();
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signUp({
@@ -165,11 +192,7 @@ export async function requestPasswordResetAction(formData: FormData) {
   const email = value(formData, "email").toLowerCase();
   if (!email) authError("/auth/forgot-password", "Enter your email address.");
 
-  const requestHeaders = await headers();
-  const origin =
-    requestHeaders.get("origin") ??
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    "http://localhost:3000";
+  const origin = await requestOrigin();
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/callback?next=/auth/update-password`,
@@ -197,5 +220,5 @@ export async function updatePasswordAction(formData: FormData) {
 export async function signOutAction() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/auth/login");
+  redirect("/");
 }
