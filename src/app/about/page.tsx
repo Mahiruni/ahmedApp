@@ -4,9 +4,17 @@ import Link from "next/link";
 import { PublicPageShell } from "@/components/public/public-page-shell";
 
 export const metadata: Metadata = {
-  title: "BILOO — Ethiopia’s Connected Super App",
+  title: { absolute: "BILOO" },
   description:
     "BILOO is an Ethiopia-focused super app for taxi booking, food delivery, grocery shopping, construction materials and car parts.",
+  applicationName: "BILOO",
+  openGraph: {
+    title: "BILOO",
+    description:
+      "BILOO is an Ethiopia-focused super app for taxi booking, food delivery, grocery shopping, construction materials and car parts.",
+    siteName: "BILOO",
+    type: "website",
+  },
   robots: { index: true, follow: true },
 };
 
@@ -41,8 +49,8 @@ const services = [
 export default function AboutPage() {
   return (
     <PublicPageShell
-      eyebrow="BILOO — ETHIOPIA’S CONNECTED SUPER APP"
-      title="BILOO connects rides, delivery, shopping and local suppliers in one app."
+      eyebrow="OFFICIAL BILOO APP HOMEPAGE"
+      title="BILOO"
       description="BILOO helps people in Ethiopia book taxi rides, order food and groceries, buy construction materials and find car parts through one secure customer account."
     >
       <section className="biloo-public-intro-grid" aria-label="BILOO purpose">
