@@ -32,6 +32,7 @@ export function TrackingModal({
     useState<ConfirmationContext | null>(null);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
   const orderId = order?.id;
   const orderService = order?.service;
   const orderTitle = order?.title;
@@ -50,20 +51,24 @@ export function TrackingModal({
 
       window.sessionStorage.removeItem(confirmationStorageKey);
       const parsed = JSON.parse(stored) as Partial<ConfirmationContext>;
+      const createdAt =
+        typeof parsed.createdAt === "number" ? parsed.createdAt : null;
       const recent =
-        typeof parsed.createdAt === "number" &&
-        Date.now() - parsed.createdAt < 2 * 60 * 1000;
+        createdAt !== null && Date.now() - createdAt < 2 * 60 * 1000;
       const merchantMatches =
         typeof parsed.merchant === "string" &&
         orderTitle.toLowerCase().includes(parsed.merchant.toLowerCase());
+      const validPayment =
+        parsed.payment === "wallet" ||
+        parsed.payment === "card" ||
+        parsed.payment === "cash";
 
       if (
         recent &&
         merchantMatches &&
-        orderService !== "taxi" &&
-        (parsed.payment === "wallet" ||
-          parsed.payment === "card" ||
-          parsed.payment === "cash")
+        validPayment &&
+        createdAt !== null &&
+        orderService !== "taxi"
       ) {
         setConfirmation({
           payment: parsed.payment,
@@ -71,7 +76,7 @@ export function TrackingModal({
             typeof parsed.itemCount === "number" ? parsed.itemCount : 1,
           merchant: parsed.merchant ?? "BILOO partner",
           service: parsed.service ?? serviceLabel(orderService),
-          createdAt: parsed.createdAt,
+          createdAt,
         });
         setMode("confirmation");
       }
@@ -101,10 +106,11 @@ export function TrackingModal({
   }, [order]);
 
   if (!order) return null;
+  const currentOrder = order;
 
   async function copyOrderId() {
     try {
-      await navigator.clipboard.writeText(order.id);
+      await navigator.clipboard.writeText(currentOrder.id);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1400);
     } catch {
@@ -167,7 +173,7 @@ export function TrackingModal({
             <div className="biloo-order-id-card">
               <span>
                 <small>Order number</small>
-                <strong>{order.id}</strong>
+                <strong>{currentOrder.id}</strong>
               </span>
               <button onClick={copyOrderId} type="button">
                 {copied ? "Copied" : "Copy"}
@@ -181,7 +187,7 @@ export function TrackingModal({
                 </span>
                 <span>
                   <small>Estimated arrival</small>
-                  <strong>{order.eta}</strong>
+                  <strong>{currentOrder.eta}</strong>
                 </span>
               </article>
               <article>
@@ -190,7 +196,7 @@ export function TrackingModal({
                 </span>
                 <span>
                   <small>{prepaid ? "Amount paid" : "Amount due"}</small>
-                  <strong>{formatETB(order.total)}</strong>
+                  <strong>{formatETB(currentOrder.total)}</strong>
                 </span>
               </article>
             </div>
@@ -252,7 +258,7 @@ export function TrackingModal({
                 <ReceiptLine
                   bold
                   label={prepaid ? "Paid" : "Total due"}
-                  value={formatETB(order.total)}
+                  value={formatETB(currentOrder.total)}
                 />
               </div>
             ) : null}
@@ -268,7 +274,11 @@ export function TrackingModal({
               <span>Track order</span>
               <Icon className="size-[18px]" name="arrow" />
             </button>
-            <button className="biloo-order-done-button" onClick={onClose} type="button">
+            <button
+              className="biloo-order-done-button"
+              onClick={onClose}
+              type="button"
+            >
               Done
             </button>
             <p>Updates will appear in BILOO notifications automatically.</p>
@@ -288,7 +298,7 @@ export function TrackingModal({
       />
 
       <section
-        aria-label={`Track ${order.id}`}
+        aria-label={`Track ${currentOrder.id}`}
         aria-modal="true"
         className="biloo-tracking-sheet"
         role="dialog"
@@ -304,7 +314,7 @@ export function TrackingModal({
           </button>
           <span className="min-w-0 flex-1">
             <small>Live order</small>
-            <strong>{order.id}</strong>
+            <strong>{currentOrder.id}</strong>
           </span>
           <span className="biloo-tracking-live">
             <i /> Live
@@ -314,42 +324,53 @@ export function TrackingModal({
         <div className="biloo-tracking-layout">
           <div className="biloo-tracking-details">
             <span className="biloo-tracking-service">
-              {serviceLabel(order.service)}
+              {serviceLabel(currentOrder.service)}
             </span>
-            <h2>{order.title}</h2>
-            <p>{order.status}</p>
+            <h2>{currentOrder.title}</h2>
+            <p>{currentOrder.status}</p>
 
             <div className="biloo-tracking-progress-card">
               <div>
                 <span>{progressLabel}</span>
-                <strong>{order.progress}%</strong>
+                <strong>{currentOrder.progress}%</strong>
               </div>
               <div className="biloo-tracking-progress-track">
-                <span style={{ width: `${Math.min(order.progress, 100)}%` }} />
+                <span
+                  style={{ width: `${Math.min(currentOrder.progress, 100)}%` }}
+                />
               </div>
             </div>
 
             <div className="biloo-tracking-steps">
               <TrackingStep done label="Order confirmed" />
-              <TrackingStep done={order.progress >= 35} label="Provider preparing" />
-              <TrackingStep done={order.progress >= 60} label="Courier en route" />
-              <TrackingStep done={order.progress >= 90} label="Arriving" />
+              <TrackingStep
+                done={currentOrder.progress >= 35}
+                label="Provider preparing"
+              />
+              <TrackingStep
+                done={currentOrder.progress >= 60}
+                label="Courier en route"
+              />
+              <TrackingStep
+                done={currentOrder.progress >= 90}
+                label="Arriving"
+              />
             </div>
 
             <div className="biloo-tracking-metrics">
               <article>
                 <small>ETA</small>
-                <strong>{order.eta}</strong>
+                <strong>{currentOrder.eta}</strong>
               </article>
               <article>
                 <small>Total</small>
-                <strong>{formatETB(order.total)}</strong>
+                <strong>{formatETB(currentOrder.total)}</strong>
               </article>
             </div>
 
             <button
               className="biloo-tracking-refresh"
-              onClick={() => onAdvance(order)}
+              onClick={() => onAdvance(currentOrder)}
               type="button"
             >
               Check latest status
@@ -368,13 +389,13 @@ export function TrackingModal({
             <span
               className="biloo-tracking-vehicle"
               style={{
-                left: `${18 + Math.min(order.progress, 100) * 0.55}%`,
-                top: `${24 + Math.min(order.progress, 100) * 0.28}%`,
+                left: `${18 + Math.min(currentOrder.progress, 100) * 0.55}%`,
+                top: `${24 + Math.min(currentOrder.progress, 100) * 0.28}%`,
               }}
             >
               <Icon
                 className="size-5"
-                name={order.service === "taxi" ? "taxi" : "driver"}
+                name={currentOrder.service === "taxi" ? "taxi" : "driver"}
               />
             </span>
             <div className="biloo-tracking-map-status">
