@@ -2,8 +2,7 @@
 
 import type { CartLine } from "@/data/biloo";
 
-import { Drawer } from "./overlay-primitives";
-import { formatETB, Icon } from "./ui";
+import { formatETB, Icon, serviceLabel } from "./ui";
 
 export function CartDrawer({
   open,
@@ -22,126 +21,210 @@ export function CartDrawer({
     (total, line) => total + line.item.price * line.quantity,
     0,
   );
+  const itemCount = cart.reduce((total, line) => total + line.quantity, 0);
   const delivery = cart.length ? 75 : 0;
   const serviceFee = cart.length ? Math.round(subtotal * 0.025) : 0;
+  const total = subtotal + delivery + serviceFee;
+  const cartService = cart[0]?.item.service;
+  const merchant = cart[0]?.item.merchant;
 
   return (
-    <Drawer onClose={onClose} open={open} title="Your cart">
-      <div className="flex h-full flex-col">
-        <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">
-          {cart.length ? (
-            <div className="space-y-3">
-              {cart.map((line) => (
-                <article
-                  className="flex gap-4 rounded-2xl border border-slate-200 p-4"
-                  key={line.item.id}
-                >
-                  <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#f5f8fa] text-2xl">
-                    {line.item.icon}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-black">
-                      {line.item.name}
-                    </p>
-                    <p className="mt-1 truncate text-xs text-slate-400">
-                      {line.item.merchant}
-                    </p>
-                    <div className="mt-3 flex items-center justify-between gap-3">
-                      <span className="text-sm font-black">
-                        {formatETB(line.item.price * line.quantity)}
-                      </span>
-                      <div className="flex items-center gap-2 rounded-xl bg-slate-100 p-1">
-                        <button
-                          aria-label={`Remove one ${line.item.name}`}
-                          className="grid size-8 place-items-center rounded-lg bg-white text-[#082640]"
-                          onClick={() =>
-                            onUpdateQuantity(line.item.id, line.quantity - 1)
-                          }
-                          type="button"
-                        >
-                          <Icon className="size-4" name="minus" />
-                        </button>
-                        <span className="min-w-5 text-center text-xs font-black">
-                          {line.quantity}
-                        </span>
-                        <button
-                          aria-label={`Add one ${line.item.name}`}
-                          className="grid size-8 place-items-center rounded-lg bg-[#082640] text-white"
-                          onClick={() =>
-                            onUpdateQuantity(line.item.id, line.quantity + 1)
-                          }
-                          type="button"
-                        >
-                          <Icon className="size-4" name="plus" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <div className="grid min-h-[420px] place-items-center text-center">
-              <div>
-                <span className="mx-auto grid size-20 place-items-center rounded-[1.7rem] bg-[#f2f7fb] text-[#082640]">
-                  <Icon className="size-8" name="cart" />
+    <div
+      aria-hidden={!open}
+      className="biloo-cart-overlay"
+      data-open={open}
+    >
+      <button
+        aria-label="Close cart"
+        className="biloo-cart-backdrop"
+        onClick={onClose}
+        tabIndex={open ? 0 : -1}
+        type="button"
+      />
+
+      <section
+        aria-label="Your cart"
+        aria-modal="true"
+        className="biloo-cart-sheet"
+        role="dialog"
+      >
+        <div className="biloo-cart-handle" aria-hidden="true" />
+
+        <header className="biloo-cart-header">
+          <div className="biloo-cart-heading">
+            <span className="biloo-cart-heading-icon" aria-hidden="true">
+              <Icon className="size-[19px]" name="cart" />
+            </span>
+            <span className="min-w-0">
+              <span className="biloo-cart-eyebrow">
+                {cartService ? serviceLabel(cartService) : "BILOO shopping"}
+              </span>
+              <span className="biloo-cart-title">Your cart</span>
+            </span>
+          </div>
+
+          <div className="biloo-cart-header-actions">
+            {itemCount ? (
+              <span className="biloo-cart-count">
+                {itemCount} {itemCount === 1 ? "item" : "items"}
+              </span>
+            ) : null}
+            <button
+              aria-label="Close cart"
+              className="biloo-cart-close"
+              onClick={onClose}
+              type="button"
+            >
+              <Icon className="size-[18px]" name="close" />
+            </button>
+          </div>
+        </header>
+
+        {cart.length ? (
+          <>
+            <div className="biloo-cart-content">
+              <div className="biloo-cart-order-context">
+                <span className="biloo-cart-context-icon" aria-hidden="true">
+                  <Icon className="size-4" name="vendor" />
                 </span>
-                <h3 className="mt-5 text-xl font-black">Your cart is empty</h3>
-                <p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-slate-500">
-                  Add products from food, supermarket, construction or car
-                  parts to begin an order.
-                </p>
+                <span className="min-w-0 flex-1">
+                  <span className="biloo-cart-context-label">Ordering from</span>
+                  <span className="biloo-cart-context-value">
+                    {merchant ?? "BILOO partner"}
+                  </span>
+                </span>
+                <span className="biloo-cart-context-status">Available</span>
+              </div>
+
+              <div className="biloo-cart-items">
+                {cart.map((line) => {
+                  const lineTotal = line.item.price * line.quantity;
+                  return (
+                    <article className="biloo-cart-item" key={line.item.id}>
+                      <span className="biloo-cart-item-visual" aria-hidden="true">
+                        {line.item.icon}
+                      </span>
+
+                      <div className="biloo-cart-item-body">
+                        <div className="biloo-cart-item-topline">
+                          <div className="min-w-0 flex-1">
+                            <h3 className="biloo-cart-item-name">
+                              {line.item.name}
+                            </h3>
+                            <p className="biloo-cart-item-meta">
+                              {formatETB(line.item.price)} each
+                            </p>
+                          </div>
+                          <strong className="biloo-cart-item-total">
+                            {formatETB(lineTotal)}
+                          </strong>
+                        </div>
+
+                        <div className="biloo-cart-item-controls">
+                          <button
+                            aria-label={
+                              line.quantity === 1
+                                ? `Remove ${line.item.name} from cart`
+                                : `Remove one ${line.item.name}`
+                            }
+                            className="biloo-cart-quantity-button"
+                            data-action="decrease"
+                            onClick={() =>
+                              onUpdateQuantity(
+                                line.item.id,
+                                line.quantity - 1,
+                              )
+                            }
+                            type="button"
+                          >
+                            <Icon className="size-4" name="minus" />
+                          </button>
+                          <span
+                            aria-label={`${line.quantity} in cart`}
+                            className="biloo-cart-quantity-value"
+                          >
+                            {line.quantity}
+                          </span>
+                          <button
+                            aria-label={`Add one ${line.item.name}`}
+                            className="biloo-cart-quantity-button"
+                            data-action="increase"
+                            onClick={() =>
+                              onUpdateQuantity(
+                                line.item.id,
+                                line.quantity + 1,
+                              )
+                            }
+                            type="button"
+                          >
+                            <Icon className="size-4" name="plus" />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="border-t border-slate-200 bg-white p-5 sm:p-6">
-          <div className="space-y-2 text-sm">
-            <SummaryLine label="Subtotal" value={formatETB(subtotal)} />
-            <SummaryLine label="Delivery" value={formatETB(delivery)} />
-            <SummaryLine label="Service fee" value={formatETB(serviceFee)} />
-            <div className="my-3 border-t border-slate-200" />
-            <SummaryLine
-              bold
-              label="Total"
-              value={formatETB(subtotal + delivery + serviceFee)}
-            />
+            <footer className="biloo-cart-summary">
+              <div className="biloo-cart-summary-lines">
+                <SummaryLine label="Subtotal" value={formatETB(subtotal)} />
+                <SummaryLine label="Delivery fee" value={formatETB(delivery)} />
+                <SummaryLine
+                  label="Service fee"
+                  value={formatETB(serviceFee)}
+                />
+              </div>
+
+              <div className="biloo-cart-total-row">
+                <span>
+                  <span className="biloo-cart-total-label">Total</span>
+                  <span className="biloo-cart-total-note">
+                    Taxes included where applicable
+                  </span>
+                </span>
+                <strong>{formatETB(total)}</strong>
+              </div>
+
+              <button
+                className="biloo-cart-checkout"
+                onClick={onCheckout}
+                type="button"
+              >
+                <span>Continue to payment</span>
+                <span className="biloo-cart-checkout-total">
+                  {formatETB(total)}
+                </span>
+                <Icon className="size-[18px]" name="arrow" />
+              </button>
+            </footer>
+          </>
+        ) : (
+          <div className="biloo-cart-empty">
+            <span className="biloo-cart-empty-icon" aria-hidden="true">
+              <Icon className="size-8" name="cart" />
+            </span>
+            <h3>Your cart is empty</h3>
+            <p>
+              Browse food, groceries, construction materials or car parts and
+              add what you need.
+            </p>
+            <button onClick={onClose} type="button">
+              Browse services
+            </button>
           </div>
-          <button
-            className="mt-5 min-h-13 w-full rounded-2xl bg-[#082640] text-sm font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
-            disabled={!cart.length}
-            onClick={onCheckout}
-            type="button"
-          >
-            Continue to payment
-          </button>
-        </div>
-      </div>
-    </Drawer>
+        )}
+      </section>
+    </div>
   );
 }
 
-
-function SummaryLine({
-  label,
-  value,
-  bold = false,
-}: {
-  label: string;
-  value: string;
-  bold?: boolean;
-}) {
+function SummaryLine({ label, value }: { label: string; value: string }) {
   return (
-    <div
-      className={`flex items-center justify-between gap-4 ${
-        bold ? "text-base font-black" : "text-slate-500"
-      }`}
-    >
+    <div className="biloo-cart-summary-line">
       <span>{label}</span>
-      <span className={bold ? "text-[#082640]" : "font-bold text-slate-700"}>
-        {value}
-      </span>
+      <strong>{value}</strong>
     </div>
   );
 }
