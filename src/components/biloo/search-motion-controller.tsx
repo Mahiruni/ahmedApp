@@ -48,6 +48,7 @@ export function SearchMotionController() {
       if (!heroCopy) return;
 
       function animateServiceChange() {
+        if (!heroCopy) return;
         heroCopy.classList.remove("biloo-service-motion-enter");
         void heroCopy.offsetWidth;
         heroCopy.classList.add("biloo-service-motion-enter");
