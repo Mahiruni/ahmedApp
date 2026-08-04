@@ -18,39 +18,33 @@ export function Drawer({
   return (
     <div
       aria-hidden={!open}
-      className={`fixed inset-0 z-[70] transition ${
-        open ? "pointer-events-auto" : "pointer-events-none"
-      }`}
+      className="biloo-overlay"
+      data-open={open}
     >
       <button
         aria-label="Close panel"
-        className={`absolute inset-0 bg-[#07111f]/58 backdrop-blur-md transition duration-300 ${
-          open ? "opacity-100" : "opacity-0"
-        }`}
+        className="biloo-overlay-backdrop"
         onClick={onClose}
+        tabIndex={open ? 0 : -1}
         type="button"
       />
       <section
         aria-label={title}
-        className={`absolute inset-y-2 right-2 flex w-[calc(100%_-_1rem)] max-w-[490px] flex-col overflow-hidden rounded-[1.9rem] border border-white/70 bg-white/94 shadow-[0_34px_100px_rgba(7,17,31,0.32)] backdrop-blur-2xl transition duration-300 sm:inset-y-3 sm:right-3 sm:w-[calc(100%_-_1.5rem)] ${
-          open ? "translate-x-0 opacity-100" : "translate-x-[110%] opacity-0"
-        }`}
+        aria-modal="true"
+        className="biloo-drawer-sheet"
+        role="dialog"
       >
-        <div className="flex h-[76px] items-center justify-between border-b border-slate-200/70 px-5 sm:px-6">
+        <div className="biloo-sheet-handle" aria-hidden="true" />
+        <header className="biloo-overlay-header">
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">BILOO workspace</p>
-            <h2 className="mt-1 text-xl font-black tracking-[-0.035em] text-[#101828]">{title}</h2>
+            <span>BILOO workspace</span>
+            <h2>{title}</h2>
           </div>
-          <button
-            aria-label="Close"
-            className="grid size-10 place-items-center rounded-xl bg-[#eef3f8] text-[#0a1b31] transition hover:rotate-6 hover:bg-[#0a1b31] hover:text-white"
-            onClick={onClose}
-            type="button"
-          >
+          <button aria-label="Close" className="biloo-icon-button" onClick={onClose} type="button">
             <Icon name="close" />
           </button>
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+        </header>
+        <div className="biloo-overlay-content">{children}</div>
       </section>
     </div>
   );
@@ -68,28 +62,26 @@ export function Modal({
   wide?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 z-[80] grid place-items-center overflow-y-auto bg-[#07111f]/62 p-3 backdrop-blur-md sm:p-5">
+    <div className="biloo-overlay biloo-overlay-modal" data-open="true">
+      <button aria-label="Close dialog" className="biloo-overlay-backdrop" onClick={onClose} type="button" />
       <section
         aria-label={title}
-        className={`my-auto w-full overflow-hidden rounded-[2rem] border border-white/70 bg-white/95 shadow-[0_36px_120px_rgba(7,17,31,0.38)] backdrop-blur-2xl ${
-          wide ? "max-w-5xl" : "max-w-xl"
-        }`}
+        aria-modal="true"
+        className="biloo-modal-sheet"
+        data-wide={wide}
+        role="dialog"
       >
-        <div className="flex h-[74px] items-center justify-between border-b border-slate-200/70 px-5 sm:px-6">
+        <div className="biloo-sheet-handle" aria-hidden="true" />
+        <header className="biloo-overlay-header">
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">Connected experience</p>
-            <h2 className="mt-1 text-xl font-black tracking-[-0.035em] text-[#101828]">{title}</h2>
+            <span>Connected experience</span>
+            <h2>{title}</h2>
           </div>
-          <button
-            aria-label="Close"
-            className="grid size-10 place-items-center rounded-xl bg-[#eef3f8] text-[#0a1b31] transition hover:rotate-6 hover:bg-[#0a1b31] hover:text-white"
-            onClick={onClose}
-            type="button"
-          >
+          <button aria-label="Close" className="biloo-icon-button" onClick={onClose} type="button">
             <Icon name="close" />
           </button>
-        </div>
-        <div className="max-h-[calc(100svh_-_110px)] overflow-y-auto">{children}</div>
+        </header>
+        <div className="biloo-overlay-content">{children}</div>
       </section>
     </div>
   );
