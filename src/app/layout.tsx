@@ -19,6 +19,7 @@ import "./hero-service-motion.css";
 import "./responsive-shell.css";
 import "./search-experience.css";
 import "./motion-boundaries.css";
+import "./cart-experience.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
