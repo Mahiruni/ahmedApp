@@ -3,6 +3,7 @@ import { Inter_Tight, Manrope } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { InteractionFeedbackController } from "@/components/biloo/interaction-feedback-controller";
+import { SearchFocusController } from "@/components/biloo/search-focus-controller";
 import { SearchMotionController } from "@/components/biloo/search-motion-controller";
 
 import "./globals.css";
@@ -27,6 +28,7 @@ import "./operations-experience.css";
 import "./completion-system.css";
 import "./dark-surface-contrast.css";
 import "./interaction-feedback.css";
+import "./search-standard-fix.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -62,6 +64,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang="en">
       <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
         <InteractionFeedbackController />
+        <SearchFocusController />
         <SearchMotionController />
         {children}
       </body>
