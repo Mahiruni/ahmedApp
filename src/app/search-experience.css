@@ -1,0 +1,415 @@
+/* BILOO standard search system: crisp, browser-safe and mobile-first. */
+
+.biloo-typewriter-caret {
+  display: inline-block;
+  width: 1.5px;
+  height: 1em;
+  margin-left: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  vertical-align: -0.1em;
+  animation: biloo-caret-blink 780ms steps(1, end) infinite;
+}
+
+.biloo-service-loop-copy {
+  animation: none !important;
+  will-change: auto !important;
+}
+
+.biloo-service-loop-label {
+  display: flex !important;
+  min-height: 17px;
+  align-items: center;
+}
+
+.biloo-search-premium {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(18, 18, 22, 0.11) !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  color: #15151a;
+  box-shadow:
+    0 1px 2px rgba(18, 18, 22, 0.03),
+    0 9px 24px rgba(41, 36, 112, 0.06) !important;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.biloo-search-premium:hover {
+  border-color: rgba(81, 70, 229, 0.24) !important;
+}
+
+.biloo-search-premium:focus-visible,
+.biloo-search-premium:focus-within {
+  border-color: #5146e5 !important;
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(81, 70, 229, 0.12),
+    0 12px 30px rgba(41, 36, 112, 0.09) !important;
+}
+
+.biloo-search-leading {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  border-radius: 10px;
+  background: #f0efff;
+  color: #5146e5;
+}
+
+.biloo-search-typewriter,
+.biloo-search-typewriter-overlay {
+  overflow: hidden;
+  color: #666477;
+  font-size: 15px;
+  font-weight: 580;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-search-typewriter-overlay {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 46px;
+  left: 57px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.biloo-standard-search-input {
+  width: 100%;
+  height: 100%;
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  color: #111116 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.015em;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.biloo-standard-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.biloo-search-action {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  border-radius: 999px;
+  background: #5146e5;
+  color: #ffffff;
+}
+
+.biloo-search-clear {
+  background: #f0f0f3;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.biloo-search-clear:hover {
+  background: #e5e4ea;
+  color: #17171c;
+}
+
+.biloo-search-location {
+  border: 1px solid #5146e5 !important;
+  background: #5146e5 !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(81, 70, 229, 0.2) !important;
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.biloo-search-location:hover {
+  background: #4036c9 !important;
+  box-shadow: 0 12px 28px rgba(81, 70, 229, 0.25) !important;
+}
+
+/* Pickup and destination autocomplete. */
+.biloo-place-search {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #e1e1e5;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #111116;
+  box-shadow: 0 4px 16px rgba(18, 18, 22, 0.045);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.biloo-place-search:hover {
+  border-color: #c9c7d8;
+}
+
+.biloo-place-search:focus-within {
+  border-color: #5146e5;
+  box-shadow:
+    0 0 0 3px rgba(81, 70, 229, 0.11),
+    0 10px 26px rgba(41, 36, 112, 0.08);
+}
+
+.biloo-place-search-label {
+  color: #74727f;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.biloo-place-search-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 25px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: #111116;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 620;
+  letter-spacing: -0.015em;
+  line-height: 25px;
+  outline: none;
+  box-shadow: none;
+}
+
+.biloo-place-search-input::placeholder {
+  color: #97959f;
+  font-weight: 540;
+  opacity: 1;
+}
+
+.biloo-place-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.biloo-place-search-clear,
+.biloo-place-search-gps {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.biloo-place-search-clear {
+  background: #f1f1f3;
+  color: #66646e;
+}
+
+.biloo-place-search-clear:hover {
+  background: #e6e5e9;
+  color: #17171c;
+}
+
+.biloo-place-search-gps {
+  background: #e9e7ff;
+  color: #5146e5;
+}
+
+.biloo-place-search-gps:hover {
+  background: #dedbff;
+}
+
+.biloo-place-search-gps:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.biloo-place-search-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid #dedce9;
+  border-top-color: #5146e5;
+  border-radius: 999px;
+  animation: biloo-search-spin 680ms linear infinite;
+}
+
+.biloo-place-results {
+  position: absolute;
+  z-index: 120;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  overflow: hidden;
+  max-height: min(390px, 62vh);
+  border: 1px solid rgba(18, 18, 22, 0.1);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow:
+    0 2px 5px rgba(18, 18, 22, 0.05),
+    0 22px 58px rgba(18, 18, 22, 0.17);
+}
+
+.biloo-place-results-head,
+.biloo-place-results-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  color: #777580;
+  font-size: 9.5px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.biloo-place-results-head {
+  border-bottom: 1px solid #eeeeF1;
+  background: #fafafd;
+}
+
+.biloo-place-results-list {
+  overflow-y: auto;
+  max-height: 292px;
+  overscroll-behavior: contain;
+}
+
+.biloo-place-result {
+  display: flex;
+  width: 100%;
+  min-height: 54px;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  border-bottom: 1px solid #f0f0f2;
+  background: #ffffff;
+  padding: 9px 11px;
+  color: #17171c;
+  text-align: left;
+  transition: background-color 120ms ease;
+}
+
+.biloo-place-result:last-child {
+  border-bottom: 0;
+}
+
+.biloo-place-result:hover,
+.biloo-place-result[data-active="true"] {
+  background: #f3f2ff;
+}
+
+.biloo-place-result-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 11px;
+  background: #efedff;
+  color: #5146e5;
+}
+
+.biloo-place-result-title,
+.biloo-place-result-context {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-place-result-title {
+  color: #15151a;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  line-height: 1.25;
+}
+
+.biloo-place-result-context {
+  margin-top: 2px;
+  color: #7d7b85;
+  font-size: 10.5px;
+  font-weight: 520;
+  line-height: 1.25;
+}
+
+.biloo-place-results-foot {
+  border-top: 1px solid #eeeeF1;
+  background: #fafafd;
+}
+
+@keyframes biloo-caret-blink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes biloo-search-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 639px) {
+  .biloo-search-premium {
+    border-radius: 15px !important;
+  }
+
+  .biloo-search-typewriter,
+  .biloo-search-typewriter-overlay {
+    font-size: 14px;
+  }
+
+  .biloo-place-search {
+    min-height: 62px;
+    border-radius: 15px;
+  }
+
+  .biloo-place-results {
+    right: -2px;
+    left: -2px;
+    max-height: min(370px, 58vh);
+    border-radius: 16px;
+  }
+
+  .biloo-place-results-head,
+  .biloo-place-results-foot {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .biloo-place-result {
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 380px) {
+  .biloo-search-typewriter-overlay {
+    right: 42px;
+    left: 54px;
+  }
+
+  .biloo-place-results-head span:last-child,
+  .biloo-place-results-foot span:last-child {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-typewriter-caret,
+  .biloo-place-search-spinner {
+    animation: none !important;
+  }
+}
