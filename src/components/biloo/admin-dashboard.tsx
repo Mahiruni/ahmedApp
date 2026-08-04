@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { AdminIncident, IconName, ServiceKey } from "@/data/biloo";
 
-import { Icon, StatusPill, Surface } from "./ui";
+import { Icon, StatusPill } from "./ui";
 
 interface Campaign {
   id: string;
@@ -61,6 +61,7 @@ export function AdminDashboard({
 
   const openIncidents = incidents.filter((incident) => !incident.resolved);
   const activeCampaigns = campaigns.filter((campaign) => campaign.active);
+  const urgentCount = openIncidents.filter((incident) => incident.severity === "High").length;
 
   useEffect(() => {
     try {
@@ -87,11 +88,11 @@ export function AdminDashboard({
 
   const serviceMetrics = useMemo(
     () => [
-      ["Food delivery", 78, "642 orders", "#f97316"],
-      ["Taxi", 64, "418 trips", "#d99a1f"],
-      ["Supermarket", 48, "156 orders", "#059669"],
-      ["Construction", 31, "42 orders", "#0284c7"],
-      ["Car parts", 22, "26 orders", "#7c3aed"],
+      ["Food delivery", 78, "642 orders", "food" as const],
+      ["Taxi", 64, "418 trips", "taxi" as const],
+      ["Supermarket", 48, "156 orders", "market" as const],
+      ["Construction", 31, "42 orders", "construction" as const],
+      ["Car parts", 22, "26 orders", "parts" as const],
     ] as const,
     [],
   );
@@ -167,86 +168,80 @@ export function AdminDashboard({
     setNotice("Operations report exported as CSV.");
   }
 
+  const metrics: Array<{
+    value: string;
+    label: string;
+    detail: string;
+    icon: IconName;
+    tone: "positive" | "neutral" | "danger";
+  }> = [
+    { value: "ETB 2.48M", label: "Gross order value", detail: "+18.4% today", icon: "wallet", tone: "positive" },
+    { value: "1,284", label: "Orders today", detail: "+11.2% vs yesterday", icon: "receipt", tone: "positive" },
+    { value: "486", label: "Drivers online", detail: "92% currently active", icon: "driver", tone: "neutral" },
+    { value: String(openIncidents.length), label: "Open incidents", detail: `${urgentCount} urgent`, icon: "alert", tone: urgentCount ? "danger" : "positive" },
+  ];
+
   return (
-    <div className="space-y-5 sm:space-y-6">
-      <section className="relative overflow-hidden rounded-[2rem] bg-[#082640] p-6 text-white shadow-[0_28px_80px_rgba(8,38,64,0.22)] sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-24 size-72 rounded-full bg-[#f2bd4b]/15 blur-3xl" />
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f2bd4b]">
-              BILOO command center
-            </p>
-            <h1 className="mt-4 text-4xl font-black tracking-[-0.055em] sm:text-5xl">
-              Operations at a glance.
-            </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-white/60 sm:text-base">
-              Monitor marketplace activity, driver supply, payments, vendors and
-              service health across the platform.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <button
-              className="min-h-12 rounded-2xl bg-white/10 px-5 text-sm font-black transition hover:bg-white/15"
-              onClick={exportReport}
-              type="button"
-            >
-              Export report
-            </button>
-            <button
-              className="min-h-12 rounded-2xl bg-[#f2bd4b] px-5 text-sm font-black text-[#082640] transition hover:bg-[#ffd272]"
-              onClick={() => setComposerOpen((current) => !current)}
-              type="button"
-            >
-              {composerOpen ? "Close composer" : "Create campaign"}
-            </button>
-          </div>
+    <div className="biloo-admin-page">
+      <section className="biloo-admin-hero">
+        <div className="biloo-admin-hero-copy">
+          <span className="biloo-admin-kicker">BILOO command center</span>
+          <h1>Run the entire marketplace from one clear view.</h1>
+          <p>
+            Monitor orders, driver supply, payments, vendors, incidents and growth controls without losing operational context.
+          </p>
+        </div>
+        <div className="biloo-admin-hero-actions">
+          <button className="biloo-button biloo-button-secondary-on-dark" onClick={exportReport} type="button">
+            <Icon className="size-[17px]" name="receipt" />
+            Export report
+          </button>
+          <button
+            aria-expanded={composerOpen}
+            className="biloo-button biloo-button-light"
+            onClick={() => setComposerOpen((current) => !current)}
+            type="button"
+          >
+            <Icon className="size-[17px]" name={composerOpen ? "close" : "plus"} />
+            {composerOpen ? "Close campaign form" : "Create campaign"}
+          </button>
         </div>
       </section>
 
-      {notice ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">
-          {notice}
-        </div>
-      ) : null}
+      {notice ? <div className="biloo-inline-notice" role="status">{notice}</div> : null}
 
       {composerOpen ? (
-        <Surface className="p-5 sm:p-6">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end">
-            <label className="flex-1">
-              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
-                Campaign name
-              </span>
+        <section className="biloo-admin-composer" aria-label="Create campaign">
+          <div className="biloo-section-heading">
+            <div>
+              <span>Growth control</span>
+              <h2>Publish a campaign</h2>
+            </div>
+            <small>Discounts are capped at 80%</small>
+          </div>
+          <div className="biloo-admin-composer-grid">
+            <label className="biloo-field biloo-admin-campaign-name">
+              <span>Campaign name</span>
               <input
-                className="mt-2 min-h-12 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold outline-none focus:border-[#082640]"
                 onChange={(event) => setCampaignName(event.target.value)}
                 placeholder="Example: Addis weekend saver"
                 value={campaignName}
               />
             </label>
-            <label className="lg:w-56">
-              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
-                Service
-              </span>
+            <label className="biloo-field">
+              <span>Service</span>
               <select
-                className="mt-2 min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold outline-none focus:border-[#082640]"
-                onChange={(event) =>
-                  setCampaignService(event.target.value as Campaign["service"])
-                }
+                onChange={(event) => setCampaignService(event.target.value as Campaign["service"])}
                 value={campaignService}
               >
                 {serviceOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                  <option key={option.value} value={option.value}>{option.label}</option>
                 ))}
               </select>
             </label>
-            <label className="lg:w-40">
-              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
-                Discount %
-              </span>
+            <label className="biloo-field">
+              <span>Discount</span>
               <input
-                className="mt-2 min-h-12 w-full rounded-xl border border-slate-200 px-4 text-sm font-bold outline-none focus:border-[#082640]"
                 max={80}
                 min={1}
                 onChange={(event) => setCampaignDiscount(Number(event.target.value))}
@@ -254,178 +249,100 @@ export function AdminDashboard({
                 value={campaignDiscount}
               />
             </label>
-            <button
-              className="min-h-12 rounded-xl bg-[#082640] px-6 text-sm font-black text-white"
-              onClick={createCampaign}
-              type="button"
-            >
+            <button className="biloo-button biloo-button-primary" onClick={createCampaign} type="button">
               Publish campaign
             </button>
           </div>
-        </Surface>
+        </section>
       ) : null}
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        {[
-          ["ETB 2.48M", "Gross order value", "+18.4%", "wallet" as const],
-          ["1,284", "Orders today", "+11.2%", "receipt" as const],
-          ["486", "Drivers online", "92% active", "driver" as const],
-          [
-            String(openIncidents.length),
-            "Open incidents",
-            `${openIncidents.filter((item) => item.severity === "High").length} urgent`,
-            "alert" as const,
-          ],
-          [String(activeCampaigns.length), "Active campaigns", "Demo control", "trend" as const],
-        ].map(([value, label, change, icon]) => (
-          <article
-            className="rounded-[1.55rem] border border-slate-200 bg-white p-5 shadow-[0_14px_45px_rgba(15,23,42,0.045)]"
-            key={label}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold text-slate-400">{label}</p>
-                <p className="mt-4 text-3xl font-black tracking-[-0.04em]">{value}</p>
-                <p
-                  className={`mt-3 text-xs font-black ${
-                    label === "Open incidents" ? "text-rose-600" : "text-emerald-600"
-                  }`}
-                >
-                  {change}
-                </p>
-              </div>
-              <span className="grid size-11 place-items-center rounded-2xl bg-[#f2f7fb] text-[#082640]">
-                <Icon name={icon as IconName} />
-              </span>
+      <section className="biloo-admin-metrics" aria-label="Platform metrics">
+        {metrics.map((metric) => (
+          <article className="biloo-admin-metric" data-tone={metric.tone} key={metric.label}>
+            <span className="biloo-admin-metric-icon"><Icon name={metric.icon} /></span>
+            <div>
+              <small>{metric.label}</small>
+              <strong>{metric.value}</strong>
+              <span>{metric.detail}</span>
             </div>
           </article>
         ))}
       </section>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
-        <Surface className="p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
+      <div className="biloo-admin-primary-grid">
+        <section className="biloo-admin-panel">
+          <div className="biloo-section-heading">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-                Service performance
-              </p>
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
-                Orders by vertical
-              </h2>
+              <span>Service performance</span>
+              <h2>Marketplace activity</h2>
             </div>
             <StatusPill tone="brand">Today</StatusPill>
           </div>
-
-          <div className="mt-8 space-y-5">
-            {serviceMetrics.map(([label, width, value, color]) => (
-              <div key={label}>
-                <div className="flex items-center justify-between gap-4 text-sm">
-                  <span className="font-black">{label}</span>
-                  <span className="font-bold text-slate-400">{value}</span>
+          <div className="biloo-admin-services">
+            {serviceMetrics.map(([label, width, value, service]) => (
+              <article className="biloo-admin-service" key={label}>
+                <span className="biloo-admin-service-icon"><Icon name={service} /></span>
+                <div className="biloo-admin-service-body">
+                  <div><strong>{label}</strong><small>{value}</small></div>
+                  <div className="biloo-admin-service-track"><span style={{ width: `${width}%` }} /></div>
                 </div>
-                <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-100">
-                  <div
-                    className="h-full rounded-full"
-                    style={{ backgroundColor: color, width: `${width}%` }}
-                  />
-                </div>
-              </div>
+                <b>{width}%</b>
+              </article>
             ))}
           </div>
-        </Surface>
+        </section>
 
-        <Surface className="p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-4">
+        <section className="biloo-admin-panel">
+          <div className="biloo-section-heading">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-rose-600">
-                Risk queue
-              </p>
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
-                Needs attention
-              </h2>
+              <span>Risk queue</span>
+              <h2>Needs attention</h2>
             </div>
-            <StatusPill tone="danger">{openIncidents.length} open</StatusPill>
+            <StatusPill tone={openIncidents.length ? "danger" : "success"}>{openIncidents.length} open</StatusPill>
           </div>
-
-          <div className="mt-6 space-y-3">
+          <div className="biloo-admin-incidents">
             {incidents.map((incident) => (
-              <article
-                className={`rounded-2xl p-4 ${
-                  incident.resolved ? "bg-emerald-50/70" : "bg-[#f5f8fa]"
-                }`}
-                key={incident.id}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-black leading-5">{incident.title}</p>
-                    <p className="mt-2 text-xs text-slate-400">
-                      {incident.id} · {incident.age}
-                    </p>
-                  </div>
-                  <StatusPill
-                    tone={
-                      incident.resolved
-                        ? "success"
-                        : incident.severity === "High"
-                          ? "danger"
-                          : "warning"
-                    }
-                  >
+              <article className="biloo-admin-incident" data-resolved={incident.resolved} key={incident.id}>
+                <div className="biloo-admin-incident-top">
+                  <span className="biloo-admin-incident-icon"><Icon name={incident.resolved ? "check" : "alert"} /></span>
+                  <div><strong>{incident.title}</strong><small>{incident.id} · {incident.age}</small></div>
+                  <StatusPill tone={incident.resolved ? "success" : incident.severity === "High" ? "danger" : "warning"}>
                     {incident.resolved ? "Resolved" : incident.severity}
                   </StatusPill>
                 </div>
                 {!incident.resolved ? (
-                  <button
-                    className="mt-4 min-h-10 w-full rounded-xl bg-white text-xs font-black text-[#082640] shadow-sm"
-                    onClick={() => onResolveIncident(incident)}
-                    type="button"
-                  >
+                  <button className="biloo-button biloo-button-soft" onClick={() => onResolveIncident(incident)} type="button">
                     Mark resolved
                   </button>
                 ) : null}
               </article>
             ))}
+            {!incidents.length ? (
+              <div className="biloo-empty-state compact"><Icon name="check" /><strong>All clear</strong><p>No incidents require attention.</p></div>
+            ) : null}
           </div>
-        </Surface>
+        </section>
       </div>
 
-      <Surface className="p-5 sm:p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <section className="biloo-admin-panel">
+        <div className="biloo-section-heading">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-700">
-              Growth controls
-            </p>
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
-              Campaign manager
-            </h2>
+            <span>Growth controls</span>
+            <h2>Campaign manager</h2>
           </div>
           <StatusPill tone="success">{activeCampaigns.length} active</StatusPill>
         </div>
-
-        <div className="mt-6 grid gap-3 lg:grid-cols-2">
+        <div className="biloo-admin-campaigns">
           {campaigns.map((campaign) => (
-            <article
-              className="flex flex-col gap-4 rounded-2xl border border-slate-200 p-5 sm:flex-row sm:items-center sm:justify-between"
-              key={campaign.id}
-            >
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-black">{campaign.name}</p>
-                  <StatusPill tone={campaign.active ? "success" : "neutral"}>
-                    {campaign.active ? "Active" : "Paused"}
-                  </StatusPill>
-                </div>
-                <p className="mt-2 text-xs font-bold text-slate-400">
-                  {campaign.id} · {serviceLabel(campaign.service)} · {campaign.discount}% off
-                </p>
-                <p className="mt-1 text-[10px] text-slate-400">Created {campaign.createdAt}</p>
+            <article className="biloo-admin-campaign" data-active={campaign.active} key={campaign.id}>
+              <span className="biloo-admin-campaign-icon"><Icon name="trend" /></span>
+              <div className="biloo-admin-campaign-copy">
+                <div><strong>{campaign.name}</strong><StatusPill tone={campaign.active ? "success" : "neutral"}>{campaign.active ? "Active" : "Paused"}</StatusPill></div>
+                <p>{campaign.id} · {serviceLabel(campaign.service)} · {campaign.discount}% off</p>
+                <small>Created {campaign.createdAt}</small>
               </div>
               <button
-                className={`min-h-10 rounded-xl px-4 text-xs font-black ${
-                  campaign.active
-                    ? "bg-rose-50 text-rose-700"
-                    : "bg-emerald-50 text-emerald-700"
-                }`}
+                className={`biloo-button ${campaign.active ? "biloo-button-danger-soft" : "biloo-button-success-soft"}`}
                 onClick={() => toggleCampaign(campaign)}
                 type="button"
               >
@@ -434,7 +351,7 @@ export function AdminDashboard({
             </article>
           ))}
         </div>
-      </Surface>
+      </section>
     </div>
   );
 }
