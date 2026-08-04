@@ -17,6 +17,7 @@ const destinationPrompts = [
 type InputAnimation = {
   timer: number | null;
   stopped: boolean;
+  paused: boolean;
 };
 
 function promptsFor(input: HTMLInputElement) {
@@ -48,7 +49,6 @@ export function SearchMotionController() {
       if (!heroCopy) return;
 
       function animateServiceChange() {
-        if (!heroCopy) return;
         heroCopy.classList.remove("biloo-service-motion-enter");
         void heroCopy.offsetWidth;
         heroCopy.classList.add("biloo-service-motion-enter");
@@ -69,58 +69,110 @@ export function SearchMotionController() {
       preparedInputs.add(input);
 
       const prompts = promptsFor(input);
+      const stablePrompt = prompts[0] ?? "Search";
       if (reducedMotion) {
-        input.placeholder = prompts[0];
+        input.placeholder = stablePrompt;
         return;
       }
 
-      const animation: InputAnimation = { timer: null, stopped: false };
+      const animation: InputAnimation = {
+        timer: null,
+        stopped: false,
+        paused: false,
+      };
       let promptIndex = 0;
       let characterIndex = 0;
       let deleting = false;
 
+      function clearTimer() {
+        if (animation.timer === null) return;
+        window.clearTimeout(animation.timer);
+        animation.timer = null;
+      }
+
       function schedule(delay: number) {
+        clearTimer();
+        if (animation.stopped || animation.paused) return;
         animation.timer = window.setTimeout(step, delay);
       }
 
+      function pauseForEditing() {
+        animation.paused = true;
+        clearTimer();
+        input.dataset.searchEditing = "true";
+        input.placeholder = input.value ? "" : stablePrompt;
+      }
+
+      function resumeIdlePrompt() {
+        animation.paused = false;
+        delete input.dataset.searchEditing;
+        if (input.value) {
+          input.placeholder = "";
+          return;
+        }
+        characterIndex = 0;
+        deleting = false;
+        input.placeholder = "";
+        schedule(320);
+      }
+
+      function handleInput() {
+        if (input.value) {
+          input.placeholder = "";
+          return;
+        }
+        input.placeholder = animation.paused ? stablePrompt : "";
+        if (!animation.paused) schedule(260);
+      }
+
       function step() {
-        if (animation.stopped) return;
-        const prompt = prompts[promptIndex] ?? prompts[0];
+        animation.timer = null;
+        if (animation.stopped || animation.paused) return;
+        const prompt = prompts[promptIndex] ?? stablePrompt;
 
-        if (!input.value) {
-          if (!deleting) {
-            characterIndex = Math.min(characterIndex + 1, prompt.length);
-            input.placeholder = prompt.slice(0, characterIndex);
-
-            if (characterIndex === prompt.length) {
-              deleting = true;
-              schedule(1350);
-              return;
-            }
-            schedule(48);
-            return;
-          }
-
-          characterIndex = Math.max(characterIndex - 1, 0);
-          input.placeholder = prompt.slice(0, characterIndex);
-          if (characterIndex === 0) {
-            deleting = false;
-            promptIndex = (promptIndex + 1) % prompts.length;
-            schedule(260);
-            return;
-          }
-          schedule(27);
+        if (input.value) {
+          input.placeholder = "";
+          schedule(180);
           return;
         }
 
-        input.placeholder = "";
-        schedule(180);
+        if (!deleting) {
+          characterIndex = Math.min(characterIndex + 1, prompt.length);
+          input.placeholder = prompt.slice(0, characterIndex);
+
+          if (characterIndex === prompt.length) {
+            deleting = true;
+            schedule(1350);
+            return;
+          }
+          schedule(48);
+          return;
+        }
+
+        characterIndex = Math.max(characterIndex - 1, 0);
+        input.placeholder = prompt.slice(0, characterIndex);
+        if (characterIndex === 0) {
+          deleting = false;
+          promptIndex = (promptIndex + 1) % prompts.length;
+          schedule(260);
+          return;
+        }
+        schedule(27);
       }
 
-      schedule(280);
+      input.addEventListener("focus", pauseForEditing);
+      input.addEventListener("blur", resumeIdlePrompt);
+      input.addEventListener("input", handleInput);
+
+      if (document.activeElement === input) pauseForEditing();
+      else schedule(280);
+
       cleanups.add(() => {
         animation.stopped = true;
-        if (animation.timer !== null) window.clearTimeout(animation.timer);
+        clearTimer();
+        input.removeEventListener("focus", pauseForEditing);
+        input.removeEventListener("blur", resumeIdlePrompt);
+        input.removeEventListener("input", handleInput);
       });
     }
 
