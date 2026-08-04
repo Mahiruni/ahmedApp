@@ -13,6 +13,7 @@ import "./analytics-polish.css";
 import "./award-experience.css";
 import "./clarity-fix.css";
 import "./signature-color.css";
+import "./hero-service-motion.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
