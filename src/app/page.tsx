@@ -16,6 +16,13 @@ export const metadata: Metadata = {
   description:
     "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.",
   applicationName: "BILOO",
+  openGraph: {
+    title: "BILOO",
+    description:
+      "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.",
+    siteName: "BILOO",
+    type: "website",
+  },
   robots: { index: true, follow: true },
 };
 
