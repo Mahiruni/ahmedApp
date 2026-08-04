@@ -1,4 +1,5 @@
-/* Keep service discovery motion and search typing visually distinct. */
+/* Keep service discovery motion and search typing visually distinct.
+   This layer is intentionally imported last after the verified search system. */
 
 .biloo-service-loop[data-motion-controller="ready"]
   .biloo-service-loop-label
