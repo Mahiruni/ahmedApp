@@ -1,0 +1,74 @@
+/* Final contrast contract for dark BILOO surfaces.
+   Imported last so global heading/text rules cannot create dark-on-dark copy. */
+
+.biloo-admin-hero,
+.biloo-auth-story,
+.biloo-vendor-hero,
+.biloo-driver-hero,
+.biloo-card-preview {
+  color: #ffffff !important;
+}
+
+.biloo-admin-hero h1,
+.biloo-admin-hero h2,
+.biloo-admin-hero h3,
+.biloo-admin-hero strong,
+.biloo-admin-hero b,
+.biloo-auth-story h1,
+.biloo-auth-story h2,
+.biloo-auth-story h3,
+.biloo-auth-story strong,
+.biloo-vendor-hero h1,
+.biloo-vendor-hero h2,
+.biloo-vendor-hero h3,
+.biloo-vendor-hero strong,
+.biloo-driver-hero h1,
+.biloo-driver-hero h2,
+.biloo-driver-hero h3,
+.biloo-driver-hero strong,
+.biloo-card-preview > span,
+.biloo-card-preview > strong {
+  color: #ffffff !important;
+}
+
+.biloo-admin-hero p,
+.biloo-auth-story > div > p {
+  color: rgba(255, 255, 255, 0.68) !important;
+}
+
+.biloo-auth-benefits small,
+.biloo-card-preview > small,
+.biloo-card-preview > em {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.biloo-admin-kicker,
+.biloo-auth-story-kicker {
+  color: #c9c5ff !important;
+}
+
+.biloo-admin-hero .biloo-button-secondary-on-dark {
+  color: #ffffff !important;
+}
+
+.biloo-admin-hero .biloo-button-light {
+  color: #16161b !important;
+}
+
+.biloo-admin-hero svg,
+.biloo-auth-story svg,
+.biloo-vendor-hero svg,
+.biloo-driver-hero svg,
+.biloo-card-preview svg {
+  color: inherit;
+}
+
+@media (forced-colors: active) {
+  .biloo-admin-hero,
+  .biloo-auth-story,
+  .biloo-vendor-hero,
+  .biloo-driver-hero,
+  .biloo-card-preview {
+    border: 1px solid CanvasText;
+  }
+}
