@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { DriverJob, IconName } from "@/data/biloo";
 
-import { formatETB, Icon, serviceLabel, StatusPill, Surface } from "./ui";
+import { formatETB, Icon, serviceLabel } from "./ui";
 
 type DriverStage = "accepted" | "at_pickup" | "picked_up" | "at_dropoff";
 
@@ -140,6 +140,10 @@ export function DriverDashboard({
 
   const currentStage =
     driverStages.find((candidate) => candidate.key === stage) ?? driverStages[0];
+  const currentStageIndex = Math.max(
+    0,
+    driverStages.findIndex((candidate) => candidate.key === stage),
+  );
 
   const activeJobContact = activeJob as DriverJobWithContact | null;
   const activeContactName =
@@ -152,6 +156,32 @@ export function DriverDashboard({
       activeJobContact?.recipientPhone ??
       activeJobContact?.contactPhone,
   );
+
+  const metrics: Array<{
+    value: string;
+    label: string;
+    detail: string;
+    icon: IconName;
+  }> = [
+    {
+      value: formatETB(earnings),
+      label: "Today’s earnings",
+      detail: "Available after completed work",
+      icon: "wallet",
+    },
+    {
+      value: String(completed),
+      label: "Completed jobs",
+      detail: activeJob ? "One active job in progress" : `${visibleJobs.length} nearby requests`,
+      icon: "check",
+    },
+    {
+      value: "4.93",
+      label: "Driver rating",
+      detail: "Excellent service score",
+      icon: "star",
+    },
+  ];
 
   function advanceJob() {
     const currentIndex = driverStages.findIndex((candidate) => candidate.key === stage);
@@ -167,6 +197,7 @@ export function DriverDashboard({
     }
 
     const next = driverStages[currentIndex + 1];
+    if (!next) return;
     setStage(next.key);
     setNotice(`Job updated: ${next.label}.`);
   }
@@ -189,262 +220,243 @@ export function DriverDashboard({
   }
 
   return (
-    <div className="space-y-5 sm:space-y-6">
-      <section className="relative overflow-hidden rounded-[2rem] bg-[#082640] p-6 text-white shadow-[0_28px_80px_rgba(8,38,64,0.22)] sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-28 size-72 rounded-full bg-[#f2bd4b]/15 blur-3xl" />
-        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-white/60">
-              <span
-                className={`size-2.5 rounded-full ${online ? "bg-emerald-400" : "bg-slate-400"}`}
-              />
-              {online ? "Online and receiving requests" : "You are offline"}
+    <div className="biloo-driver-workspace">
+      <section className="biloo-driver-hero">
+        <div className="biloo-driver-hero-main">
+          <span className="biloo-driver-avatar" aria-hidden="true">
+            <Icon name="driver" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="biloo-driver-kicker">
+              <span className={online ? "is-live" : ""} />
+              {online ? "Online · Receiving requests" : "Offline · Requests paused"}
             </div>
-            <h1 className="mt-4 text-4xl font-black tracking-[-0.055em] sm:text-5xl">
-              Good evening, Dawit.
-            </h1>
-            <p className="mt-3 text-sm text-white/60 sm:text-base">
-              Trips, deliveries, earnings and navigation in one driver app.
-            </p>
+            <h1>Driver workspace</h1>
+            <p>Trips, deliveries, navigation and earnings—organized around your next action.</p>
           </div>
           <button
-            className={`min-h-13 rounded-2xl px-7 text-sm font-black transition hover:-translate-y-0.5 ${
-              online
-                ? "bg-[#f2bd4b] text-[#082640]"
-                : "bg-white text-[#082640]"
-            }`}
+            aria-pressed={online}
+            className="biloo-driver-availability"
+            data-online={online}
             onClick={() => setOnline(!online)}
             type="button"
           >
-            {online ? "Go offline" : "Go online"}
+            <span>
+              <small>Availability</small>
+              <strong>{online ? "Go offline" : "Go online"}</strong>
+            </span>
+            <span className="biloo-driver-switch" aria-hidden="true"><i /></span>
           </button>
         </div>
 
-        <div className="relative mt-8 grid gap-3 sm:grid-cols-3">
-          {[
-            [formatETB(earnings), "Today’s earnings", "wallet" as const],
-            [String(completed), "Completed jobs", "check" as const],
-            ["4.93", "Driver rating", "star" as const],
-          ].map(([value, label, icon]) => (
-            <div className="rounded-2xl bg-white/9 p-5" key={label}>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-2xl font-black">{value}</p>
-                  <p className="mt-2 text-xs font-semibold text-white/55">{label}</p>
-                </div>
-                <Icon className="size-5 text-[#f2bd4b]" name={icon as IconName} />
-              </div>
-            </div>
+        <div className="biloo-driver-metrics">
+          {metrics.map((metric) => (
+            <article key={metric.label}>
+              <span className="biloo-driver-metric-icon">
+                <Icon name={metric.icon} />
+              </span>
+              <span className="min-w-0">
+                <strong>{metric.value}</strong>
+                <small>{metric.label}</small>
+                <em>{metric.detail}</em>
+              </span>
+            </article>
           ))}
         </div>
       </section>
 
       {notice ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">
-          {notice}
+        <div className="biloo-driver-notice" role="status">
+          <Icon name="check" />
+          <span>{notice}</span>
         </div>
       ) : null}
 
-      {activeJob ? (
-        <Surface className="overflow-hidden">
-          <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
-            <div className="p-5 sm:p-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <StatusPill tone="success">Active job</StatusPill>
-                <span className="text-xs font-black text-slate-400">
-                  {currentStage.progress}% complete
-                </span>
-              </div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.045em]">
-                {activeJob.type} in progress
-              </h2>
-              <p className="mt-2 text-sm text-slate-500">
-                {serviceLabel(activeJob.service)} · {activeJob.distance} · {activeJob.eta}
-              </p>
+      {activeJob && currentStage ? (
+        <section className="biloo-driver-active">
+          <div className="biloo-driver-active-content">
+            <header className="biloo-driver-active-header">
+              <span className="biloo-driver-active-badge">
+                <i /> Active {activeJob.type.toLowerCase()}
+              </span>
+              <span>{activeJob.id}</span>
+            </header>
 
-              <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100">
-                <div
-                  className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-                  style={{ width: `${currentStage.progress}%` }}
-                />
+            <div className="biloo-driver-active-title">
+              <span className="biloo-driver-service-icon">
+                <Icon name={activeJob.type === "Taxi" ? "taxi" : "driver"} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <small>{serviceLabel(activeJob.service)}</small>
+                <h2>{currentStage.label}</h2>
+                <p>{activeJob.distance} · {activeJob.eta} estimated</p>
               </div>
-              <div className="mt-3 grid grid-cols-4 gap-2">
-                {driverStages.map((item) => {
-                  const activeIndex = driverStages.findIndex(
-                    (candidate) => candidate.key === stage,
-                  );
-                  const itemIndex = driverStages.findIndex(
-                    (candidate) => candidate.key === item.key,
-                  );
-                  return (
-                    <div key={item.key} className="text-center">
-                      <span
-                        className={`mx-auto block size-2.5 rounded-full ${
-                          itemIndex <= activeIndex ? "bg-emerald-500" : "bg-slate-200"
-                        }`}
-                      />
-                      <span className="mt-2 block text-[9px] font-black text-slate-400">
-                        {item.label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+              <strong>{formatETB(activeJob.amount)}</strong>
+            </div>
 
-              <div className="mt-6 space-y-4">
-                <RouteStop label="Pickup" location={activeJob.pickup} tone="green" />
-                <RouteStop label="Drop-off" location={activeJob.dropoff} tone="red" />
+            <div className="biloo-driver-stage-progress">
+              <div>
+                <span>{currentStage.label}</span>
+                <strong>{currentStage.progress}%</strong>
               </div>
-
-              <div className="mt-6 rounded-2xl bg-[#f5f8fa] p-4">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
-                  Estimated earning
-                </p>
-                <p className="mt-2 text-2xl font-black">{formatETB(activeJob.amount)}</p>
+              <div className="biloo-driver-stage-track">
+                <span style={{ width: `${currentStage.progress}%` }} />
               </div>
+              <div className="biloo-driver-stage-labels">
+                {driverStages.map((item, index) => (
+                  <span data-current={index === currentStageIndex} data-done={index <= currentStageIndex} key={item.key}>
+                    <i />
+                    {item.label}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                {activeContactPhone ? (
-                  <a
-                    aria-label={`Call ${activeContactName}`}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 text-sm font-black text-[#082640]"
-                    href={`tel:${activeContactPhone}`}
-                  >
-                    <Icon name="phone" /> Call customer
-                  </a>
-                ) : (
-                  <button
-                    aria-label="Customer phone unavailable"
-                    className="inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 text-sm font-black text-slate-400"
-                    disabled
-                    title="No verified customer phone is attached to this job"
-                    type="button"
-                  >
-                    <Icon name="phone" /> Call unavailable
-                  </button>
-                )}
+            <div className="biloo-driver-route-card">
+              <RouteStop label="Pickup" location={activeJob.pickup} tone="green" />
+              <span className="biloo-driver-route-connector" aria-hidden="true" />
+              <RouteStop label="Drop-off" location={activeJob.dropoff} tone="red" />
+            </div>
+
+            <div className="biloo-driver-job-metrics">
+              <article>
+                <small>Estimated earning</small>
+                <strong>{formatETB(activeJob.amount)}</strong>
+              </article>
+              <article>
+                <small>Distance</small>
+                <strong>{activeJob.distance}</strong>
+              </article>
+              <article>
+                <small>ETA</small>
+                <strong>{activeJob.eta}</strong>
+              </article>
+            </div>
+
+            <div className="biloo-driver-contact-actions">
+              {activeContactPhone ? (
+                <a aria-label={`Call ${activeContactName}`} href={`tel:${activeContactPhone}`}>
+                  <Icon name="phone" />
+                  <span>Call customer</span>
+                </a>
+              ) : (
                 <button
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#082640] text-sm font-black text-white"
-                  onClick={() => openNavigation(activeJob)}
+                  aria-label="Customer phone unavailable"
+                  disabled
+                  title="No verified customer phone is attached to this job"
                   type="button"
                 >
-                  <Icon name="navigation" /> Navigate
+                  <Icon name="phone" />
+                  <span>Call unavailable</span>
                 </button>
-              </div>
-              <p className="mt-2 text-[10px] leading-4 text-slate-400">
-                Calls use the verified phone attached to this customer’s active job.
-              </p>
-              <button
-                className="mt-3 min-h-12 w-full rounded-xl bg-emerald-600 text-sm font-black text-white transition hover:bg-emerald-700"
-                onClick={advanceJob}
-                type="button"
-              >
-                {currentStage.action}
+              )}
+              <button onClick={() => openNavigation(activeJob)} type="button">
+                <Icon name="navigation" />
+                <span>Open navigation</span>
               </button>
             </div>
 
-            <div className="relative min-h-[430px] overflow-hidden bg-[#e8eef2]">
-              <div className="absolute inset-0 opacity-60 [background-image:linear-gradient(#cbd5e1_1px,transparent_1px),linear-gradient(90deg,#cbd5e1_1px,transparent_1px)] [background-size:42px_42px]" />
-              <div className="absolute left-[15%] top-[23%] h-2 w-[65%] rotate-[24deg] rounded-full bg-[#082640]/25" />
-              <div className="absolute left-[19%] top-[19%] grid size-12 place-items-center rounded-full border-4 border-white bg-emerald-500 text-white shadow-xl">
-                <Icon name="location" />
-              </div>
-              <div className="absolute bottom-[19%] right-[14%] grid size-12 place-items-center rounded-full border-4 border-white bg-rose-500 text-white shadow-xl">
-                <Icon name="location" />
-              </div>
-              <div className="absolute left-[52%] top-[44%] grid size-14 place-items-center rounded-full border-4 border-white bg-[#082640] text-[#f2bd4b] shadow-2xl">
-                <Icon name={activeJob.type === "Taxi" ? "taxi" : "driver"} />
-              </div>
-              <div className="absolute inset-x-5 bottom-5 rounded-2xl bg-white/92 p-4 shadow-xl backdrop-blur">
-                <p className="text-sm font-black">{currentStage.label}</p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Your progress is saved on this device until the backend is connected.
-                </p>
+            <button className="biloo-driver-primary-action" onClick={advanceJob} type="button">
+              <span>{currentStage.action}</span>
+              <Icon name={stage === "at_dropoff" ? "check" : "arrow"} />
+            </button>
+            <p className="biloo-driver-contact-note">
+              Customer calls use only the verified phone attached to this active job.
+            </p>
+          </div>
+
+          <div className="biloo-driver-route-visual" aria-label="Active route preview">
+            <div className="biloo-driver-map-grid" />
+            <div className="biloo-driver-map-route" />
+            <span className="biloo-driver-map-pin is-start"><Icon name="location" /></span>
+            <span className="biloo-driver-map-pin is-end"><Icon name="location" /></span>
+            <span
+              className="biloo-driver-map-vehicle"
+              style={{
+                left: `${18 + currentStage.progress * 0.52}%`,
+                top: `${25 + currentStage.progress * 0.22}%`,
+              }}
+            >
+              <Icon name={activeJob.type === "Taxi" ? "taxi" : "driver"} />
+            </span>
+            <div className="biloo-driver-map-card">
+              <span><Icon name="navigation" /></span>
+              <div>
+                <small>Next action</small>
+                <strong>{currentStage.action}</strong>
+                <p>Progress is synchronized with the customer order lifecycle.</p>
               </div>
             </div>
           </div>
-        </Surface>
+        </section>
       ) : (
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.72fr)]">
-          <Surface className="p-5 sm:p-6">
-            <div className="flex items-start justify-between gap-4">
+        <div className="biloo-driver-grid">
+          <section className="biloo-driver-panel">
+            <header className="biloo-driver-panel-header">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-amber-700">
-                  Incoming work
-                </p>
-                <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">
-                  Available jobs nearby
-                </h2>
+                <span>Nearby opportunities</span>
+                <h2>Available jobs</h2>
+                <p>Compare route, time and payout before accepting.</p>
               </div>
-              <StatusPill tone={online ? "success" : "neutral"}>
-                {online ? "Live" : "Offline"}
-              </StatusPill>
-            </div>
+              <span className="biloo-driver-panel-status" data-online={online}>
+                <i /> {online ? "Live" : "Offline"}
+              </span>
+            </header>
 
-            <div className="mt-6 space-y-4">
+            <div className="biloo-driver-jobs" data-online={online}>
               {visibleJobs.map((job) => (
-                <article
-                  className={`rounded-[1.45rem] border p-5 transition ${
-                    online
-                      ? "border-slate-200 hover:border-slate-300 hover:shadow-lg"
-                      : "border-slate-100 opacity-55"
-                  }`}
-                  key={job.id}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <StatusPill tone="brand">{job.type}</StatusPill>
-                        <span className="text-xs font-bold text-slate-400">{job.id}</span>
-                      </div>
-                      <p className="mt-4 text-sm font-black">{job.pickup}</p>
-                      <div className="my-2 ml-2 h-5 border-l border-dashed border-slate-300" />
-                      <p className="text-sm font-black">{job.dropoff}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xl font-black text-[#082640]">
-                        {formatETB(job.amount)}
-                      </p>
-                      <p className="mt-1 text-xs font-bold text-slate-400">
-                        {job.distance} · {job.eta}
-                      </p>
-                    </div>
+                <article className="biloo-driver-job" key={job.id}>
+                  <div className="biloo-driver-job-top">
+                    <span className="biloo-driver-job-type">
+                      <Icon name={job.type === "Taxi" ? "taxi" : "driver"} />
+                      {job.type}
+                    </span>
+                    <span>{job.id}</span>
                   </div>
 
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    <button
-                      className="min-h-11 rounded-xl border border-slate-200 text-xs font-black text-slate-500 disabled:opacity-40"
-                      disabled={!online}
-                      onClick={() => declineJob(job)}
-                      type="button"
-                    >
+                  <div className="biloo-driver-job-route">
+                    <RouteStop label="Pickup" location={job.pickup} tone="green" />
+                    <span className="biloo-driver-route-connector" aria-hidden="true" />
+                    <RouteStop label="Drop-off" location={job.dropoff} tone="red" />
+                  </div>
+
+                  <div className="biloo-driver-job-summary">
+                    <span>
+                      <small>Payout</small>
+                      <strong>{formatETB(job.amount)}</strong>
+                    </span>
+                    <span>
+                      <small>Distance</small>
+                      <strong>{job.distance}</strong>
+                    </span>
+                    <span>
+                      <small>Time</small>
+                      <strong>{job.eta}</strong>
+                    </span>
+                  </div>
+
+                  <div className="biloo-driver-job-actions">
+                    <button disabled={!online} onClick={() => declineJob(job)} type="button">
                       Decline
                     </button>
-                    <button
-                      className="min-h-11 rounded-xl bg-[#082640] text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
-                      disabled={!online}
-                      onClick={() => onAccept(job)}
-                      type="button"
-                    >
-                      Accept job
+                    <button disabled={!online} onClick={() => onAccept(job)} type="button">
+                      Accept job <Icon name="arrow" />
                     </button>
                   </div>
                 </article>
               ))}
 
               {visibleJobs.length === 0 ? (
-                <div className="rounded-[1.45rem] bg-slate-50 px-6 py-12 text-center">
-                  <Icon className="mx-auto size-8 text-slate-300" name="check" />
-                  <p className="mt-4 text-sm font-black text-slate-600">Queue cleared</p>
-                  <p className="mt-2 text-xs text-slate-400">
-                    New requests will appear here when they become available.
-                  </p>
+                <div className="biloo-driver-empty">
+                  <span><Icon name="check" /></span>
+                  <h3>Queue cleared</h3>
+                  <p>New requests will appear here automatically when they become available.</p>
                 </div>
               ) : null}
             </div>
-          </Surface>
+          </section>
 
-          <DemandMap />
+          <DemandMap online={online} />
         </div>
       )}
     </div>
@@ -461,49 +473,43 @@ function RouteStop({
   tone: "green" | "red";
 }) {
   return (
-    <div className="flex gap-3">
-      <span
-        className={`mt-1 size-3 shrink-0 rounded-full ${
-          tone === "green" ? "bg-emerald-500" : "bg-rose-500"
-        }`}
-      />
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.13em] text-slate-400">
-          {label}
-        </p>
-        <p className="mt-1 text-sm font-black">{location}</p>
+    <div className="biloo-driver-route-stop" data-tone={tone}>
+      <span aria-hidden="true"><i /></span>
+      <div className="min-w-0">
+        <small>{label}</small>
+        <strong>{location}</strong>
       </div>
     </div>
   );
 }
 
-function DemandMap() {
+function DemandMap({ online }: { online: boolean }) {
   return (
-    <Surface className="p-5 sm:p-6">
-      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-        Demand map
-      </p>
-      <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">High-demand zones</h2>
-      <div className="relative mt-6 min-h-[430px] overflow-hidden rounded-[1.45rem] bg-[#e8eef2]">
-        <div className="absolute inset-0 opacity-55 [background-image:linear-gradient(#cbd5e1_1px,transparent_1px),linear-gradient(90deg,#cbd5e1_1px,transparent_1px)] [background-size:40px_40px]" />
-        <div className="absolute left-[15%] top-[20%] size-32 rounded-full bg-amber-400/38 blur-sm" />
-        <div className="absolute right-[9%] top-[42%] size-40 rounded-full bg-orange-400/34 blur-sm" />
-        <div className="absolute bottom-[12%] left-[34%] size-28 rounded-full bg-emerald-400/30 blur-sm" />
-        <div className="absolute left-1/2 top-1/2 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-4 border-white bg-[#082640] text-white shadow-xl">
-          <Icon name="driver" />
+    <section className="biloo-driver-panel biloo-driver-demand">
+      <header className="biloo-driver-panel-header">
+        <div>
+          <span>Demand intelligence</span>
+          <h2>High-demand zones</h2>
+          <p>Move toward active areas to reduce waiting time.</p>
         </div>
-        <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-white/92 p-4 backdrop-blur">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm font-black">Bole · 2.1× demand</p>
-              <p className="mt-1 text-xs text-slate-500">
-                Estimated four-minute wait for the next request.
-              </p>
-            </div>
-            <Icon className="size-5 text-[#082640]" name="trend" />
+        <span className="biloo-driver-demand-trend"><Icon name="trend" /> 2.1×</span>
+      </header>
+
+      <div className="biloo-driver-demand-map" data-online={online}>
+        <div className="biloo-driver-map-grid" />
+        <span className="biloo-driver-demand-zone is-one" />
+        <span className="biloo-driver-demand-zone is-two" />
+        <span className="biloo-driver-demand-zone is-three" />
+        <span className="biloo-driver-demand-position"><Icon name="driver" /></span>
+        <div className="biloo-driver-demand-card">
+          <span><Icon name="trend" /></span>
+          <div>
+            <small>Best nearby zone</small>
+            <strong>Bole · 2.1× demand</strong>
+            <p>{online ? "Estimated four-minute wait for the next request." : "Go online to receive requests in this zone."}</p>
           </div>
         </div>
       </div>
-    </Surface>
+    </section>
   );
 }
