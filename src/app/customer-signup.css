@@ -1,0 +1,300 @@
+/* Ethiopia-ready BILOO customer registration. */
+
+.biloo-auth-form-wrap:has(.biloo-signup-form) {
+  width: min(100%, 720px);
+  max-width: 720px;
+}
+
+.biloo-auth-shell:has(.biloo-signup-form) {
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.28fr);
+}
+
+.biloo-signup-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+  border: 1px solid #e9e7f5;
+  border-radius: 16px;
+  background: #f8f7ff;
+  padding: 13px 14px;
+}
+
+.biloo-signup-intro > span:first-child {
+  min-width: 0;
+}
+
+.biloo-signup-intro strong,
+.biloo-signup-intro small {
+  display: block;
+}
+
+.biloo-signup-intro strong {
+  color: #242033;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.biloo-signup-intro small {
+  margin-top: 3px;
+  color: #777384;
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.biloo-signup-intro-status {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #e8e5ff;
+  padding: 6px 9px;
+  color: #5146e5;
+  font-size: 9.5px;
+  font-weight: 750;
+}
+
+.biloo-signup-form {
+  display: grid;
+  gap: 18px;
+}
+
+.biloo-signup-section {
+  border: 1px solid #eceaf2;
+  border-radius: 18px;
+  background: #fff;
+  padding: 18px;
+  box-shadow: 0 1px 2px rgba(24, 20, 45, 0.025);
+}
+
+.biloo-signup-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 16px;
+}
+
+.biloo-signup-step {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border-radius: 10px;
+  background: #5146e5;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.biloo-signup-section-heading h2 {
+  color: #1f1b2c;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 16px;
+  font-weight: 720;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.biloo-signup-section-heading p {
+  margin-top: 3px;
+  color: #7a7687;
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.biloo-signup-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.biloo-signup-name-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.biloo-signup-wide {
+  grid-column: 1 / -1;
+}
+
+.biloo-signup-form label {
+  min-width: 0;
+}
+
+.biloo-signup-form .biloo-auth-input {
+  min-height: 50px;
+  margin-top: 0;
+  border-radius: 13px;
+  font-size: 16px;
+}
+
+.biloo-signup-form select.biloo-auth-input {
+  appearance: auto;
+  cursor: pointer;
+}
+
+.biloo-signup-username-field {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 50px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #dedbe9;
+  border-radius: 13px;
+  background: #fff;
+  padding: 0 13px;
+  color: #777384;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.biloo-signup-username-field:focus-within {
+  border-color: #5146e5;
+  box-shadow: 0 0 0 3px rgba(81, 70, 229, 0.11);
+}
+
+.biloo-signup-username-field[data-valid="true"] > svg {
+  color: #11884f;
+}
+
+.biloo-signup-username-field[data-valid="false"] > svg {
+  color: #c66b12;
+}
+
+.biloo-signup-username-field .biloo-auth-input {
+  min-height: 48px;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.biloo-signup-help {
+  display: block;
+  margin-top: 6px;
+  color: #898596;
+  font-size: 9.5px;
+  line-height: 1.45;
+}
+
+.biloo-signup-password-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.biloo-signup-password-checks span {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  border-radius: 999px;
+  background: #f1f0f4;
+  padding: 5px 9px;
+  color: #7a7687;
+  font-size: 9.5px;
+  font-weight: 650;
+}
+
+.biloo-signup-password-checks span[data-complete="true"] {
+  background: #e9f8f0;
+  color: #117447;
+}
+
+.biloo-signup-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #eceaf2;
+  border-radius: 14px;
+  background: #faf9fc;
+  padding: 13px 14px;
+  color: #5f5b6c;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.biloo-signup-consent input {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  margin-top: 1px;
+  accent-color: #5146e5;
+}
+
+.biloo-signup-submit {
+  display: flex !important;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.biloo-signup-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.biloo-signup-security-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #858191;
+  font-size: 9.5px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .biloo-auth-shell:has(.biloo-signup-form) {
+    grid-template-columns: minmax(270px, 0.65fr) minmax(0, 1.35fr);
+  }
+
+  .biloo-signup-name-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .biloo-signup-name-grid > label:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 820px) {
+  .biloo-auth-shell:has(.biloo-signup-form) {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-auth-form-wrap:has(.biloo-signup-form) {
+    max-width: 680px;
+  }
+}
+
+@media (max-width: 620px) {
+  .biloo-signup-intro {
+    align-items: flex-start;
+  }
+
+  .biloo-signup-intro-status {
+    display: none;
+  }
+
+  .biloo-signup-section {
+    border-radius: 16px;
+    padding: 15px;
+  }
+
+  .biloo-signup-grid,
+  .biloo-signup-name-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-signup-name-grid > label:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-signup-username-field {
+    transition: none;
+  }
+}
