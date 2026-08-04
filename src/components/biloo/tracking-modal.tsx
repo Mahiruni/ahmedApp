@@ -1,9 +1,22 @@
 "use client";
 
-import type { ActiveOrder } from "@/data/biloo";
+import { useEffect, useMemo, useState } from "react";
 
-import { Modal } from "./overlay-primitives";
-import { formatETB, Icon, StatusPill } from "./ui";
+import type { ActiveOrder, PaymentMethod } from "@/data/biloo";
+
+import { formatETB, Icon, serviceLabel } from "./ui";
+
+const confirmationStorageKey = "biloo:pending-order-confirmation";
+
+type ConfirmationContext = {
+  payment: PaymentMethod;
+  itemCount: number;
+  merchant: string;
+  service: string;
+  createdAt: number;
+};
+
+type ExperienceMode = "confirmation" | "tracking";
 
 export function TrackingModal({
   order,
@@ -14,125 +27,396 @@ export function TrackingModal({
   onClose: () => void;
   onAdvance: (order: ActiveOrder) => void;
 }) {
+  const [mode, setMode] = useState<ExperienceMode>("tracking");
+  const [confirmation, setConfirmation] =
+    useState<ConfirmationContext | null>(null);
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const orderId = order?.id;
+  const orderService = order?.service;
+  const orderTitle = order?.title;
+
+  useEffect(() => {
+    if (!orderId || !orderService || !orderTitle) return;
+
+    setReceiptOpen(false);
+    setCopied(false);
+    setConfirmation(null);
+    setMode("tracking");
+
+    try {
+      const stored = window.sessionStorage.getItem(confirmationStorageKey);
+      if (!stored) return;
+
+      window.sessionStorage.removeItem(confirmationStorageKey);
+      const parsed = JSON.parse(stored) as Partial<ConfirmationContext>;
+      const recent =
+        typeof parsed.createdAt === "number" &&
+        Date.now() - parsed.createdAt < 2 * 60 * 1000;
+      const merchantMatches =
+        typeof parsed.merchant === "string" &&
+        orderTitle.toLowerCase().includes(parsed.merchant.toLowerCase());
+
+      if (
+        recent &&
+        merchantMatches &&
+        orderService !== "taxi" &&
+        (parsed.payment === "wallet" ||
+          parsed.payment === "card" ||
+          parsed.payment === "cash")
+      ) {
+        setConfirmation({
+          payment: parsed.payment,
+          itemCount:
+            typeof parsed.itemCount === "number" ? parsed.itemCount : 1,
+          merchant: parsed.merchant ?? "BILOO partner",
+          service: parsed.service ?? serviceLabel(orderService),
+          createdAt: parsed.createdAt,
+        });
+        setMode("confirmation");
+      }
+    } catch {
+      // Tracking remains available when session storage is blocked.
+    }
+  }, [orderId, orderService, orderTitle]);
+
+  useEffect(() => {
+    if (!order) return;
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [onClose, order]);
+
+  const progressLabel = useMemo(() => {
+    if (!order) return "Order confirmed";
+    if (order.progress >= 100) return "Delivered";
+    if (order.progress >= 90) return "Arriving now";
+    if (order.progress >= 60) return "Courier en route";
+    if (order.progress >= 35) return "Provider preparing";
+    return "Order confirmed";
+  }, [order]);
+
   if (!order) return null;
 
-  return (
-    <Modal onClose={onClose} title={`Track ${order.id}`} wide>
-      <div className="grid lg:grid-cols-[0.72fr_1.28fr]">
-        <div className="p-5 sm:p-6">
-          <StatusPill tone="success">Live</StatusPill>
-          <h2 className="mt-4 text-2xl font-black tracking-[-0.04em]">
-            {order.title}
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
-            {order.status}
-          </p>
+  async function copyOrderId() {
+    try {
+      await navigator.clipboard.writeText(order.id);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+    }
+  }
 
-          <div className="mt-6 rounded-2xl bg-[#f5f8fa] p-4">
-            <div className="flex items-center justify-between gap-4">
-              <span className="text-xs font-black text-slate-500">
-                Progress
+  if (mode === "confirmation" && confirmation) {
+    const prepaid = confirmation.payment !== "cash";
+    const paymentLabel =
+      confirmation.payment === "wallet"
+        ? "BILOO Wallet"
+        : confirmation.payment === "card"
+          ? "Bank card"
+          : "Cash on delivery";
+
+    return (
+      <div className="biloo-order-overlay" role="presentation">
+        <div className="biloo-order-backdrop" />
+        <section
+          aria-label="Order confirmation"
+          aria-modal="true"
+          className="biloo-order-confirmation"
+          role="dialog"
+        >
+          <div className="biloo-order-handle" aria-hidden="true" />
+
+          <header className="biloo-order-confirmation-header">
+            <span className="biloo-order-brand">BILOO</span>
+            <button
+              aria-label="Close confirmation"
+              className="biloo-order-close"
+              onClick={onClose}
+              type="button"
+            >
+              <Icon className="size-[18px]" name="close" />
+            </button>
+          </header>
+
+          <div className="biloo-order-confirmation-body">
+            <div className="biloo-order-success-mark" aria-hidden="true">
+              <span>
+                <Icon className="size-8" name="check" />
               </span>
-              <span className="text-xs font-black text-[#082640]">
-                {order.progress}%
-              </span>
+              <i />
+              <i />
+              <i />
             </div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
-              <div
-                className="h-full rounded-full bg-[#082640]"
-                style={{ width: `${order.progress}%` }}
+
+            <div className="biloo-order-success-copy" aria-live="polite">
+              <span>{prepaid ? "Payment successful" : "Order confirmed"}</span>
+              <h2>{prepaid ? "You’re all set." : "Your order is placed."}</h2>
+              <p>
+                {prepaid
+                  ? `${confirmation.merchant} has received your order and payment.`
+                  : `${confirmation.merchant} has received your order. Pay the courier when it arrives.`}
+              </p>
+            </div>
+
+            <div className="biloo-order-id-card">
+              <span>
+                <small>Order number</small>
+                <strong>{order.id}</strong>
+              </span>
+              <button onClick={copyOrderId} type="button">
+                {copied ? "Copied" : "Copy"}
+              </button>
+            </div>
+
+            <div className="biloo-order-highlights">
+              <article>
+                <span className="biloo-order-highlight-icon">
+                  <Icon className="size-[18px]" name="clock" />
+                </span>
+                <span>
+                  <small>Estimated arrival</small>
+                  <strong>{order.eta}</strong>
+                </span>
+              </article>
+              <article>
+                <span className="biloo-order-highlight-icon">
+                  <Icon className="size-[18px]" name="wallet" />
+                </span>
+                <span>
+                  <small>{prepaid ? "Amount paid" : "Amount due"}</small>
+                  <strong>{formatETB(order.total)}</strong>
+                </span>
+              </article>
+            </div>
+
+            <div className="biloo-order-destination">
+              <span className="biloo-order-destination-icon">
+                <Icon className="size-[18px]" name="home" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <small>Delivering to</small>
+                <strong>Home · Bole, Addis Ababa</strong>
+                <em>Call on arrival</em>
+              </span>
+              <span className="biloo-order-live-pill">Confirmed</span>
+            </div>
+
+            <div className="biloo-order-first-step">
+              <div className="biloo-order-first-step-line">
+                <span data-done="true">
+                  <Icon className="size-3" name="check" />
+                </span>
+                <i />
+                <span />
+                <i />
+                <span />
+              </div>
+              <div className="biloo-order-first-step-labels">
+                <strong>Confirmed</strong>
+                <span>Preparing</span>
+                <span>On the way</span>
+              </div>
+            </div>
+
+            <button
+              aria-expanded={receiptOpen}
+              className="biloo-order-receipt-toggle"
+              onClick={() => setReceiptOpen((current) => !current)}
+              type="button"
+            >
+              <span>
+                <Icon className="size-[18px]" name="receipt" />
+                Receipt and order details
+              </span>
+              <Icon
+                className={`size-4 transition-transform ${receiptOpen ? "rotate-90" : ""}`}
+                name="arrow"
               />
-            </div>
+            </button>
+
+            {receiptOpen ? (
+              <div className="biloo-order-receipt">
+                <ReceiptLine label="Merchant" value={confirmation.merchant} />
+                <ReceiptLine label="Service" value={confirmation.service} />
+                <ReceiptLine
+                  label="Items"
+                  value={`${confirmation.itemCount}`}
+                />
+                <ReceiptLine label="Payment" value={paymentLabel} />
+                <ReceiptLine
+                  bold
+                  label={prepaid ? "Paid" : "Total due"}
+                  value={formatETB(order.total)}
+                />
+              </div>
+            ) : null}
           </div>
 
-          <div className="mt-6 space-y-4">
-            <TrackingStep done label="Order confirmed" />
-            <TrackingStep done={order.progress >= 35} label="Provider preparing" />
-            <TrackingStep done={order.progress >= 60} label="Driver en route" />
-            <TrackingStep done={order.progress >= 90} label="Arriving" />
-          </div>
+          <footer className="biloo-order-confirmation-footer">
+            <button
+              className="biloo-order-track-button"
+              onClick={() => setMode("tracking")}
+              type="button"
+            >
+              <Icon className="size-[18px]" name="navigation" />
+              <span>Track order</span>
+              <Icon className="size-[18px]" name="arrow" />
+            </button>
+            <button className="biloo-order-done-button" onClick={onClose} type="button">
+              Done
+            </button>
+            <p>Updates will appear in BILOO notifications automatically.</p>
+          </footer>
+        </section>
+      </div>
+    );
+  }
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-slate-200 p-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">
-                ETA
-              </p>
-              <p className="mt-2 text-lg font-black">{order.eta}</p>
-            </div>
-            <div className="rounded-2xl border border-slate-200 p-4">
-              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">
-                Total
-              </p>
-              <p className="mt-2 text-lg font-black">
-                {formatETB(order.total)}
-              </p>
-            </div>
-          </div>
+  return (
+    <div className="biloo-order-overlay" role="presentation">
+      <button
+        aria-label="Close tracking"
+        className="biloo-order-backdrop"
+        onClick={onClose}
+        type="button"
+      />
 
+      <section
+        aria-label={`Track ${order.id}`}
+        aria-modal="true"
+        className="biloo-tracking-sheet"
+        role="dialog"
+      >
+        <header className="biloo-tracking-header">
           <button
-            className="mt-5 min-h-12 w-full rounded-xl bg-[#082640] text-xs font-black text-white"
-            onClick={() => onAdvance(order)}
+            aria-label="Close tracking"
+            className="biloo-order-close"
+            onClick={onClose}
             type="button"
           >
-            Advance tracking demo
+            <Icon className="size-[18px]" name="close" />
           </button>
-        </div>
+          <span className="min-w-0 flex-1">
+            <small>Live order</small>
+            <strong>{order.id}</strong>
+          </span>
+          <span className="biloo-tracking-live">
+            <i /> Live
+          </span>
+        </header>
 
-        <div className="relative min-h-[500px] overflow-hidden bg-[#e8eef2]">
-          <div className="absolute inset-0 opacity-60 [background-image:linear-gradient(#cbd5e1_1px,transparent_1px),linear-gradient(90deg,#cbd5e1_1px,transparent_1px)] [background-size:42px_42px]" />
-          <div className="absolute left-[13%] top-[22%] h-2 w-[67%] rotate-[22deg] rounded-full bg-[#082640]/23" />
-          <div className="absolute left-[17%] top-[19%] grid size-12 place-items-center rounded-full border-4 border-white bg-emerald-500 text-white shadow-xl">
-            <Icon name="location" />
+        <div className="biloo-tracking-layout">
+          <div className="biloo-tracking-details">
+            <span className="biloo-tracking-service">
+              {serviceLabel(order.service)}
+            </span>
+            <h2>{order.title}</h2>
+            <p>{order.status}</p>
+
+            <div className="biloo-tracking-progress-card">
+              <div>
+                <span>{progressLabel}</span>
+                <strong>{order.progress}%</strong>
+              </div>
+              <div className="biloo-tracking-progress-track">
+                <span style={{ width: `${Math.min(order.progress, 100)}%` }} />
+              </div>
+            </div>
+
+            <div className="biloo-tracking-steps">
+              <TrackingStep done label="Order confirmed" />
+              <TrackingStep done={order.progress >= 35} label="Provider preparing" />
+              <TrackingStep done={order.progress >= 60} label="Courier en route" />
+              <TrackingStep done={order.progress >= 90} label="Arriving" />
+            </div>
+
+            <div className="biloo-tracking-metrics">
+              <article>
+                <small>ETA</small>
+                <strong>{order.eta}</strong>
+              </article>
+              <article>
+                <small>Total</small>
+                <strong>{formatETB(order.total)}</strong>
+              </article>
+            </div>
+
+            <button
+              className="biloo-tracking-refresh"
+              onClick={() => onAdvance(order)}
+              type="button"
+            >
+              Check latest status
+            </button>
           </div>
-          <div className="absolute right-[12%] bottom-[17%] grid size-12 place-items-center rounded-full border-4 border-white bg-rose-500 text-white shadow-xl">
-            <Icon name="home" />
-          </div>
-          <div
-            className="absolute grid size-14 place-items-center rounded-full border-4 border-white bg-[#082640] text-[#f2bd4b] shadow-2xl transition-all duration-500"
-            style={{
-              left: `${18 + order.progress * 0.55}%`,
-              top: `${24 + order.progress * 0.28}%`,
-            }}
-          >
-            <Icon name={order.service === "taxi" ? "taxi" : "driver"} />
-          </div>
-          <div className="absolute inset-x-5 bottom-5 rounded-2xl bg-white/92 p-4 shadow-xl backdrop-blur">
-            <div className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-xl bg-[#f2f7fb] text-[#082640]">
-                <Icon name="navigation" />
+
+          <div className="biloo-tracking-map">
+            <div className="biloo-tracking-grid" />
+            <div className="biloo-tracking-route" />
+            <span className="biloo-tracking-pin biloo-tracking-pin-start">
+              <Icon className="size-5" name="location" />
+            </span>
+            <span className="biloo-tracking-pin biloo-tracking-pin-end">
+              <Icon className="size-5" name="home" />
+            </span>
+            <span
+              className="biloo-tracking-vehicle"
+              style={{
+                left: `${18 + Math.min(order.progress, 100) * 0.55}%`,
+                top: `${24 + Math.min(order.progress, 100) * 0.28}%`,
+              }}
+            >
+              <Icon
+                className="size-5"
+                name={order.service === "taxi" ? "taxi" : "driver"}
+              />
+            </span>
+            <div className="biloo-tracking-map-status">
+              <span>
+                <Icon className="size-[18px]" name="navigation" />
               </span>
               <div>
-                <p className="text-sm font-black">Live route simulation</p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Production tracking will stream authenticated driver GPS
-                  coordinates.
-                </p>
+                <strong>Route tracking</strong>
+                <p>Authenticated driver GPS will update this route live.</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </Modal>
+      </section>
+    </div>
+  );
+}
+
+function ReceiptLine({
+  label,
+  value,
+  bold = false,
+}: {
+  label: string;
+  value: string;
+  bold?: boolean;
+}) {
+  return (
+    <div className="biloo-order-receipt-line" data-bold={bold}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
   );
 }
 
 function TrackingStep({ done, label }: { done: boolean; label: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <span
-        className={`grid size-8 place-items-center rounded-full ${
-          done ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400"
-        }`}
-      >
-        {done ? <Icon className="size-4" name="check" /> : "•"}
+    <div className="biloo-tracking-step" data-done={done}>
+      <span>
+        {done ? <Icon className="size-3.5" name="check" /> : <i />}
       </span>
-      <span
-        className={`text-sm font-black ${
-          done ? "text-slate-800" : "text-slate-400"
-        }`}
-      >
-        {label}
-      </span>
+      <strong>{label}</strong>
     </div>
   );
 }
