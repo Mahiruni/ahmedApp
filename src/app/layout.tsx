@@ -12,6 +12,7 @@ import "./notifications.css";
 import "./analytics-polish.css";
 import "./award-experience.css";
 import "./clarity-fix.css";
+import "./signature-color.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#0b0b0d",
+  themeColor: "#5146e5",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
