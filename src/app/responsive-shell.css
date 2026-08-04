@@ -1,0 +1,218 @@
+/* BILOO responsive application shell.
+   Keeps the interface crisp, fitted and permanently navigable across modern
+   mobile browsers, Android WebView, iOS Safari and desktop browsers. */
+
+:root {
+  --biloo-fixed-header-height: 64px;
+  --biloo-mobile-nav-height: 66px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0 !important;
+  margin: 0;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
+main[class*="min-h-screen"] {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  padding-top: calc(var(--biloo-fixed-header-height) + env(safe-area-inset-top)) !important;
+}
+
+main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"],
+main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"] > section {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+  font-size: 16px !important;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Remove interface scaling that can feel like browser zoom on touch devices. */
+main button:active,
+main a:active,
+[data-biloo-header] button:active,
+[data-biloo-role-rail] button:active,
+#biloo-command-menu button:active,
+#biloo-command-menu a:active {
+  transform: none !important;
+}
+
+/* Header remains visible during every scroll direction. */
+[data-biloo-header] {
+  position: fixed !important;
+  inset: 0 0 auto !important;
+  z-index: 90 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-top: env(safe-area-inset-top) !important;
+}
+
+[data-biloo-header] > div {
+  width: 100%;
+  min-width: 0;
+  height: var(--biloo-fixed-header-height) !important;
+}
+
+#biloo-command-menu {
+  z-index: 120 !important;
+  width: 100%;
+  max-width: 100%;
+}
+
+#biloo-command-menu > section[role="dialog"] {
+  max-width: 100%;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Subtle particles are embedded in the existing hero color field. They do not
+   add DOM layers, block controls or create blur. */
+[data-biloo-customer-home]::before {
+  background:
+    radial-gradient(circle at 16% 24%, rgba(81, 70, 229, 0.18) 0 1.6px, transparent 2.4px),
+    radial-gradient(circle at 38% 68%, rgba(81, 70, 229, 0.12) 0 1.3px, transparent 2.1px),
+    radial-gradient(circle at 61% 31%, rgba(52, 41, 184, 0.14) 0 1.5px, transparent 2.3px),
+    radial-gradient(circle at 79% 74%, rgba(81, 70, 229, 0.11) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 92% 45%, rgba(199, 240, 0, 0.3) 0 1.4px, transparent 2.2px),
+    var(--biloo-iris-soft) !important;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+  animation: biloo-hero-particle-drift 16s ease-in-out infinite alternate;
+}
+
+@keyframes biloo-hero-particle-drift {
+  to {
+    background-position: 8px -7px, -6px 6px, 5px 8px, -8px -5px, 4px -9px;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* A true fixed footer: no floating gap, no scroll-away behavior. */
+  [data-biloo-role-rail] {
+    position: fixed !important;
+    inset: auto 0 0 !important;
+    z-index: 85 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: calc(var(--biloo-mobile-nav-height) + env(safe-area-inset-bottom));
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  [data-biloo-role-rail] > div:nth-child(2) {
+    min-height: var(--biloo-mobile-nav-height);
+  }
+
+  [data-biloo-role-rail] button {
+    min-height: var(--biloo-mobile-nav-height) !important;
+  }
+
+  main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"] > section {
+    padding-bottom: calc(var(--biloo-mobile-nav-height) + env(safe-area-inset-bottom) + 22px) !important;
+  }
+
+  /* Keep temporary messages above the fixed navigation. */
+  main[class*="min-h-screen"] > div[class*="fixed"][class*="bottom-"] {
+    bottom: calc(var(--biloo-mobile-nav-height) + env(safe-area-inset-bottom) + 12px) !important;
+  }
+
+  [data-biloo-customer-home],
+  .biloo-standard-search,
+  .biloo-service-loop,
+  .biloo-map-card,
+  .biloo-route-field {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"] > section {
+    padding-inline: 12px !important;
+  }
+
+  [data-biloo-customer-home] {
+    width: 100%;
+    border-radius: 20px;
+    padding-inline: 14px !important;
+  }
+
+  [data-biloo-customer-home] h1 {
+    font-size: clamp(1.85rem, 9vw, 2.35rem) !important;
+  }
+
+  .biloo-service-loop-copy,
+  .biloo-standard-search-input {
+    min-width: 0;
+  }
+}
+
+@media (hover: none) {
+  .biloo-service-loop:hover,
+  main button:hover,
+  main a:hover {
+    transform: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-biloo-role-rail] {
+    top: calc(var(--biloo-fixed-header-height) + env(safe-area-inset-top) + 16px) !important;
+    height: calc(100vh - var(--biloo-fixed-header-height) - env(safe-area-inset-top) - 32px) !important;
+    height: calc(100dvh - var(--biloo-fixed-header-height) - env(safe-area-inset-top) - 32px) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-biloo-customer-home]::before {
+    animation: none !important;
+  }
+}
