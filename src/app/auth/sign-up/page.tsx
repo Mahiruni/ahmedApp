@@ -1,12 +1,7 @@
 import Link from "next/link";
 
-import {
-  AuthError,
-  AuthShell,
-  authButtonClass,
-  authInputClass,
-} from "@/components/auth/auth-shell";
-import { signUpAction } from "../actions";
+import { AuthError, AuthShell } from "@/components/auth/auth-shell";
+import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export default async function SignUpPage({
   searchParams,
@@ -14,59 +9,30 @@ export default async function SignUpPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
+
   return (
     <AuthShell
-      eyebrow="Addis Ababa pilot"
-      title="Create your account"
-      description="Start as a customer. Driver and vendor access are activated after verification."
+      eyebrow="Customer registration"
+      title="Create your BILOO account"
+      description="Complete your customer profile using your Ethiopian name, mobile number, username and local address."
       footer={
         <p className="text-center text-sm font-semibold text-slate-500">
           Already registered?{" "}
-          <Link className="font-black text-[#9b6500]" href="/auth/login">
+          <Link className="font-black text-[#5146e5]" href="/auth/login">
             Sign in
           </Link>
         </p>
       }
     >
+      <div className="biloo-signup-intro">
+        <span>
+          <strong>Customer account</strong>
+          <small>Driver and vendor access can be requested after registration.</small>
+        </span>
+        <span className="biloo-signup-intro-status">Secure signup</span>
+      </div>
       <AuthError message={params.error} />
-      <form action={signUpAction}>
-        <label className="block text-sm font-black text-[#10243a]">
-          Full name
-          <input
-            autoComplete="name"
-            className={authInputClass}
-            name="displayName"
-            placeholder="Your full name"
-            required
-          />
-        </label>
-        <label className="mt-5 block text-sm font-black text-[#10243a]">
-          Email address
-          <input
-            autoComplete="email"
-            className={authInputClass}
-            name="email"
-            placeholder="you@example.com"
-            required
-            type="email"
-          />
-        </label>
-        <label className="mt-5 block text-sm font-black text-[#10243a]">
-          Password
-          <input
-            autoComplete="new-password"
-            className={authInputClass}
-            minLength={8}
-            name="password"
-            placeholder="At least 8 characters"
-            required
-            type="password"
-          />
-        </label>
-        <button className={authButtonClass} type="submit">
-          Create secure account
-        </button>
-      </form>
+      <SignUpForm />
     </AuthShell>
   );
 }
