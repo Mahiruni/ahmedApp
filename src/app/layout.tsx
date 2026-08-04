@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { InteractionFeedbackController } from "@/components/biloo/interaction-feedback-controller";
 import { SearchFocusController } from "@/components/biloo/search-focus-controller";
 import { SearchMotionController } from "@/components/biloo/search-motion-controller";
+import { PwaRegister } from "@/components/pwa-register";
 
 import "./globals.css";
 import "./brand-overrides.css";
@@ -33,6 +34,7 @@ import "./live-location.css";
 import "./customer-signup.css";
 import "./customer-navigation.css";
 import "./customer-navigation-icons.css";
+import "./brand-identity.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -54,6 +56,45 @@ export const metadata: Metadata = {
   description:
     "One beautifully connected platform for taxi booking, food delivery, supermarket shopping, construction materials, and car parts.",
   applicationName: "BILOO",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      {
+        url: "/icons/favicon-32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        url: "/icons/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/icons/biloo-mark.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "/icons/favicon-32.png",
+    apple: [
+      {
+        url: "/icons/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "BILOO",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export const viewport: Viewport = {
@@ -67,6 +108,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en">
       <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
+        <PwaRegister />
         <InteractionFeedbackController />
         <SearchFocusController />
         <SearchMotionController />
