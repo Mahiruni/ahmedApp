@@ -1,0 +1,1 @@
+Verify the public BILOO About, Privacy Policy and Terms of Service pages, welcome-page legal links, responsive styles, TypeScript, ESLint and production build.
