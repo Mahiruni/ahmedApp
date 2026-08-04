@@ -1,0 +1,1 @@
+Verify that search, pickup, and destination reset controls bypass destructive confirmation while important deletions remain protected.
