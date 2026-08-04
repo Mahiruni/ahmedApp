@@ -1,0 +1,484 @@
+/* BILOO signed-out app gateway. Imported last. */
+
+.biloo-entry-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 86% 14%, rgba(199, 240, 0, 0.16), transparent 19rem),
+    radial-gradient(circle at 12% 78%, rgba(137, 126, 255, 0.38), transparent 25rem),
+    linear-gradient(155deg, #17105f 0%, #2e25ad 43%, #5146e5 72%, #756cff 100%);
+  color: #ffffff;
+  isolation: isolate;
+}
+
+.biloo-entry-page::before {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  content: "";
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 68%);
+}
+
+.biloo-entry-page::after {
+  position: absolute;
+  right: -22%;
+  bottom: -34%;
+  z-index: -1;
+  width: 78vw;
+  height: 55vh;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.13);
+  filter: blur(1px);
+  content: "";
+  transform: rotate(-12deg);
+}
+
+.biloo-entry-orbit {
+  position: absolute;
+  z-index: -1;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.biloo-entry-orbit-one {
+  top: 10%;
+  right: -110px;
+  width: 260px;
+  height: 260px;
+  box-shadow: inset 0 0 0 30px rgba(255, 255, 255, 0.025);
+}
+
+.biloo-entry-orbit-two {
+  bottom: 19%;
+  left: -150px;
+  width: 310px;
+  height: 310px;
+  box-shadow: inset 0 0 0 48px rgba(199, 240, 0, 0.025);
+}
+
+.biloo-entry-shell {
+  display: flex;
+  width: min(100%, 660px);
+  min-height: 100vh;
+  min-height: 100svh;
+  margin-inline: auto;
+  flex-direction: column;
+  padding:
+    max(22px, env(safe-area-inset-top))
+    clamp(22px, 5.4vw, 42px)
+    max(20px, env(safe-area-inset-bottom));
+}
+
+.biloo-entry-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.biloo-entry-brand > img {
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 14px 32px rgba(11, 6, 66, 0.28);
+}
+
+.biloo-entry-brand > span,
+.biloo-entry-brand strong,
+.biloo-entry-brand small {
+  display: block;
+}
+
+.biloo-entry-brand strong {
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 21px;
+  font-weight: 820;
+  letter-spacing: -0.05em;
+}
+
+.biloo-entry-brand small {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.biloo-entry-hero {
+  margin-top: clamp(54px, 10vh, 112px);
+}
+
+.biloo-entry-eyebrow {
+  color: #d7ff36;
+  font-size: 10px;
+  font-weight: 820;
+  letter-spacing: 0.16em;
+}
+
+.biloo-entry-hero h1 {
+  margin-top: 16px;
+  color: #ffffff;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(45px, 12vw, 78px);
+  font-weight: 350;
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+}
+
+.biloo-entry-hero h1 strong {
+  font-weight: 790;
+}
+
+.biloo-entry-description {
+  max-width: 540px;
+  margin-top: 22px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(13px, 3.5vw, 16px);
+  font-weight: 520;
+  line-height: 1.65;
+}
+
+.biloo-entry-signature {
+  display: flex;
+  margin-top: clamp(36px, 7vh, 74px);
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: left;
+}
+
+.biloo-entry-signature > img {
+  width: clamp(76px, 20vw, 112px);
+  height: clamp(76px, 20vw, 112px);
+  border-radius: clamp(24px, 6vw, 34px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.24),
+    0 26px 60px rgba(17, 9, 89, 0.34);
+  transform: rotate(-5deg);
+}
+
+.biloo-entry-signature > div > strong,
+.biloo-entry-signature > div > span {
+  display: block;
+}
+
+.biloo-entry-signature > div > strong {
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(38px, 10vw, 64px);
+  font-weight: 810;
+  line-height: 0.9;
+  letter-spacing: -0.07em;
+}
+
+.biloo-entry-signature > div > span {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.biloo-entry-proof {
+  display: flex;
+  margin-top: auto;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-top: clamp(42px, 9vh, 86px);
+}
+
+.biloo-entry-proof > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  border-radius: 11px;
+  background: rgba(199, 240, 0, 0.14);
+  color: #d7ff36;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.biloo-entry-proof p,
+.biloo-entry-proof strong,
+.biloo-entry-proof small {
+  display: block;
+}
+
+.biloo-entry-proof strong {
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.biloo-entry-proof small {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+
+.biloo-entry-actions {
+  width: 100%;
+  margin-top: 26px;
+}
+
+.biloo-entry-primary,
+.biloo-entry-secondary,
+.biloo-entry-google {
+  display: flex;
+  width: 100%;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-size: 14px;
+  font-weight: 780;
+  letter-spacing: -0.015em;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    transform 130ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.biloo-entry-primary {
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #19172a;
+  box-shadow: 0 16px 34px rgba(19, 10, 94, 0.24);
+}
+
+.biloo-entry-primary:hover {
+  box-shadow: 0 20px 42px rgba(19, 10, 94, 0.32);
+  transform: translateY(-1px);
+}
+
+.biloo-entry-secondary {
+  margin-top: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.035);
+  color: #ffffff;
+}
+
+.biloo-entry-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.biloo-entry-divider {
+  display: grid;
+  margin-block: 20px;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.biloo-entry-divider > span {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.biloo-entry-divider > b {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.biloo-entry-google {
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #19172a;
+  box-shadow: 0 12px 28px rgba(19, 10, 94, 0.18);
+}
+
+.biloo-entry-google:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.biloo-entry-google:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.biloo-entry-google-mark {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+}
+
+.biloo-entry-spinner {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  border: 2px solid rgba(81, 70, 229, 0.22);
+  border-top-color: #5146e5;
+  border-radius: 999px;
+  animation: biloo-entry-spin 700ms linear infinite;
+}
+
+.biloo-entry-error {
+  margin-bottom: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 15px;
+  background: rgba(81, 12, 35, 0.38);
+  padding: 12px 14px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.biloo-entry-legal {
+  margin: 16px auto 0;
+  max-width: 360px;
+  color: rgba(255, 255, 255, 0.46);
+  font-size: 9.5px;
+  font-weight: 520;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.biloo-entry-primary:focus-visible,
+.biloo-entry-secondary:focus-visible,
+.biloo-entry-google:focus-visible {
+  outline: 3px solid rgba(215, 255, 54, 0.44);
+  outline-offset: 3px;
+}
+
+.biloo-entry-primary:active,
+.biloo-entry-secondary:active,
+.biloo-entry-google:active {
+  transform: scale(0.985);
+}
+
+@keyframes biloo-entry-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (min-width: 760px) {
+  .biloo-entry-shell {
+    padding-inline: 54px;
+  }
+
+  .biloo-entry-proof {
+    justify-content: flex-start;
+  }
+
+  .biloo-entry-actions {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 420px) {
+  .biloo-entry-shell {
+    padding-inline: 20px;
+  }
+
+  .biloo-entry-hero {
+    margin-top: 46px;
+  }
+
+  .biloo-entry-description {
+    margin-top: 18px;
+  }
+
+  .biloo-entry-signature {
+    margin-top: 34px;
+  }
+
+  .biloo-entry-proof {
+    padding-top: 38px;
+  }
+
+  .biloo-entry-primary,
+  .biloo-entry-secondary,
+  .biloo-entry-google {
+    min-height: 56px;
+  }
+}
+
+@media (max-height: 760px) {
+  .biloo-entry-hero {
+    margin-top: 32px;
+  }
+
+  .biloo-entry-description {
+    margin-top: 14px;
+  }
+
+  .biloo-entry-signature {
+    margin-top: 24px;
+  }
+
+  .biloo-entry-signature > img {
+    width: 70px;
+    height: 70px;
+    border-radius: 22px;
+  }
+
+  .biloo-entry-proof {
+    padding-top: 26px;
+  }
+
+  .biloo-entry-actions {
+    margin-top: 18px;
+  }
+
+  .biloo-entry-primary,
+  .biloo-entry-secondary,
+  .biloo-entry-google {
+    min-height: 52px;
+    padding-block: 11px;
+  }
+
+  .biloo-entry-divider {
+    margin-block: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-entry-primary,
+  .biloo-entry-secondary,
+  .biloo-entry-google {
+    transition: none;
+  }
+
+  .biloo-entry-spinner {
+    animation-duration: 1.4s;
+  }
+}
+
+@media (forced-colors: active) {
+  .biloo-entry-page {
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .biloo-entry-primary,
+  .biloo-entry-secondary,
+  .biloo-entry-google,
+  .biloo-entry-error {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}
