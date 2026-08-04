@@ -1,0 +1,333 @@
+/* Standard BILOO confirmations, loading feedback and interaction status. */
+
+.biloo-action-loading {
+  position: fixed;
+  z-index: 205;
+  top: max(14px, env(safe-area-inset-top));
+  left: 50%;
+  display: inline-flex;
+  min-height: 44px;
+  max-width: min(92vw, 420px);
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: #17171c;
+  padding: 0 15px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 16px 44px rgba(12, 12, 18, 0.22);
+  transform: translateX(-50%);
+  animation: biloo-feedback-enter 180ms ease-out both;
+}
+
+.biloo-feedback-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: currentColor;
+  border-radius: 999px;
+  animation: biloo-feedback-spin 720ms linear infinite;
+}
+
+.biloo-payment-processing-overlay {
+  position: fixed;
+  z-index: 230;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 10, 15, 0.58);
+  padding: 18px;
+  animation: biloo-feedback-fade 180ms ease-out both;
+}
+
+.biloo-payment-processing-card {
+  display: grid;
+  width: min(100%, 390px);
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 13px;
+  border: 1px solid #e5e5eb;
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 18px;
+  color: #17171c;
+  box-shadow: 0 30px 90px rgba(8, 8, 14, 0.3);
+  animation: biloo-feedback-rise 220ms cubic-bezier(0.22, 0.8, 0.22, 1) both;
+}
+
+.biloo-payment-processing-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 15px;
+  background: #5146e5;
+  color: #ffffff;
+}
+
+.biloo-payment-processing-mark .biloo-feedback-spinner {
+  width: 22px;
+  height: 22px;
+  border-width: 2.5px;
+}
+
+.biloo-payment-processing-copy {
+  min-width: 0;
+}
+
+.biloo-payment-processing-copy small,
+.biloo-payment-processing-copy strong,
+.biloo-payment-processing-copy > span {
+  display: block;
+}
+
+.biloo-payment-processing-copy small {
+  color: #5146e5;
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.025em;
+}
+
+.biloo-payment-processing-copy strong {
+  margin-top: 4px;
+  color: #17171c;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 19px;
+  font-weight: 760;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.biloo-payment-processing-copy > span {
+  margin-top: 6px;
+  color: #777580;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.biloo-payment-processing-steps {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.biloo-payment-processing-steps i {
+  height: 4px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e7e7ed;
+}
+
+.biloo-payment-processing-steps i[data-active="true"] {
+  background: #5146e5;
+}
+
+.biloo-confirmation-overlay {
+  position: fixed;
+  z-index: 225;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.biloo-confirmation-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(10, 10, 15, 0.58);
+  animation: biloo-feedback-fade 180ms ease-out both;
+}
+
+.biloo-confirmation-dialog {
+  position: relative;
+  width: min(100%, 420px);
+  border: 1px solid #e5e5eb;
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 20px;
+  color: #17171c;
+  box-shadow: 0 30px 90px rgba(8, 8, 14, 0.3);
+  animation: biloo-feedback-rise 220ms cubic-bezier(0.22, 0.8, 0.22, 1) both;
+}
+
+.biloo-confirmation-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 15px;
+  background: #fff1ef;
+  color: #b42318;
+}
+
+.biloo-confirmation-copy {
+  margin-top: 15px;
+}
+
+.biloo-confirmation-copy > span {
+  display: block;
+  color: #b42318;
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.025em;
+}
+
+.biloo-confirmation-copy h2 {
+  margin: 5px 0 0;
+  color: #17171c;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 23px;
+  font-weight: 760;
+  letter-spacing: -0.04em;
+  line-height: 1.06;
+}
+
+.biloo-confirmation-copy p {
+  margin: 8px 0 0;
+  color: #6f6d78;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.biloo-confirmation-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 20px;
+}
+
+.biloo-confirmation-cancel,
+.biloo-confirmation-delete {
+  min-height: 48px;
+  border-radius: 13px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 730;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.biloo-confirmation-cancel {
+  border: 1px solid #dedde4;
+  background: #f5f5f8;
+  color: #28272e;
+}
+
+.biloo-confirmation-cancel:hover {
+  border-color: #c7c5ce;
+  background: #ededf1;
+}
+
+.biloo-confirmation-delete {
+  border: 1px solid #b42318;
+  background: #b42318;
+  color: #ffffff;
+  box-shadow: 0 9px 22px rgba(180, 35, 24, 0.2);
+}
+
+.biloo-confirmation-delete:hover {
+  border-color: #8f1c14;
+  background: #8f1c14;
+}
+
+.biloo-confirmation-cancel:active,
+.biloo-confirmation-delete:active {
+  transform: translateY(1px);
+}
+
+.biloo-confirmation-cancel:focus-visible,
+.biloo-confirmation-delete:focus-visible {
+  outline: 3px solid rgba(81, 70, 229, 0.24);
+  outline-offset: 2px;
+}
+
+@keyframes biloo-feedback-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes biloo-feedback-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes biloo-feedback-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes biloo-feedback-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 560px) {
+  .biloo-action-loading {
+    top: auto;
+    bottom: calc(82px + env(safe-area-inset-bottom));
+    width: calc(100% - 28px);
+    justify-content: center;
+  }
+
+  .biloo-payment-processing-overlay,
+  .biloo-confirmation-overlay {
+    align-items: end;
+    padding: 0;
+  }
+
+  .biloo-payment-processing-card,
+  .biloo-confirmation-dialog {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 18px max(22px, env(safe-area-inset-bottom));
+  }
+
+  .biloo-confirmation-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-confirmation-delete {
+    grid-row: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-action-loading,
+  .biloo-payment-processing-overlay,
+  .biloo-payment-processing-card,
+  .biloo-confirmation-backdrop,
+  .biloo-confirmation-dialog {
+    animation: none !important;
+  }
+
+  .biloo-feedback-spinner {
+    animation-duration: 1.4s;
+  }
+}
