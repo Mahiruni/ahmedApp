@@ -1,0 +1,71 @@
+/* Final BILOO search behavior: idle prompts may animate, active fields stay quiet. */
+
+.biloo-search-premium {
+  border-color: #dedde4 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 10px rgba(18, 18, 24, 0.045) !important;
+}
+
+.biloo-search-premium:hover {
+  border-color: #c8c6d0 !important;
+}
+
+.biloo-search-premium:focus-visible,
+.biloo-search-premium:focus-within {
+  border-color: #5146e5 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(81, 70, 229, 0.1) !important;
+}
+
+/* The animated prompt is only an idle hint. It never competes with typing. */
+.biloo-search-premium[data-search-active="true"] .biloo-search-typewriter-overlay {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.biloo-search-typewriter .biloo-typewriter-caret,
+.biloo-search-typewriter-overlay .biloo-typewriter-caret {
+  display: none !important;
+}
+
+.biloo-standard-search-input,
+.biloo-standard-search-input:focus,
+.biloo-standard-search-input:active {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.biloo-standard-search-input::placeholder {
+  color: #85838d;
+  font-weight: 560;
+  opacity: 1;
+}
+
+.biloo-search-leading {
+  width: 28px;
+  height: 28px;
+  flex-basis: 28px;
+  border-radius: 0;
+  background: transparent;
+  color: #5146e5;
+}
+
+/* Route search keeps a stable prompt while the user is editing. */
+.biloo-place-search-input[data-search-editing="true"]::placeholder {
+  color: #85838d !important;
+  font-weight: 540;
+}
+
+.biloo-place-search:focus-within {
+  border-color: #5146e5;
+  box-shadow: 0 0 0 3px rgba(81, 70, 229, 0.1);
+}
+
+@media (max-width: 639px) {
+  .biloo-search-premium {
+    border-radius: 14px !important;
+  }
+}
