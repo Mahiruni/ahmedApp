@@ -1,0 +1,1 @@
+Verify public About, Privacy Policy and Terms of Service pages, welcome-screen links, metadata, responsive styling, TypeScript, ESLint and production build.
