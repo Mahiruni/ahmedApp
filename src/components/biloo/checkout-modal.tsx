@@ -1,25 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 import type { CartLine, PaymentMethod } from "@/data/biloo";
 
 import { formatETB, Icon, serviceLabel } from "./ui";
 
-const walletBalance = 3840;
-
-function formatCardNumber(value: string) {
-  return value
-    .replace(/\D/g, "")
-    .slice(0, 19)
-    .replace(/(.{4})/g, "$1 ")
-    .trim();
-}
-
-function formatExpiry(value: string) {
-  const digits = value.replace(/\D/g, "").slice(0, 4);
-  return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
-}
+const confirmationStorageKey = "biloo:pending-order-confirmation";
 
 export function CheckoutModal({
   open,
@@ -33,87 +20,92 @@ export function CheckoutModal({
   onConfirm: (payment: PaymentMethod) => void;
 }) {
   const [payment, setPayment] = useState<PaymentMethod>("wallet");
-  const [cardName, setCardName] = useState("");
+  const [cardholder, setCardholder] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [showSummary, setShowSummary] = useState(false);
 
   const subtotal = cart.reduce(
     (total, line) => total + line.item.price * line.quantity,
     0,
   );
+  const itemCount = cart.reduce((total, line) => total + line.quantity, 0);
   const delivery = cart.length ? 75 : 0;
   const serviceFee = cart.length ? Math.round(subtotal * 0.025) : 0;
   const total = subtotal + delivery + serviceFee;
-  const itemCount = cart.reduce((sum, line) => sum + line.quantity, 0);
+  const walletBalance = 3840;
   const merchant = cart[0]?.item.merchant ?? "BILOO partner";
-  const service = cart[0]?.item.service;
-  const walletAvailable = total <= walletBalance;
+  const orderService = cart[0]?.item.service;
 
-  const cardValid = useMemo(() => {
-    const numberDigits = cardNumber.replace(/\D/g, "");
-    return (
-      cardName.trim().length >= 2 &&
-      numberDigits.length >= 15 &&
-      expiry.length === 5 &&
-      cvv.length >= 3
-    );
-  }, [cardName, cardNumber, cvv, expiry]);
+  const cardDigits = cardNumber.replace(/\D/g, "");
+  const cardValid =
+    cardholder.trim().length >= 3 &&
+    cardDigits.length >= 15 &&
+    /^\d{2}\/\d{2}$/.test(expiry) &&
+    cvv.replace(/\D/g, "").length >= 3;
+  const walletValid = walletBalance >= total;
+  const canConfirm =
+    cart.length > 0 &&
+    (payment === "cash" ||
+      (payment === "wallet" && walletValid) ||
+      (payment === "card" && cardValid));
 
-  useEffect(() => {
-    if (!open) return;
-    setError(null);
-    const focusTimer = window.setTimeout(() => closeButtonRef.current?.focus(), 120);
+  const formattedCardNumber = useMemo(() => {
+    const digits = cardNumber.replace(/\D/g, "").slice(0, 16);
+    return digits.replace(/(.{4})/g, "$1 ").trim();
+  }, [cardNumber]);
 
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
+  if (!open) return null;
 
-    window.addEventListener("keydown", closeOnEscape);
-    return () => {
-      window.clearTimeout(focusTimer);
-      window.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [onClose, open]);
+  function selectPayment(method: PaymentMethod) {
+    setPayment(method);
+  }
 
-  function choosePayment(next: PaymentMethod) {
-    setPayment(next);
-    setError(null);
+  function formatExpiry(value: string) {
+    const digits = value.replace(/\D/g, "").slice(0, 4);
+    return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
   }
 
   function submitPayment() {
-    if (!cart.length) return;
-    if (payment === "wallet" && !walletAvailable) {
-      setError("Your BILOO Wallet balance is not enough for this order.");
-      return;
-    }
-    if (payment === "card" && !cardValid) {
-      setError("Complete the card details before placing your order.");
-      return;
+    if (!canConfirm) return;
+
+    try {
+      window.sessionStorage.setItem(
+        confirmationStorageKey,
+        JSON.stringify({
+          payment,
+          itemCount,
+          merchant,
+          service: orderService ? serviceLabel(orderService) : "BILOO order",
+          createdAt: Date.now(),
+        }),
+      );
+    } catch {
+      // Checkout remains functional when storage is unavailable.
     }
 
-    setError(null);
     onConfirm(payment);
   }
 
+  const methodLabel =
+    payment === "wallet"
+      ? "Pay with BILOO Wallet"
+      : payment === "card"
+        ? "Pay securely"
+        : "Place order";
+
   return (
-    <div
-      aria-hidden={!open}
-      className="biloo-payment-overlay"
-      data-open={open}
-    >
+    <div className="biloo-payment-overlay" role="presentation">
       <button
         aria-label="Return to cart"
         className="biloo-payment-backdrop"
         onClick={onClose}
-        tabIndex={open ? 0 : -1}
         type="button"
       />
 
       <section
-        aria-label="Secure checkout"
+        aria-label="Secure payment"
         aria-modal="true"
         className="biloo-payment-sheet"
         role="dialog"
@@ -127,220 +119,209 @@ export function CheckoutModal({
             onClick={onClose}
             type="button"
           >
-            <Icon className="size-[17px] rotate-180" name="arrow" />
+            <Icon className="size-[18px] rotate-180" name="arrow" />
           </button>
-
           <div className="min-w-0 flex-1">
-            <span className="biloo-payment-eyebrow">Secure BILOO checkout</span>
+            <span className="biloo-payment-eyebrow">Secure checkout</span>
             <h2>Payment</h2>
           </div>
-
           <span className="biloo-payment-secure">
-            <Icon className="size-[14px]" name="shield" />
-            Protected
+            <Icon className="size-4" name="shield" />
+            Secure
           </span>
-
-          <button
-            ref={closeButtonRef}
-            aria-label="Close payment"
-            className="biloo-payment-close"
-            onClick={onClose}
-            type="button"
-          >
-            <Icon className="size-[18px]" name="close" />
-          </button>
         </header>
 
         <div className="biloo-payment-progress" aria-label="Checkout progress">
-          <span data-complete="true">
-            <Icon className="size-3" name="check" />
-            Cart
-          </span>
+          <span data-complete="true">Cart</span>
           <i />
-          <span data-active="true">2</span>
-          <strong>Payment</strong>
+          <span data-active="true">Payment</span>
           <i />
-          <span>3</span>
-          <strong>Confirmation</strong>
+          <span>Confirmation</span>
         </div>
 
         <div className="biloo-payment-content">
           <section className="biloo-payment-delivery">
-            <span className="biloo-payment-delivery-icon">
+            <span className="biloo-payment-section-icon">
               <Icon className="size-[18px]" name="home" />
             </span>
             <span className="min-w-0 flex-1">
-              <small>Deliver to</small>
+              <span className="biloo-payment-small-label">Deliver to</span>
               <strong>Home · Bole, Addis Ababa</strong>
-              <em>Call on arrival</em>
+              <small>Call on arrival</small>
             </span>
-            <button type="button">Change</button>
+            <span className="biloo-payment-eta">{itemCount} items</span>
           </section>
 
-          <div className="biloo-payment-section-heading">
-            <div>
-              <small>Choose how to pay</small>
-              <h3>Payment method</h3>
+          <button
+            aria-expanded={showSummary}
+            className="biloo-payment-order-toggle"
+            onClick={() => setShowSummary((current) => !current)}
+            type="button"
+          >
+            <span>
+              <span className="biloo-payment-small-label">Order summary</span>
+              <strong>{merchant}</strong>
+            </span>
+            <span>
+              <strong>{formatETB(total)}</strong>
+              <Icon
+                className={`size-4 transition-transform ${showSummary ? "rotate-90" : ""}`}
+                name="arrow"
+              />
+            </span>
+          </button>
+
+          {showSummary ? (
+            <div className="biloo-payment-summary-lines">
+              <PaymentLine label="Subtotal" value={formatETB(subtotal)} />
+              <PaymentLine label="Delivery fee" value={formatETB(delivery)} />
+              <PaymentLine label="Service fee" value={formatETB(serviceFee)} />
+              <PaymentLine bold label="Total" value={formatETB(total)} />
             </div>
-            <span>{formatETB(total)}</span>
+          ) : null}
+
+          <div className="biloo-payment-section-title">
+            <span>Choose payment method</span>
+            <small>Encrypted and protected</small>
           </div>
 
-          <div className="biloo-payment-methods" role="radiogroup">
+          <div className="biloo-payment-methods">
             <PaymentChoice
               active={payment === "wallet"}
               detail={`Balance ${formatETB(walletBalance)}`}
               icon="wallet"
-              onClick={() => choosePayment("wallet")}
+              onClick={() => selectPayment("wallet")}
               title="BILOO Wallet"
-              warning={!walletAvailable ? "Insufficient balance" : undefined}
             />
             <PaymentChoice
               active={payment === "card"}
-              detail="Debit or credit card"
+              detail="Visa, Mastercard and online payment"
               icon="card"
-              onClick={() => choosePayment("card")}
+              onClick={() => selectPayment("card")}
               title="Bank card"
             />
             <PaymentChoice
               active={payment === "cash"}
-              detail="Pay the courier on delivery"
+              detail="Pay your courier when the order arrives"
               icon="cash"
-              onClick={() => choosePayment("cash")}
-              title="Cash"
+              onClick={() => selectPayment("cash")}
+              title="Cash on delivery"
             />
           </div>
 
+          {payment === "wallet" ? (
+            <div className={`biloo-payment-wallet ${walletValid ? "" : "is-low"}`}>
+              <span>
+                <span className="biloo-payment-small-label">Available balance</span>
+                <strong>{formatETB(walletBalance)}</strong>
+              </span>
+              <span>
+                {walletValid
+                  ? `${formatETB(walletBalance - total)} remaining`
+                  : `${formatETB(total - walletBalance)} more required`}
+              </span>
+            </div>
+          ) : null}
+
           {payment === "card" ? (
-            <section className="biloo-card-form" aria-label="Card details">
-              <div className="biloo-card-preview" aria-hidden="true">
-                <span>BILOO</span>
-                <Icon className="size-5" name="shield" />
-                <strong>{cardNumber || "•••• •••• •••• ••••"}</strong>
-                <small>{cardName || "CARDHOLDER NAME"}</small>
-                <em>{expiry || "MM/YY"}</em>
+            <div className="biloo-payment-card-section">
+              <div className="biloo-payment-card-preview">
+                <div className="biloo-payment-card-top">
+                  <span>BILOO PAY</span>
+                  <Icon className="size-5" name="card" />
+                </div>
+                <strong>{formattedCardNumber || "•••• •••• •••• ••••"}</strong>
+                <div>
+                  <span>{cardholder.trim() || "CARDHOLDER NAME"}</span>
+                  <span>{expiry || "MM/YY"}</span>
+                </div>
               </div>
 
               <label className="biloo-payment-field biloo-payment-field-wide">
-                <span>Name on card</span>
+                <span>Cardholder name</span>
                 <input
                   autoComplete="cc-name"
-                  onChange={(event) => setCardName(event.target.value)}
-                  placeholder="Mahir Aman"
-                  value={cardName}
+                  onChange={(event) => setCardholder(event.target.value)}
+                  placeholder="Name on card"
+                  value={cardholder}
                 />
               </label>
-
               <label className="biloo-payment-field biloo-payment-field-wide">
                 <span>Card number</span>
-                <div>
-                  <Icon className="size-[17px]" name="card" />
-                  <input
-                    autoComplete="cc-number"
-                    inputMode="numeric"
-                    onChange={(event) =>
-                      setCardNumber(formatCardNumber(event.target.value))
-                    }
-                    placeholder="1234 5678 9012 3456"
-                    value={cardNumber}
-                  />
-                </div>
-              </label>
-
-              <label className="biloo-payment-field">
-                <span>Expiry</span>
                 <input
-                  autoComplete="cc-exp"
+                  autoComplete="cc-number"
                   inputMode="numeric"
-                  onChange={(event) => setExpiry(formatExpiry(event.target.value))}
-                  placeholder="MM/YY"
-                  value={expiry}
-                />
-              </label>
-
-              <label className="biloo-payment-field">
-                <span>Security code</span>
-                <input
-                  autoComplete="cc-csc"
-                  inputMode="numeric"
-                  maxLength={4}
                   onChange={(event) =>
-                    setCvv(event.target.value.replace(/\D/g, "").slice(0, 4))
+                    setCardNumber(
+                      event.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 16)
+                        .replace(/(.{4})/g, "$1 ")
+                        .trim(),
+                    )
                   }
-                  placeholder="CVV"
-                  type="password"
-                  value={cvv}
+                  placeholder="0000 0000 0000 0000"
+                  value={cardNumber}
                 />
               </label>
-            </section>
-          ) : null}
-
-          {payment === "wallet" ? (
-            <section className="biloo-payment-method-note" data-tone={walletAvailable ? "success" : "warning"}>
-              <Icon className="size-[18px]" name={walletAvailable ? "check" : "alert"} />
-              <span>
-                <strong>{walletAvailable ? "Ready to pay instantly" : "Add funds or choose another method"}</strong>
-                <small>
-                  {walletAvailable
-                    ? `${formatETB(total)} will be deducted from your BILOO Wallet.`
-                    : `You need ${formatETB(total - walletBalance)} more to use your wallet.`}
-                </small>
-              </span>
-            </section>
+              <div className="biloo-payment-card-fields">
+                <label className="biloo-payment-field">
+                  <span>Expiry</span>
+                  <input
+                    autoComplete="cc-exp"
+                    inputMode="numeric"
+                    onChange={(event) => setExpiry(formatExpiry(event.target.value))}
+                    placeholder="MM/YY"
+                    value={expiry}
+                  />
+                </label>
+                <label className="biloo-payment-field">
+                  <span>CVV</span>
+                  <input
+                    autoComplete="cc-csc"
+                    inputMode="numeric"
+                    maxLength={4}
+                    onChange={(event) =>
+                      setCvv(event.target.value.replace(/\D/g, "").slice(0, 4))
+                    }
+                    placeholder="123"
+                    type="password"
+                    value={cvv}
+                  />
+                </label>
+              </div>
+            </div>
           ) : null}
 
           {payment === "cash" ? (
-            <section className="biloo-payment-method-note">
+            <div className="biloo-payment-cash-note">
               <Icon className="size-[18px]" name="cash" />
               <span>
-                <strong>Prepare the exact amount where possible</strong>
-                <small>Your courier will confirm payment when the order arrives.</small>
-              </span>
-            </section>
-          ) : null}
-
-          <section className="biloo-payment-order-card">
-            <div>
-              <span className="biloo-payment-order-icon">
-                <Icon className="size-[18px]" name="receipt" />
-              </span>
-              <span className="min-w-0 flex-1">
-                <small>{service ? serviceLabel(service) : "BILOO order"}</small>
-                <strong>{merchant}</strong>
-                <em>{itemCount} {itemCount === 1 ? "item" : "items"}</em>
+                Keep the exact amount ready where possible. The courier will
+                confirm payment at delivery.
               </span>
             </div>
-            <dl>
-              <div><dt>Subtotal</dt><dd>{formatETB(subtotal)}</dd></div>
-              <div><dt>Delivery</dt><dd>{formatETB(delivery)}</dd></div>
-              <div><dt>Service fee</dt><dd>{formatETB(serviceFee)}</dd></div>
-              <div data-total="true"><dt>Total</dt><dd>{formatETB(total)}</dd></div>
-            </dl>
-          </section>
-
-          {error ? (
-            <p className="biloo-payment-error" role="alert">
-              <Icon className="size-4" name="alert" />
-              {error}
-            </p>
           ) : null}
         </div>
 
         <footer className="biloo-payment-footer">
-          <div>
-            <small>Total due</small>
+          <div className="biloo-payment-footer-total">
+            <span>Total</span>
             <strong>{formatETB(total)}</strong>
           </div>
           <button
-            disabled={!cart.length}
+            className="biloo-payment-submit"
+            disabled={!canConfirm}
             onClick={submitPayment}
             type="button"
           >
             <Icon className="size-[17px]" name="shield" />
-            {payment === "cash" ? "Place order" : `Pay ${formatETB(total)}`}
-            <Icon className="size-[17px]" name="arrow" />
+            <span>{methodLabel}</span>
+            <span>{formatETB(total)}</span>
           </button>
           <p>
-            Card details are UI-ready. Real charges require an enabled payment provider and server-side verification.
+            By continuing, you confirm the order details and BILOO payment
+            terms.
           </p>
         </footer>
       </section>
@@ -350,26 +331,23 @@ export function CheckoutModal({
 
 function PaymentChoice({
   active,
-  detail,
   icon,
-  onClick,
   title,
-  warning,
+  detail,
+  onClick,
 }: {
   active: boolean;
-  detail: string;
   icon: "wallet" | "card" | "cash";
-  onClick: () => void;
   title: string;
-  warning?: string;
+  detail: string;
+  onClick: () => void;
 }) {
   return (
     <button
-      aria-checked={active}
+      aria-pressed={active}
       className="biloo-payment-choice"
       data-active={active}
       onClick={onClick}
-      role="radio"
       type="button"
     >
       <span className="biloo-payment-choice-icon">
@@ -377,11 +355,28 @@ function PaymentChoice({
       </span>
       <span className="min-w-0 flex-1">
         <strong>{title}</strong>
-        <small data-warning={Boolean(warning)}>{warning ?? detail}</small>
+        <small>{detail}</small>
       </span>
       <span className="biloo-payment-radio">
         {active ? <Icon className="size-3" name="check" /> : null}
       </span>
     </button>
+  );
+}
+
+function PaymentLine({
+  label,
+  value,
+  bold = false,
+}: {
+  label: string;
+  value: string;
+  bold?: boolean;
+}) {
+  return (
+    <div className="biloo-payment-summary-line" data-bold={bold}>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
   );
 }
