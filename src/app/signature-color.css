@@ -1,0 +1,331 @@
+/* BILOO Royal Iris signature color system.
+   A quiet sculpted field gives the customer homepage a memorable first glance,
+   while every navigation surface shares the same recognizable color family.
+   Imported after clarity-fix.css: no blur, no translucent glass layers. */
+
+:root {
+  --biloo-iris: #5146e5;
+  --biloo-iris-deep: #3429b8;
+  --biloo-iris-dark: #241d86;
+  --biloo-iris-soft: #ebe9ff;
+  --biloo-iris-faint: #f6f5ff;
+  --biloo-iris-line: rgba(81, 70, 229, 0.18);
+  --biloo-iris-on: #ffffff;
+  --biloo-iris-lime: #c7f000;
+}
+
+/* Homepage signature field: visually occupies the right half without
+   intercepting, obscuring or moving any content. */
+[data-biloo-customer-home] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 214px;
+  border: 1px solid rgba(10, 11, 13, 0.07);
+  border-radius: 26px;
+  background: #ffffff;
+  padding: 22px 20px 24px !important;
+  box-shadow:
+    0 1px 2px rgba(10, 11, 13, 0.025),
+    0 18px 48px rgba(39, 34, 112, 0.07);
+}
+
+[data-biloo-customer-home]::before {
+  position: absolute;
+  z-index: 0;
+  top: -34px;
+  right: -7%;
+  width: 51%;
+  height: 184px;
+  border: 1px solid var(--biloo-iris-line);
+  border-right: 0;
+  border-top: 0;
+  border-bottom-left-radius: 92px 66px;
+  background: var(--biloo-iris-soft);
+  content: "";
+  pointer-events: none;
+  transform: rotate(-1.6deg);
+  transform-origin: top right;
+}
+
+[data-biloo-customer-home]::after {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  width: 7px;
+  height: 56%;
+  border-radius: 0 0 0 9px;
+  background: var(--biloo-iris);
+  content: "";
+  pointer-events: none;
+}
+
+[data-biloo-customer-home] > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-biloo-customer-home] > button:first-child {
+  border-color: var(--biloo-iris-line) !important;
+  background: #ffffff !important;
+  color: var(--biloo-iris-dark) !important;
+}
+
+[data-biloo-customer-home] > button:first-child svg {
+  color: var(--biloo-iris) !important;
+}
+
+[data-biloo-customer-home] h1 {
+  max-width: 720px;
+}
+
+[data-biloo-customer-home] .biloo-standard-search {
+  border-color: rgba(81, 70, 229, 0.13) !important;
+}
+
+[data-biloo-customer-home] .biloo-standard-search:focus-within {
+  border-color: var(--biloo-iris) !important;
+  box-shadow:
+    0 0 0 4px rgba(81, 70, 229, 0.12),
+    0 14px 34px rgba(39, 34, 112, 0.09) !important;
+}
+
+[data-biloo-customer-home] .biloo-standard-search:focus-within .biloo-search-icon {
+  color: var(--biloo-iris) !important;
+}
+
+[data-biloo-customer-home] .biloo-search-location {
+  border-color: var(--biloo-iris) !important;
+  background: var(--biloo-iris) !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 26px rgba(81, 70, 229, 0.24) !important;
+}
+
+[data-biloo-customer-home] .biloo-search-location:hover {
+  background: var(--biloo-iris-deep) !important;
+}
+
+/* Header navigation. */
+[data-biloo-header] {
+  border-bottom-color: rgba(255, 255, 255, 0.16) !important;
+  background: var(--biloo-iris) !important;
+  color: var(--biloo-iris-on) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.1),
+    0 10px 28px rgba(36, 29, 134, 0.16) !important;
+}
+
+[data-biloo-header] a[aria-label="BILOO home"] > div > span:first-child {
+  background: #ffffff !important;
+  color: var(--biloo-iris) !important;
+}
+
+[data-biloo-header] a[aria-label="BILOO home"] p:first-of-type {
+  color: #ffffff !important;
+}
+
+[data-biloo-header] a[aria-label="BILOO home"] p:last-of-type {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+[data-biloo-header] > div > div:nth-child(2) > span {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+[data-biloo-header] button:not([aria-controls="biloo-command-menu"]) {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.13) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+[data-biloo-header] button:not([aria-controls="biloo-command-menu"]):hover {
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+[data-biloo-header] button[aria-controls="biloo-command-menu"] {
+  border-color: #000000 !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+[data-biloo-header] button span[class*="ring-white"] {
+  --tw-ring-color: var(--biloo-iris) !important;
+}
+
+/* Hamburger navigation uses the same family while retaining the requested
+   black active workspace button with white text. */
+#biloo-command-menu > section[role="dialog"] {
+  border-left-color: rgba(81, 70, 229, 0.14) !important;
+  background: var(--biloo-iris-faint) !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:first-child {
+  border-bottom-color: rgba(255, 255, 255, 0.16) !important;
+  background: var(--biloo-iris) !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:first-child > div > span:first-child {
+  background: #ffffff !important;
+  color: var(--biloo-iris) !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:first-child p:first-of-type {
+  color: #ffffff !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:first-child p:last-of-type {
+  color: rgba(255, 255, 255, 0.68) !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:first-child button {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #ffffff !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:nth-child(2) {
+  background: var(--biloo-iris-faint) !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:nth-child(2) > div:first-child {
+  border: 1px solid var(--biloo-iris-line);
+  background: #ffffff !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:nth-child(2) > p {
+  color: var(--biloo-iris-dark) !important;
+}
+
+#biloo-command-menu > section[role="dialog"] > div:nth-child(2) > div[class*="border"] {
+  border-color: var(--biloo-iris-line) !important;
+  background: #ffffff !important;
+}
+
+#biloo-command-menu button:not([aria-current="page"]),
+#biloo-command-menu a {
+  border-color: rgba(81, 70, 229, 0.1) !important;
+}
+
+#biloo-command-menu button:not([aria-current="page"]):hover,
+#biloo-command-menu a:hover {
+  background: var(--biloo-iris-soft) !important;
+}
+
+#biloo-command-menu button[aria-current="page"] {
+  border-color: #000000 !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+#biloo-command-menu button[aria-current="page"] span,
+#biloo-command-menu button[aria-current="page"] svg {
+  color: #ffffff !important;
+}
+
+#biloo-command-menu button[aria-current="page"] > span:last-of-type {
+  background: var(--biloo-iris-lime) !important;
+}
+
+#biloo-command-menu footer {
+  border-top-color: var(--biloo-iris-line) !important;
+  background: var(--biloo-iris-soft) !important;
+}
+
+/* Mobile bottom navigation. */
+@media (max-width: 1023px) {
+  [data-biloo-customer-home] {
+    min-height: 202px;
+    border-radius: 22px;
+    padding: 19px 16px 21px !important;
+  }
+
+  [data-biloo-customer-home]::before {
+    top: -28px;
+    right: -14%;
+    width: 57%;
+    height: 145px;
+    border-bottom-left-radius: 74px 54px;
+  }
+
+  [data-biloo-customer-home]::after {
+    width: 6px;
+    height: 50%;
+  }
+
+  [data-biloo-role-rail] {
+    border-top-color: rgba(255, 255, 255, 0.15) !important;
+    background: var(--biloo-iris) !important;
+    color: #ffffff !important;
+    box-shadow: 0 -10px 30px rgba(36, 29, 134, 0.18) !important;
+  }
+
+  [data-biloo-role-rail] button {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  [data-biloo-role-rail] button:hover,
+  [data-biloo-role-rail] button:active,
+  [data-biloo-role-rail] button[aria-current="page"] {
+    color: #ffffff !important;
+  }
+
+  [data-biloo-role-rail] button:hover > span:first-child,
+  [data-biloo-role-rail] button:active > span:first-child {
+    background: rgba(255, 255, 255, 0.12) !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] > span:first-child {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"]::before {
+    background: var(--biloo-iris-lime) !important;
+  }
+}
+
+/* Desktop workspace navigation. */
+@media (min-width: 1024px) {
+  [data-biloo-role-rail] {
+    border-color: rgba(81, 70, 229, 0.35) !important;
+    background: var(--biloo-iris) !important;
+    box-shadow: 0 20px 54px rgba(36, 29, 134, 0.16) !important;
+  }
+
+  [data-biloo-role-rail] button {
+    color: rgba(255, 255, 255, 0.74) !important;
+  }
+
+  [data-biloo-role-rail] button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] {
+    background: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22) !important;
+  }
+
+  [data-biloo-role-rail] button[aria-current="page"] > span:first-child {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: #ffffff !important;
+  }
+}
+
+@media (max-width: 380px) {
+  [data-biloo-customer-home]::before {
+    right: -19%;
+    width: 61%;
+    height: 132px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-biloo-customer-home]::before {
+    transform: none;
+  }
+}
