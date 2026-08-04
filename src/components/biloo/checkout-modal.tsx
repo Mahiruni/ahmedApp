@@ -96,7 +96,12 @@ export function CheckoutModal({
         : "Place order";
 
   return (
-    <div className="biloo-payment-overlay" role="presentation">
+    <div
+      aria-hidden={!open}
+      className="biloo-payment-overlay"
+      data-open={open}
+      role="presentation"
+    >
       <button
         aria-label="Return to cart"
         className="biloo-payment-backdrop"
