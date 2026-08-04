@@ -12,12 +12,20 @@ import { signInWithGoogleAction } from "./auth/actions";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "BILOO",
+  title: { absolute: "BILOO" },
   description:
     "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.",
   applicationName: "BILOO",
   robots: { index: true, follow: true },
 };
+
+const services = [
+  "Taxi booking",
+  "Food delivery",
+  "Supermarket shopping",
+  "Construction materials",
+  "Car parts",
+];
 
 export default async function HomePage({
   searchParams,
@@ -61,13 +69,45 @@ export default async function HomePage({
           <p className="biloo-entry-description">
             BILOO helps people in Ethiopia book taxi rides, order food and
             groceries, buy construction materials and find car parts through one
-            secure account.
+            secure customer account.
           </p>
           <p className="biloo-entry-description">
-            Customers can choose a service, place a ride or delivery request,
-            review prices, receive status updates and manage activity in one app.
+            Customers can choose a service, select a provider, place a ride or
+            delivery request, review prices, receive status updates and manage
+            their activity in one app.
           </p>
+
+          <ul className="biloo-entry-service-list" aria-label="BILOO app functionality">
+            {services.map((service) => (
+              <li key={service}>{service}</li>
+            ))}
+          </ul>
         </div>
+
+        <section
+          aria-labelledby="biloo-entry-data-title"
+          className="biloo-entry-data-card"
+        >
+          <p className="biloo-entry-data-kicker">DATA TRANSPARENCY</p>
+          <h2 id="biloo-entry-data-title">Why BILOO requests your information</h2>
+          <p>
+            BILOO collects the account, contact, location and service information
+            needed to create your account, process rides and orders, connect you
+            with drivers or vendors, show service progress and protect the platform.
+          </p>
+          <p>
+            When you choose <strong>Continue with Google</strong>, BILOO requests
+            only the basic Google profile information you approve—typically your
+            name, email address, profile image and account identifier. This data is
+            used only to authenticate you, create or connect your BILOO account and
+            secure the sign-in process.
+          </p>
+          <p>
+            BILOO does not request access to Gmail, Google Drive, contacts or
+            calendars, and does not sell Google user data. Read the complete{" "}
+            <Link href="/privacy">BILOO Privacy Policy</Link>.
+          </p>
+        </section>
 
         <div className="biloo-entry-signature" aria-label="BILOO services">
           <Image
@@ -131,9 +171,9 @@ export default async function HomePage({
           <nav aria-label="BILOO public information" className="biloo-entry-public-links">
             <Link href="/about">About BILOO</Link>
             <span aria-hidden="true">·</span>
-            <Link href="/privacy">Privacy</Link>
+            <Link href="/privacy">Privacy Policy</Link>
             <span aria-hidden="true">·</span>
-            <Link href="/terms">Terms</Link>
+            <Link href="/terms">Terms of Service</Link>
           </nav>
         </div>
       </section>
