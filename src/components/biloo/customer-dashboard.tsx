@@ -1,6 +1,12 @@
 "use client";
 
-import { type ChangeEvent, useMemo, useState } from "react";
+import {
+  type ChangeEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   rideTypes,
@@ -8,6 +14,7 @@ import {
   type ActiveOrder,
   type CartLine,
   type CatalogItem,
+  type IconName,
   type ServiceKey,
 } from "@/data/biloo";
 
@@ -35,6 +42,62 @@ interface CustomerDashboardProps {
   }) => void;
   onTrackOrder: (order: ActiveOrder) => void;
 }
+
+type HeroService = {
+  key: ServiceKey;
+  label: string;
+  detail: string;
+  icon: IconName;
+};
+
+type CustomerGoogleMaps = {
+  maps: {
+    importLibrary: (name: string) => Promise<unknown>;
+  };
+};
+
+type CustomerGeocodingLibrary = {
+  Geocoder: new () => {
+    geocode: (request: {
+      location: { lat: number; lng: number };
+    }) => Promise<{
+      results?: Array<{ formatted_address?: string }>;
+    }>;
+  };
+};
+
+const heroServices: HeroService[] = [
+  {
+    key: "taxi",
+    label: "Taxi booking",
+    detail: "Fast rides with live driver tracking",
+    icon: "taxi",
+  },
+  {
+    key: "food",
+    label: "Food delivery",
+    detail: "Local meals delivered while they are fresh",
+    icon: "food",
+  },
+  {
+    key: "market",
+    label: "Supermarket delivery",
+    detail: "Groceries and essentials at your door",
+    icon: "market",
+  },
+  {
+    key: "construction",
+    label: "Construction materials",
+    detail: "Verified supplies for every project",
+    icon: "construction",
+  },
+  {
+    key: "parts",
+    label: "Car parts",
+    detail: "Trusted parts matched to your vehicle",
+    icon: "parts",
+  },
+];
 
 const serviceCopy: Record<ServiceKey, { title: string; description: string }> = {
   food: {
@@ -67,6 +130,101 @@ const searchPlaceholders: Record<ServiceKey, string> = {
   parts: "Search vehicle parts",
 };
 
+const customerMapsScriptId = "biloo-google-maps-script";
+
+function cleanLocationLabel(value: string) {
+  return value
+    .replace(/^(Home|Current location)\s*·\s*/i, "")
+    .replace(/,\s*Ethiopia$/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function coordinatePair(value: string) {
+  const match = cleanLocationLabel(value).match(
+    /^(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)$/,
+  );
+  if (!match) return null;
+
+  const lat = Number(match[1]);
+  const lng = Number(match[2]);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  return { lat, lng };
+}
+
+function initialNamedLocation(value: string) {
+  if (coordinatePair(value)) return "Bole, Addis Ababa";
+  return cleanLocationLabel(value) || "Bole, Addis Ababa";
+}
+
+function loadCustomerGoogleMaps(apiKey: string) {
+  const mapsWindow = window as unknown as Window & {
+    google?: CustomerGoogleMaps;
+    __bilooGoogleMapsPromise?: Promise<CustomerGoogleMaps>;
+  };
+
+  if (mapsWindow.google?.maps?.importLibrary) {
+    return Promise.resolve(mapsWindow.google);
+  }
+  if (mapsWindow.__bilooGoogleMapsPromise) {
+    return mapsWindow.__bilooGoogleMapsPromise;
+  }
+
+  mapsWindow.__bilooGoogleMapsPromise = new Promise<CustomerGoogleMaps>(
+    (resolve, reject) => {
+      const finish = () => {
+        if (mapsWindow.google?.maps?.importLibrary) resolve(mapsWindow.google);
+        else reject(new Error("Google Maps loaded without geocoding."));
+      };
+
+      const existing = document.getElementById(
+        customerMapsScriptId,
+      ) as HTMLScriptElement | null;
+
+      if (existing) {
+        existing.addEventListener("load", finish, { once: true });
+        existing.addEventListener(
+          "error",
+          () => reject(new Error("Google Maps failed to load.")),
+          { once: true },
+        );
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.id = customerMapsScriptId;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
+        apiKey,
+      )}&v=weekly&loading=async&language=en&region=ET`;
+      script.async = true;
+      script.defer = true;
+      script.addEventListener("load", finish, { once: true });
+      script.addEventListener(
+        "error",
+        () => reject(new Error("Google Maps failed to load.")),
+        { once: true },
+      );
+      document.head.appendChild(script);
+    },
+  );
+
+  return mapsWindow.__bilooGoogleMapsPromise;
+}
+
+async function resolvePlaceName(lat: number, lng: number) {
+  const apiKey = process.env.NEXT_PUBLIC_BILOO_MAPS_KEY?.trim();
+  if (!apiKey) return null;
+
+  const google = await loadCustomerGoogleMaps(apiKey);
+  const geocoding = (await google.maps.importLibrary(
+    "geocoding",
+  )) as CustomerGeocodingLibrary;
+  const geocoder = new geocoding.Geocoder();
+  const response = await geocoder.geocode({ location: { lat, lng } });
+  const address = response.results?.[0]?.formatted_address;
+  return address ? cleanLocationLabel(address) : null;
+}
+
 export function CustomerDashboard({
   service,
   setService,
@@ -86,17 +244,94 @@ export function CustomerDashboard({
   const [dropoff, setDropoff] = useState("Bole International Airport");
   const [rideId, setRideId] =
     useState<(typeof rideTypes)[number]["id"]>("standard");
+  const [heroServiceIndex, setHeroServiceIndex] = useState(0);
+  const [exactLocationLabel, setExactLocationLabel] = useState(() =>
+    initialNamedLocation(locationLabel),
+  );
+  const [resolvingLocation, setResolvingLocation] = useState(false);
+  const lastNamedLocationRef = useRef(initialNamedLocation(locationLabel));
 
   const selectedRide =
     rideTypes.find((ride) => ride.id === rideId) ?? rideTypes[0];
   const copy = serviceCopy[service];
   const cartCount = cart.reduce((total, line) => total + line.quantity, 0);
+  const animatedService = heroServices[heroServiceIndex] ?? heroServices[0];
 
   const serviceStats = useMemo(() => {
     const active = orders.filter((order) => order.progress < 100).length;
     const completed = orders.filter((order) => order.progress >= 100).length;
     return { active, completed };
   }, [orders]);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+    if (reducedMotion.matches) return;
+
+    const interval = window.setInterval(() => {
+      setHeroServiceIndex(
+        (current) => (current + 1) % heroServices.length,
+      );
+    }, 2600);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const coordinates = coordinatePair(locationLabel);
+    const cleaned = cleanLocationLabel(locationLabel);
+    const locating = /locating|finding/i.test(cleaned);
+
+    if (!coordinates) {
+      setResolvingLocation(locating);
+      if (locating) {
+        setExactLocationLabel("Finding your exact place…");
+      } else if (cleaned) {
+        lastNamedLocationRef.current = cleaned;
+        setExactLocationLabel(cleaned);
+      }
+      return;
+    }
+
+    let cancelled = false;
+    setResolvingLocation(true);
+    setExactLocationLabel("Finding your exact place…");
+
+    void resolvePlaceName(coordinates.lat, coordinates.lng)
+      .then((placeName) => {
+        if (cancelled) return;
+        const nextLocation =
+          placeName || lastNamedLocationRef.current || "Bole, Addis Ababa";
+        lastNamedLocationRef.current = nextLocation;
+        setExactLocationLabel(nextLocation);
+
+        if (placeName) {
+          try {
+            window.localStorage.setItem(
+              "biloo.customer-location",
+              JSON.stringify(placeName),
+            );
+          } catch {
+            // The exact name remains visible even when storage is unavailable.
+          }
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setExactLocationLabel(
+            lastNamedLocationRef.current || "Bole, Addis Ababa",
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setResolvingLocation(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [locationLabel]);
 
   function openTaxiSearch() {
     const target = document.getElementById("biloo-taxi-booking");
@@ -105,25 +340,78 @@ export function CustomerDashboard({
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  function openAnimatedService() {
+    setService(animatedService.key);
+    setSearch("");
+  }
+
   return (
     <div className="space-y-7 sm:space-y-8">
       <section className="pt-1" data-biloo-customer-home>
         <button
-          className="inline-flex max-w-full items-center gap-1.5 text-[12px] font-medium text-[#545454] transition hover:text-black"
+          aria-busy={resolvingLocation}
+          aria-label={`Use current location. ${exactLocationLabel}`}
+          className="biloo-compact-location inline-flex items-center gap-1.5"
           onClick={onLocate}
+          title={exactLocationLabel}
           type="button"
         >
-          <Icon className="size-4 shrink-0" name="location" />
-          <span className="truncate">{locationLabel}</span>
+          <span className="biloo-compact-location-icon">
+            <Icon className="size-3" name="location" />
+          </span>
+          <span className="biloo-compact-location-copy">
+            {exactLocationLabel}
+          </span>
+          <span
+            aria-hidden="true"
+            className={`biloo-compact-location-status ${
+              resolvingLocation ? "animate-pulse" : ""
+            }`}
+          />
         </button>
 
-        <h1 className="mt-4 text-[32px] font-semibold leading-[1.08] tracking-[-0.045em] text-black sm:text-[40px]">
+        <h1 className="mt-3 text-[32px] font-semibold leading-[1.08] tracking-[-0.045em] text-black sm:text-[40px]">
           What do you need?
         </h1>
 
+        <button
+          aria-label={`Open ${animatedService.label}`}
+          className="biloo-service-loop mt-3"
+          onClick={openAnimatedService}
+          type="button"
+        >
+          <span className="biloo-service-loop-icon" aria-hidden="true">
+            <Icon className="size-5" name={animatedService.icon} />
+          </span>
+          <span
+            className="biloo-service-loop-copy"
+            key={animatedService.key}
+          >
+            <span className="biloo-service-loop-label">
+              {animatedService.label}
+            </span>
+            <span className="biloo-service-loop-detail">
+              {animatedService.detail}
+            </span>
+          </span>
+          <span className="biloo-service-loop-dots" aria-hidden="true">
+            {heroServices.map((item, index) => (
+              <span
+                className="biloo-service-loop-dot"
+                data-active={index === heroServiceIndex}
+                key={item.key}
+              />
+            ))}
+          </span>
+        </button>
+        <span className="sr-only">
+          BILOO services include taxi booking, food delivery, supermarket
+          delivery, construction materials and car parts.
+        </span>
+
         {service === "taxi" ? (
           <button
-            className="biloo-standard-search mt-5 flex h-[52px] w-full items-center gap-3 px-3.5 text-left"
+            className="biloo-standard-search mt-4 flex h-[52px] w-full items-center gap-3 px-3.5 text-left"
             onClick={openTaxiSearch}
             type="button"
           >
@@ -136,7 +424,7 @@ export function CustomerDashboard({
             </span>
           </button>
         ) : (
-          <div className="mt-5 flex items-center gap-2.5">
+          <div className="mt-4 flex items-center gap-2.5">
             <div className="biloo-standard-search flex h-[52px] min-w-0 flex-1 items-center gap-3 px-3.5">
               <Icon
                 className="biloo-search-icon size-5 shrink-0 text-[#6d7078]"
