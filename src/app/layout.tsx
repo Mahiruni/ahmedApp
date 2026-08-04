@@ -15,7 +15,6 @@ import "./clarity-fix.css";
 import "./signature-color.css";
 import "./hero-service-motion.css";
 import "./responsive-shell.css";
-import "./browser-consistency.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
