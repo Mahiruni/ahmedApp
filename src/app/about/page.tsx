@@ -4,62 +4,67 @@ import Link from "next/link";
 import { PublicPageShell } from "@/components/public/public-page-shell";
 
 export const metadata: Metadata = {
-  title: "About BILOO",
+  title: "BILOO — Ethiopia’s Connected Super App",
   description:
-    "Learn about BILOO Group and the connected Ethiopian super app for rides, delivery and everyday shopping.",
+    "BILOO is an Ethiopia-focused super app for taxi booking, food delivery, grocery shopping, construction materials and car parts.",
   robots: { index: true, follow: true },
 };
 
 const services = [
   {
-    label: "Ride",
-    description: "Request local taxi trips and follow the journey from pickup to arrival.",
+    label: "Taxi booking",
+    description:
+      "Request local rides, choose pickup and destination locations, and follow trip progress from one BILOO account.",
   },
   {
     label: "Food delivery",
-    description: "Discover nearby restaurants and order meals through one account.",
+    description:
+      "Discover nearby restaurants, order meals and receive preparation and delivery updates.",
   },
   {
-    label: "Groceries",
-    description: "Shop supermarket essentials and arrange delivery to your location.",
+    label: "Supermarket shopping",
+    description:
+      "Shop groceries and household essentials and arrange delivery to a saved address or current location.",
   },
   {
     label: "Construction materials",
-    description: "Find building supplies from verified vendors for personal and business projects.",
+    description:
+      "Find building supplies from participating vendors for personal, contractor and business projects.",
   },
   {
     label: "Car parts",
-    description: "Browse vehicle parts and connect with trusted local suppliers.",
+    description:
+      "Browse vehicle parts and connect with local suppliers through the same trusted BILOO experience.",
   },
 ];
 
 export default function AboutPage() {
   return (
     <PublicPageShell
-      eyebrow="ABOUT BILOO"
-      title="One trusted account for everyday movement and commerce."
-      description="BILOO is an Ethiopia-focused super app that connects customers with transport, food, groceries, construction materials and car-parts services through one consistent digital experience."
+      eyebrow="BILOO — ETHIOPIA’S CONNECTED SUPER APP"
+      title="BILOO connects rides, delivery, shopping and local suppliers in one app."
+      description="BILOO helps people in Ethiopia book taxi rides, order food and groceries, buy construction materials and find car parts through one secure customer account."
     >
-      <section className="biloo-public-intro-grid">
+      <section className="biloo-public-intro-grid" aria-label="BILOO purpose">
         <article className="biloo-public-card biloo-public-card-primary">
-          <p className="biloo-public-kicker">OUR PURPOSE</p>
-          <h2>Make essential local services easier to access.</h2>
+          <p className="biloo-public-kicker">WHAT BILOO DOES</p>
+          <h2>One practical platform for essential everyday services.</h2>
           <p>
-            BILOO brings fragmented daily services into one platform so people can
-            book, order, pay, receive updates and manage activity without switching
-            between unrelated applications.
+            Customers use BILOO to search for available services, choose a provider,
+            place a ride or delivery request, review prices, receive status updates
+            and manage their activity without switching between unrelated apps.
           </p>
         </article>
 
         <article className="biloo-public-card biloo-public-company-card">
-          <p className="biloo-public-kicker">COMPANY INFORMATION</p>
+          <p className="biloo-public-kicker">APPLICATION AND COMPANY</p>
           <dl>
             <div>
-              <dt>Operating name</dt>
+              <dt>Application name</dt>
               <dd>BILOO</dd>
             </div>
             <div>
-              <dt>Company</dt>
+              <dt>Operating company</dt>
               <dd>BILOO Group</dd>
             </div>
             <div>
@@ -67,20 +72,21 @@ export default function AboutPage() {
               <dd>Mahir Aman Biftu</dd>
             </div>
             <div>
-              <dt>Location</dt>
+              <dt>Primary location</dt>
               <dd>Addis Ababa, Ethiopia</dd>
             </div>
           </dl>
         </article>
       </section>
 
-      <section className="biloo-public-section">
+      <section className="biloo-public-section" aria-labelledby="biloo-services-title">
         <div className="biloo-public-section-heading">
-          <p className="biloo-public-kicker">CONNECTED SERVICES</p>
-          <h2>Designed around real daily needs.</h2>
+          <p className="biloo-public-kicker">BILOO SERVICES</p>
+          <h2 id="biloo-services-title">Five connected services, one consistent account.</h2>
           <p>
-            Each service uses the same BILOO identity, account, order history,
-            notifications and support experience.
+            BILOO is designed for customers, drivers, delivery partners, stores,
+            vendors and administrators. Every service uses the same BILOO identity,
+            order history, notifications and support experience.
           </p>
         </div>
 
@@ -92,6 +98,34 @@ export default function AboutPage() {
               <p>{service.description}</p>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="biloo-public-section" aria-labelledby="biloo-google-title">
+        <div className="biloo-public-section-heading">
+          <p className="biloo-public-kicker">GOOGLE SIGN-IN</p>
+          <h2 id="biloo-google-title">Why BILOO requests basic Google account information.</h2>
+          <p>
+            “Continue with Google” is an optional sign-in method. With permission,
+            BILOO receives basic profile information such as your name, email address,
+            profile image and Google account identifier so it can authenticate you,
+            create or connect your BILOO account and protect the sign-in process.
+            BILOO does not request access to Gmail, Google Drive, contacts or calendars.
+          </p>
+        </div>
+        <div className="biloo-public-value-grid">
+          <article>
+            <strong>Authentication only</strong>
+            <p>Google information is used to sign you in and connect the correct BILOO account.</p>
+          </article>
+          <article>
+            <strong>No sale of Google data</strong>
+            <p>BILOO does not sell Google profile information or use it for advertising profiling.</p>
+          </article>
+          <article>
+            <strong>Clear privacy controls</strong>
+            <p>Details about collection, use, retention and account choices are available in the Privacy Policy.</p>
+          </article>
         </div>
       </section>
 
@@ -118,13 +152,15 @@ export default function AboutPage() {
 
       <section className="biloo-public-cta">
         <div>
-          <p className="biloo-public-kicker">GET STARTED</p>
-          <h2>Move, order and shop with BILOO.</h2>
-          <p>Create one customer account and access every available BILOO service.</p>
+          <p className="biloo-public-kicker">BILOO</p>
+          <h2>Move, order and shop through one connected platform.</h2>
+          <p>
+            Read the BILOO Privacy Policy before creating an account or using Google sign-in.
+          </p>
         </div>
         <div>
-          <Link className="biloo-public-cta-primary" href="/auth/sign-up">
-            Create account
+          <Link className="biloo-public-cta-primary" href="/privacy">
+            Privacy Policy
           </Link>
           <Link className="biloo-public-cta-secondary" href="/">
             Return home
