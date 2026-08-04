@@ -1,1 +1,2 @@
 Verification marker for the standard typewriter search interface and detailed Addis destination autocomplete.
+Rerun after the lint-safe typewriter transition update.
