@@ -11,6 +11,13 @@ type TypewriterOptions = {
 
 type Phase = "typing" | "paused" | "deleting";
 
+type TypewriterState = {
+  signature: string;
+  index: number;
+  text: string;
+  phase: Phase;
+};
+
 export function useTypewriterCycle(
   values: readonly string[],
   {
@@ -25,83 +32,96 @@ export function useTypewriterCycle(
     [values],
   );
   const signature = items.join("\u0000");
-  const [index, setIndex] = useState(0);
-  const [text, setText] = useState("");
-  const [phase, setPhase] = useState<Phase>("typing");
+  const [state, setState] = useState<TypewriterState>({
+    signature,
+    index: 0,
+    text: "",
+    phase: "typing",
+  });
+
+  const currentState: TypewriterState =
+    state.signature === signature
+      ? state
+      : { signature, index: 0, text: "", phase: "typing" };
 
   useEffect(() => {
-    setIndex(0);
-    setText("");
-    setPhase("typing");
-  }, [signature]);
-
-  useEffect(() => {
-    if (!items.length) {
-      setText("");
-      return;
+    if (state.signature !== signature) {
+      const reset = window.setTimeout(() => {
+        setState({ signature, index: 0, text: "", phase: "typing" });
+      }, 0);
+      return () => window.clearTimeout(reset);
     }
+
+    if (!items.length) return;
 
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const current = items[index % items.length] ?? items[0];
+    const safeIndex = state.index % items.length;
+    const current = items[safeIndex] ?? items[0];
 
     if (reducedMotion) {
-      setText(current);
-      setPhase("paused");
-      return;
+      if (state.text === current && state.phase === "paused") return;
+      const settle = window.setTimeout(() => {
+        setState({
+          signature,
+          index: safeIndex,
+          text: current,
+          phase: "paused",
+        });
+      }, 0);
+      return () => window.clearTimeout(settle);
     }
 
     let delay = typingMs;
-    let nextPhase = phase;
-    let nextText = text;
-    let nextIndex = index;
+    let nextPhase = state.phase;
+    let nextText = state.text;
+    let nextIndex = safeIndex;
 
-    if (phase === "typing") {
-      if (text.length < current.length) {
-        nextText = current.slice(0, text.length + 1);
+    if (state.phase === "typing") {
+      if (state.text.length < current.length) {
+        nextText = current.slice(0, state.text.length + 1);
       } else {
         nextPhase = "paused";
         delay = pauseMs;
       }
-    } else if (phase === "paused") {
+    } else if (state.phase === "paused") {
       nextPhase = "deleting";
       delay = deletingMs;
-    } else if (text.length > 0) {
-      nextText = text.slice(0, -1);
+    } else if (state.text.length > 0) {
+      nextText = state.text.slice(0, -1);
       delay = deletingMs;
     } else {
-      nextIndex = (index + 1) % items.length;
+      nextIndex = (safeIndex + 1) % items.length;
       nextPhase = "typing";
       delay = nextDelayMs;
     }
 
     const timeout = window.setTimeout(() => {
-      setText(nextText);
-      setIndex(nextIndex);
-      setPhase(nextPhase);
+      setState({
+        signature,
+        index: nextIndex,
+        text: nextText,
+        phase: nextPhase,
+      });
     }, delay);
 
     return () => window.clearTimeout(timeout);
   }, [
     deletingMs,
-    index,
     items,
     nextDelayMs,
     pauseMs,
-    phase,
-    text,
+    signature,
+    state,
     typingMs,
   ]);
 
-  useEffect(() => {
-    if (items.length && index >= items.length) setIndex(0);
-  }, [index, items.length]);
-
   return {
-    index,
-    text,
-    fullText: items[index % Math.max(items.length, 1)] ?? "",
-    phase,
+    index: currentState.index,
+    text: currentState.text,
+    fullText:
+      items[currentState.index % Math.max(items.length, 1)] ?? "",
+    phase: currentState.phase,
   };
 }
