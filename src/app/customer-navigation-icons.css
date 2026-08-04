@@ -1,0 +1,59 @@
+/* Matched navigation glyph set: consistent 24px viewBox and 1.8px optical stroke. */
+
+.biloo-header-action > svg,
+.biloo-customer-nav-icon > svg {
+  display: none !important;
+}
+
+.biloo-header-action::before,
+.biloo-customer-nav-icon::before {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: currentColor;
+  content: "";
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 22px 22px;
+  mask-size: 22px 22px;
+}
+
+.biloo-header-actions > .biloo-header-action:first-child::before,
+.biloo-customer-nav-item:nth-child(3) .biloo-customer-nav-icon::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M3%204h2.1l1.8%209.1a2%202%200%200%200%202%201.6h7.8a2%202%200%200%200%201.9-1.4L21%207H6%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3Ccircle%20cx%3D%279%27%20cy%3D%2719.5%27%20r%3D%271.1%27%20fill%3D%27black%27%2F%3E%3Ccircle%20cx%3D%2718%27%20cy%3D%2719.5%27%20r%3D%271.1%27%20fill%3D%27black%27%2F%3E%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M3%204h2.1l1.8%209.1a2%202%200%200%200%202%201.6h7.8a2%202%200%200%200%201.9-1.4L21%207H6%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3Ccircle%20cx%3D%279%27%20cy%3D%2719.5%27%20r%3D%271.1%27%20fill%3D%27black%27%2F%3E%3Ccircle%20cx%3D%2718%27%20cy%3D%2719.5%27%20r%3D%271.1%27%20fill%3D%27black%27%2F%3E%3C%2Fsvg%3E");
+}
+
+.biloo-header-actions > .biloo-header-action:nth-child(2)::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M18%209a6%206%200%201%200-12%200c0%205.5-2.5%206.5-2.5%208.25h17C20.5%2015.5%2018%2014.5%2018%209Z%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M9.75%2020.25h4.5%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M18%209a6%206%200%201%200-12%200c0%205.5-2.5%206.5-2.5%208.25h17C20.5%2015.5%2018%2014.5%2018%209Z%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M9.75%2020.25h4.5%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+}
+
+.biloo-customer-nav-item:nth-child(1) .biloo-customer-nav-icon::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M3.5%2010.5%2012%203l8.5%207.5v8.25A2.25%202.25%200%200%201%2018.25%2021H5.75a2.25%202.25%200%200%201-2.25-2.25V10.5Z%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M9%2021v-6h6v6%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M3.5%2010.5%2012%203l8.5%207.5v8.25A2.25%202.25%200%200%201%2018.25%2021H5.75a2.25%202.25%200%200%201-2.25-2.25V10.5Z%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3Cpath%20d%3D%27M9%2021v-6h6v6%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+}
+
+.biloo-customer-nav-item:nth-child(2) .biloo-customer-nav-icon::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Ccircle%20cx%3D%2710.75%27%20cy%3D%2710.75%27%20r%3D%276.75%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%2F%3E%3Cpath%20d%3D%27m16%2016%204.25%204.25%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Ccircle%20cx%3D%2710.75%27%20cy%3D%2710.75%27%20r%3D%276.75%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%2F%3E%3Cpath%20d%3D%27m16%2016%204.25%204.25%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+}
+
+.biloo-customer-nav-item:nth-child(4) .biloo-customer-nav-icon::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%278%27%20r%3D%273.25%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%2F%3E%3Cpath%20d%3D%27M5.25%2020.5a6.75%206.75%200%200%201%2013.5%200%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%278%27%20r%3D%273.25%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%2F%3E%3Cpath%20d%3D%27M5.25%2020.5a6.75%206.75%200%200%201%2013.5%200%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.8%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E");
+}
+
+@media (forced-colors: active) {
+  .biloo-header-action > svg,
+  .biloo-customer-nav-icon > svg {
+    display: block !important;
+  }
+
+  .biloo-header-action::before,
+  .biloo-customer-nav-icon::before {
+    display: none;
+  }
+}
