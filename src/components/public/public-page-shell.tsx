@@ -25,7 +25,7 @@ export function PublicPageShell({
         <div className="biloo-public-header-inner">
           <Link className="biloo-public-brand" href="/" aria-label="BILOO home">
             <Image
-              alt=""
+              alt="BILOO app logo"
               height={42}
               priority
               src="/icons/biloo-mark.svg"
@@ -64,10 +64,15 @@ export function PublicPageShell({
       <footer className="biloo-public-footer">
         <div className="biloo-public-footer-inner">
           <div className="biloo-public-footer-brand">
-            <Image alt="" height={38} src="/icons/biloo-mark.svg" width={38} />
+            <Image
+              alt="BILOO app logo"
+              height={38}
+              src="/icons/biloo-mark.svg"
+              width={38}
+            />
             <div>
-              <strong>BILOO Group</strong>
-              <span>Addis Ababa, Ethiopia</span>
+              <strong>BILOO</strong>
+              <span>Operated by BILOO Group · Addis Ababa, Ethiopia</span>
             </div>
           </div>
 
