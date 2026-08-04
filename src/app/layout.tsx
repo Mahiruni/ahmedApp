@@ -14,6 +14,7 @@ import "./award-experience.css";
 import "./clarity-fix.css";
 import "./signature-color.css";
 import "./hero-service-motion.css";
+import "./responsive-shell.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: "#5146e5",
 };
 
