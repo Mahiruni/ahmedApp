@@ -1,0 +1,796 @@
+/* Public BILOO company, privacy and terms pages. */
+
+.biloo-public-page {
+  min-height: 100vh;
+  background: #f7f7fb;
+  color: #1b1a22;
+}
+
+.biloo-public-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-bottom: 1px solid #e8e7ef;
+  background: #ffffff;
+}
+
+.biloo-public-header-inner {
+  display: grid;
+  width: min(1180px, calc(100% - 40px));
+  min-height: 76px;
+  margin-inline: auto;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+}
+
+.biloo-public-brand {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 11px;
+  color: #17161d;
+  text-decoration: none;
+}
+
+.biloo-public-brand img {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  box-shadow: 0 8px 22px rgba(52, 41, 184, 0.17);
+}
+
+.biloo-public-brand span,
+.biloo-public-brand strong,
+.biloo-public-brand small {
+  display: block;
+}
+
+.biloo-public-brand strong {
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 20px;
+  font-weight: 820;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.biloo-public-brand small {
+  margin-top: 4px;
+  color: #777482;
+  font-size: 8px;
+  font-weight: 720;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.biloo-public-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.biloo-public-nav a,
+.biloo-public-footer-nav a {
+  color: #5f5c68;
+  font-size: 13px;
+  font-weight: 680;
+  text-decoration: none;
+}
+
+.biloo-public-nav a {
+  min-height: 42px;
+  border-radius: 999px;
+  padding: 12px 16px;
+}
+
+.biloo-public-nav a:hover {
+  background: #f2f1ff;
+  color: #3429b8;
+}
+
+.biloo-public-signin {
+  justify-self: end;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #5146e5;
+  padding: 11px 20px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 760;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(52, 41, 184, 0.19);
+}
+
+.biloo-public-signin:hover {
+  background: #4237cf;
+}
+
+.biloo-public-hero {
+  position: relative;
+  overflow: hidden;
+  background: #2b218f;
+  color: #ffffff;
+}
+
+.biloo-public-hero::before,
+.biloo-public-hero::after {
+  position: absolute;
+  border-radius: 999px;
+  content: "";
+  pointer-events: none;
+}
+
+.biloo-public-hero::before {
+  top: -160px;
+  right: -90px;
+  width: 420px;
+  height: 420px;
+  border: 90px solid rgba(255, 255, 255, 0.045);
+}
+
+.biloo-public-hero::after {
+  bottom: -220px;
+  left: 7%;
+  width: 440px;
+  height: 440px;
+  background: rgba(199, 240, 0, 0.07);
+}
+
+.biloo-public-hero-inner {
+  position: relative;
+  z-index: 1;
+  width: min(980px, calc(100% - 40px));
+  margin-inline: auto;
+  padding-block: clamp(78px, 12vw, 138px);
+  text-align: center;
+}
+
+.biloo-public-hero-inner > p,
+.biloo-public-kicker {
+  color: #c7f000;
+  font-size: 10px;
+  font-weight: 820;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.biloo-public-hero h1 {
+  max-width: 900px;
+  margin: 18px auto 0;
+  color: #ffffff;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(42px, 7vw, 76px);
+  font-weight: 760;
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+}
+
+.biloo-public-hero-inner > span {
+  display: block;
+  max-width: 760px;
+  margin: 26px auto 0;
+  color: #d9d6f4;
+  font-size: clamp(15px, 2vw, 18px);
+  font-weight: 480;
+  line-height: 1.75;
+}
+
+.biloo-public-content {
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+  padding-block: clamp(48px, 8vw, 88px);
+}
+
+.biloo-public-intro-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  gap: 22px;
+}
+
+.biloo-public-card {
+  border: 1px solid #e7e5ee;
+  border-radius: 28px;
+  background: #ffffff;
+  padding: clamp(26px, 4vw, 44px);
+  box-shadow: 0 18px 48px rgba(30, 24, 78, 0.07);
+}
+
+.biloo-public-card-primary {
+  background: #5146e5;
+  color: #ffffff;
+}
+
+.biloo-public-card-primary .biloo-public-kicker {
+  color: #d8ff3b;
+}
+
+.biloo-public-card h2,
+.biloo-public-section-heading h2,
+.biloo-public-cta h2 {
+  color: #1b1a22;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-weight: 780;
+  letter-spacing: -0.045em;
+}
+
+.biloo-public-card-primary h2 {
+  margin-top: 18px;
+  color: #ffffff;
+  font-size: clamp(31px, 4vw, 48px);
+  line-height: 1.03;
+}
+
+.biloo-public-card-primary > p:last-child {
+  max-width: 650px;
+  margin-top: 22px;
+  color: #e4e1ff;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.biloo-public-company-card dl {
+  margin-top: 20px;
+}
+
+.biloo-public-company-card dl > div {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 18px;
+  border-top: 1px solid #eceaf1;
+  padding-block: 16px;
+}
+
+.biloo-public-company-card dt {
+  color: #7a7783;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.biloo-public-company-card dd {
+  color: #222028;
+  font-size: 13px;
+  font-weight: 740;
+  text-align: right;
+}
+
+.biloo-public-section {
+  margin-top: clamp(62px, 9vw, 104px);
+}
+
+.biloo-public-section-heading {
+  max-width: 760px;
+}
+
+.biloo-public-section-heading h2 {
+  margin-top: 14px;
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 1.03;
+}
+
+.biloo-public-section-heading > p:last-child {
+  max-width: 680px;
+  margin-top: 18px;
+  color: #6d6976;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.biloo-public-service-grid {
+  display: grid;
+  margin-top: 30px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.biloo-public-service-card {
+  min-height: 230px;
+  border: 1px solid #e5e3ec;
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 22px;
+  box-shadow: 0 12px 34px rgba(30, 24, 78, 0.05);
+}
+
+.biloo-public-service-card > span {
+  display: inline-flex;
+  min-width: 34px;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: #eeecff;
+  color: #5146e5;
+  font-size: 10px;
+  font-weight: 820;
+}
+
+.biloo-public-service-card h3 {
+  margin-top: 42px;
+  color: #211f27;
+  font-size: 17px;
+  font-weight: 780;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.biloo-public-service-card p {
+  margin-top: 12px;
+  color: #74717c;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.biloo-public-value-grid {
+  display: grid;
+  margin-top: 28px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.biloo-public-value-grid article {
+  border-left: 3px solid #5146e5;
+  border-radius: 0 18px 18px 0;
+  background: #ffffff;
+  padding: 24px;
+}
+
+.biloo-public-value-grid strong {
+  color: #25222d;
+  font-size: 15px;
+  font-weight: 780;
+}
+
+.biloo-public-value-grid p {
+  margin-top: 10px;
+  color: #74717c;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.biloo-public-cta {
+  display: grid;
+  margin-top: clamp(64px, 10vw, 112px);
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 30px;
+  border-radius: 30px;
+  background: #1e186b;
+  padding: clamp(28px, 5vw, 52px);
+  color: #ffffff;
+}
+
+.biloo-public-cta h2 {
+  margin-top: 12px;
+  color: #ffffff;
+  font-size: clamp(32px, 5vw, 52px);
+}
+
+.biloo-public-cta > div:first-child > p:last-child {
+  margin-top: 14px;
+  color: #d7d3ef;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.biloo-public-cta > div:last-child {
+  display: flex;
+  gap: 10px;
+}
+
+.biloo-public-cta-primary,
+.biloo-public-cta-secondary {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.biloo-public-cta-primary {
+  background: #c7f000;
+  color: #1d2500;
+}
+
+.biloo-public-cta-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+
+.biloo-public-document-meta {
+  display: grid;
+  max-width: 780px;
+  margin: 0 auto 38px;
+  grid-template-columns: auto 1fr;
+  gap: 10px 26px;
+  border: 1px solid #e5e3ec;
+  border-radius: 20px;
+  background: #ffffff;
+  padding: 22px 24px;
+}
+
+.biloo-public-document-meta span {
+  color: #7a7783;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.biloo-public-document-meta strong {
+  color: #26232c;
+  font-size: 12px;
+  font-weight: 760;
+  text-align: right;
+}
+
+.biloo-public-document {
+  max-width: 880px;
+  margin-inline: auto;
+  border: 1px solid #e5e3ec;
+  border-radius: 30px;
+  background: #ffffff;
+  padding: clamp(24px, 5vw, 56px);
+  box-shadow: 0 20px 60px rgba(30, 24, 78, 0.07);
+}
+
+.biloo-public-document-section {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 22px;
+  padding-block: 34px;
+}
+
+.biloo-public-document-section:first-child {
+  padding-top: 0;
+}
+
+.biloo-public-document-section:last-child {
+  padding-bottom: 0;
+}
+
+.biloo-public-document-section + .biloo-public-document-section {
+  border-top: 1px solid #ebe9f0;
+}
+
+.biloo-public-document-number {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 13px;
+  background: #eeecff;
+  color: #5146e5;
+  font-size: 10px;
+  font-weight: 820;
+}
+
+.biloo-public-document-section h2 {
+  color: #201e26;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 780;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.biloo-public-document-section p,
+.biloo-public-document-section li {
+  color: #625f69;
+  font-size: 14px;
+  line-height: 1.78;
+}
+
+.biloo-public-document-section p {
+  margin-top: 16px;
+}
+
+.biloo-public-document-section ul {
+  margin-top: 14px;
+  padding-left: 20px;
+}
+
+.biloo-public-document-section li + li {
+  margin-top: 8px;
+}
+
+.biloo-public-document-section a {
+  color: #4237cf;
+  font-weight: 700;
+}
+
+.biloo-public-footer {
+  border-top: 1px solid #e5e3ec;
+  background: #ffffff;
+}
+
+.biloo-public-footer-inner {
+  display: grid;
+  width: min(1120px, calc(100% - 40px));
+  margin-inline: auto;
+  grid-template-columns: 1.1fr 1fr auto;
+  align-items: center;
+  gap: 28px;
+  padding-block: 34px;
+}
+
+.biloo-public-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.biloo-public-footer-brand img {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+}
+
+.biloo-public-footer-brand strong,
+.biloo-public-footer-brand span {
+  display: block;
+}
+
+.biloo-public-footer-brand strong {
+  color: #222028;
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.biloo-public-footer-brand span {
+  margin-top: 3px;
+  color: #7a7783;
+  font-size: 10px;
+}
+
+.biloo-public-footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.biloo-public-footer-contact a {
+  color: #514e59;
+  font-size: 11px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.biloo-public-footer-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+}
+
+.biloo-public-footer-nav a:hover,
+.biloo-public-footer-contact a:hover {
+  color: #4237cf;
+}
+
+.biloo-public-copyright {
+  grid-column: 1 / -1;
+  border-top: 1px solid #eeedf2;
+  padding-top: 20px;
+  color: #8a8791;
+  font-size: 10px;
+  text-align: center;
+}
+
+.biloo-entry-legal a,
+.biloo-entry-public-links a {
+  color: rgba(255, 255, 255, 0.84);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: rgba(199, 240, 0, 0.55);
+  text-underline-offset: 3px;
+}
+
+.biloo-entry-public-links {
+  display: flex;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 9.5px;
+}
+
+.biloo-public-nav a:focus-visible,
+.biloo-public-signin:focus-visible,
+.biloo-public-brand:focus-visible,
+.biloo-public-cta-primary:focus-visible,
+.biloo-public-cta-secondary:focus-visible,
+.biloo-public-footer a:focus-visible {
+  outline: 3px solid rgba(81, 70, 229, 0.32);
+  outline-offset: 3px;
+}
+
+@media (max-width: 960px) {
+  .biloo-public-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .biloo-public-service-card:last-child {
+    grid-column: 1 / -1;
+    min-height: 180px;
+  }
+
+  .biloo-public-footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .biloo-public-footer-nav {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .biloo-public-header-inner {
+    width: min(100% - 28px, 1180px);
+    min-height: 68px;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+  }
+
+  .biloo-public-nav {
+    display: none;
+  }
+
+  .biloo-public-brand img {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+
+  .biloo-public-brand strong {
+    font-size: 18px;
+  }
+
+  .biloo-public-brand small {
+    display: none;
+  }
+
+  .biloo-public-signin {
+    min-height: 42px;
+    padding-inline: 17px;
+  }
+
+  .biloo-public-hero-inner,
+  .biloo-public-content,
+  .biloo-public-footer-inner {
+    width: min(100% - 32px, 1120px);
+  }
+
+  .biloo-public-hero-inner {
+    padding-block: 72px;
+    text-align: left;
+  }
+
+  .biloo-public-hero h1,
+  .biloo-public-hero-inner > span {
+    margin-inline: 0;
+  }
+
+  .biloo-public-intro-grid,
+  .biloo-public-value-grid,
+  .biloo-public-cta {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-public-company-card dl > div {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .biloo-public-company-card dd {
+    text-align: left;
+  }
+
+  .biloo-public-cta {
+    align-items: start;
+  }
+
+  .biloo-public-cta > div:last-child {
+    flex-wrap: wrap;
+  }
+
+  .biloo-public-document-section {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .biloo-public-document-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .biloo-public-footer-inner {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .biloo-public-footer-nav {
+    grid-column: auto;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 520px) {
+  .biloo-public-content {
+    padding-block: 38px 58px;
+  }
+
+  .biloo-public-card,
+  .biloo-public-document,
+  .biloo-public-cta {
+    border-radius: 22px;
+  }
+
+  .biloo-public-service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-public-service-card,
+  .biloo-public-service-card:last-child {
+    grid-column: auto;
+    min-height: 180px;
+  }
+
+  .biloo-public-document-meta {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .biloo-public-document-meta strong {
+    margin-bottom: 10px;
+    text-align: left;
+  }
+
+  .biloo-public-cta > div:last-child,
+  .biloo-public-cta-primary,
+  .biloo-public-cta-secondary {
+    width: 100%;
+  }
+
+  .biloo-entry-public-links {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-public-signin,
+  .biloo-public-nav a,
+  .biloo-public-cta-primary,
+  .biloo-public-cta-secondary {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .biloo-public-page,
+  .biloo-public-header,
+  .biloo-public-hero,
+  .biloo-public-card,
+  .biloo-public-service-card,
+  .biloo-public-document,
+  .biloo-public-cta,
+  .biloo-public-footer {
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .biloo-public-hero h1,
+  .biloo-public-hero-inner > span,
+  .biloo-public-card-primary h2,
+  .biloo-public-cta h2 {
+    color: CanvasText;
+  }
+}
