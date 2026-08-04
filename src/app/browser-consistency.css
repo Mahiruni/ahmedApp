@@ -1,0 +1,235 @@
+/* BILOO cross-browser shell hardening.
+   This final layer keeps viewport fitting and navigation geometry identical in
+   Firefox, Chromium, Android WebView and Safari. It intentionally avoids blur,
+   transformed fixed ancestors and root overflow clipping. */
+
+:root {
+  --biloo-shell-header: 64px;
+  --biloo-shell-footer: 66px;
+}
+
+html {
+  inline-size: 100% !important;
+  max-inline-size: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-text-size-adjust: 100% !important;
+  -moz-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+}
+
+body {
+  position: static !important;
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+  contain: none !important;
+}
+
+body > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/* A clipped/hidden main element can become the fixed-position containing block
+   in browser-specific rendering paths. Keep the document as the only scroller. */
+main[class*="min-h-screen"] {
+  position: relative !important;
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 100% !important;
+  overflow: visible !important;
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  filter: none !important;
+  perspective: none !important;
+  contain: none !important;
+  will-change: auto !important;
+  padding-block-start: calc(var(--biloo-shell-header) + env(safe-area-inset-top)) !important;
+}
+
+main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"],
+main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"] > *,
+main[class*="min-h-screen"] section,
+main[class*="min-h-screen"] article,
+main[class*="min-h-screen"] form,
+main[class*="min-h-screen"] fieldset {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+/* Fixed header geometry. Use left/right instead of 100vw so Firefox scrollbar
+   accounting cannot widen the app. */
+[data-biloo-header] {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: 0 !important;
+  inset-inline: 0 !important;
+  z-index: 100 !important;
+  inline-size: auto !important;
+  width: auto !important;
+  min-inline-size: 0 !important;
+  max-inline-size: none !important;
+  margin: 0 !important;
+  padding-block-start: env(safe-area-inset-top) !important;
+  transform: none !important;
+  translate: none !important;
+  scale: none !important;
+  rotate: none !important;
+  filter: none !important;
+  perspective: none !important;
+  contain: none !important;
+  will-change: auto !important;
+  backface-visibility: visible !important;
+}
+
+[data-biloo-header] > div {
+  inline-size: 100% !important;
+  min-inline-size: 0 !important;
+  max-inline-size: 1500px !important;
+  block-size: var(--biloo-shell-header) !important;
+  min-block-size: var(--biloo-shell-header) !important;
+}
+
+#biloo-command-menu {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 200 !important;
+  inline-size: auto !important;
+  max-inline-size: none !important;
+  block-size: 100vh !important;
+  block-size: 100dvh !important;
+  transform: none;
+  contain: none !important;
+}
+
+#biloo-command-menu > section[role="dialog"] {
+  block-size: 100vh !important;
+  block-size: 100dvh !important;
+  max-block-size: 100vh !important;
+  max-block-size: 100dvh !important;
+}
+
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+@media (max-width: 1023px) {
+  [data-biloo-role-rail] {
+    position: fixed !important;
+    top: auto !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    inset-inline: 0 !important;
+    z-index: 95 !important;
+    display: block !important;
+    inline-size: auto !important;
+    width: auto !important;
+    min-inline-size: 0 !important;
+    max-inline-size: none !important;
+    min-block-size: calc(var(--biloo-shell-footer) + env(safe-area-inset-bottom)) !important;
+    margin: 0 !important;
+    transform: none !important;
+    translate: none !important;
+    scale: none !important;
+    rotate: none !important;
+    filter: none !important;
+    perspective: none !important;
+    contain: none !important;
+    will-change: auto !important;
+    backface-visibility: visible !important;
+  }
+
+  [data-biloo-role-rail] > div:nth-child(2) {
+    inline-size: 100% !important;
+    min-inline-size: 0 !important;
+    min-block-size: var(--biloo-shell-footer) !important;
+  }
+
+  [data-biloo-role-rail] button {
+    min-inline-size: 0 !important;
+    min-block-size: var(--biloo-shell-footer) !important;
+    transform: none !important;
+  }
+
+  main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"] > section {
+    padding-block-end: calc(var(--biloo-shell-footer) + env(safe-area-inset-bottom) + 24px) !important;
+  }
+
+  main[class*="min-h-screen"] > div[class*="grid"][class*="max-w"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  [data-biloo-customer-home],
+  .biloo-standard-search,
+  .biloo-service-loop,
+  .biloo-map-card,
+  .biloo-route-field {
+    inline-size: 100%;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-biloo-role-rail] {
+    position: sticky !important;
+    top: calc(var(--biloo-shell-header) + env(safe-area-inset-top) + 16px) !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    filter: none !important;
+    contain: layout style !important;
+  }
+}
+
+/* Firefox-specific fallback. Firefox supports -moz-appearance and can treat a
+   one-axis overflow declaration as a scroll container. Keep root scrolling
+   explicit and fixed bars viewport-relative. */
+@supports (-moz-appearance: none) {
+  html {
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+  }
+
+  body,
+  main[class*="min-h-screen"] {
+    overflow: visible !important;
+  }
+
+  [data-biloo-header],
+  #biloo-command-menu {
+    position: fixed !important;
+  }
+
+  @media (max-width: 1023px) {
+    [data-biloo-role-rail] {
+      position: fixed !important;
+      top: auto !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      left: 0 !important;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-biloo-header],
+  [data-biloo-role-rail],
+  #biloo-command-menu {
+    transition: none !important;
+  }
+}
