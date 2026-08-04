@@ -74,15 +74,16 @@ export async function signInWithGoogleAction(formData: FormData) {
       skipBrowserRedirect: true,
     },
   });
+  const redirectUrl = data.url;
 
-  if (error || !data.url) {
+  if (error || !redirectUrl) {
     authError(
       "/",
       error?.message ?? "Google sign-in is not available right now.",
     );
   }
 
-  redirect(data.url);
+  redirect(redirectUrl);
 }
 
 export async function signUpAction(formData: FormData) {
