@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { Icon } from "@/components/biloo/ui";
 import { signUpAction } from "@/app/auth/actions";
+import { Icon } from "@/components/biloo/ui";
+import { EthiopianPhoneInput } from "@/components/forms/ethiopian-phone-input";
 
 import { authButtonClass, authInputClass } from "./auth-shell";
 
@@ -33,11 +35,9 @@ function FieldLabel({
   optional?: boolean;
 }) {
   return (
-    <span className="mb-2 flex items-center justify-between gap-3 text-[12px] font-semibold text-[#252238]">
+    <span className="biloo-signup-field-label">
       <span>{children}</span>
-      {optional ? (
-        <span className="text-[10px] font-medium text-[#8a8798]">Optional</span>
-      ) : null}
+      {optional ? <span>Optional</span> : null}
     </span>
   );
 }
@@ -196,15 +196,10 @@ export function SignUpForm() {
 
           <label>
             <FieldLabel>Ethiopian mobile number</FieldLabel>
-            <input
-              autoComplete="tel"
-              className={authInputClass}
-              inputMode="tel"
-              name="phone"
-              placeholder="0912 345 678"
-              required
-              type="tel"
-            />
+            <EthiopianPhoneInput className={authInputClass} name="phone" required />
+            <small className="biloo-signup-help">
+              +251 is added automatically. Enter only the 9 digits starting with 9 or 7.
+            </small>
           </label>
 
           <label>
@@ -213,6 +208,7 @@ export function SignUpForm() {
               autoCapitalize="none"
               autoComplete="email"
               className={authInputClass}
+              inputMode="email"
               name="email"
               placeholder="you@example.com"
               required
@@ -234,12 +230,7 @@ export function SignUpForm() {
         <div className="biloo-signup-grid">
           <label>
             <FieldLabel>Region or city administration</FieldLabel>
-            <select
-              className={authInputClass}
-              defaultValue=""
-              name="region"
-              required
-            >
+            <select className={authInputClass} defaultValue="" name="region" required>
               <option disabled value="">
                 Select region
               </option>
@@ -314,9 +305,7 @@ export function SignUpForm() {
           <label>
             <FieldLabel>Confirm password</FieldLabel>
             <input
-              aria-invalid={
-                confirmPassword.length > 0 && !passwordChecks.match
-              }
+              aria-invalid={confirmPassword.length > 0 && !passwordChecks.match}
               autoComplete="new-password"
               className={authInputClass}
               minLength={8}
@@ -341,14 +330,15 @@ export function SignUpForm() {
       <label className="biloo-signup-consent">
         <input name="terms" required type="checkbox" />
         <span>
-          I agree to the BILOO Terms of Service and acknowledge the Privacy Notice.
+          I agree to the BILOO <Link href="/terms">Terms of Service</Link> and acknowledge
+          the <Link href="/privacy">Privacy Policy</Link>.
         </span>
       </label>
 
       <SubmitButton passwordReady={passwordReady} />
       <p className="biloo-signup-security-note">
         <Icon className="size-[15px]" name="shield" />
-        Your password is handled by Supabase Auth and is never stored in this form.
+        Your password is protected by Supabase Auth and is never stored in this form.
       </p>
     </form>
   );
