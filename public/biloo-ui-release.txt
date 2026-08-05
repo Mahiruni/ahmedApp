@@ -1,4 +1,4 @@
-BILOO UI release
-Requested deployment retry: 2026-08-05T19:51:00Z
-Includes header visibility, fixed footer navigation, and compact non-scrolling sign-in experience.
-Source commit: 6bb3da69767fc9bcdccbfad5b2bcd49d3aec6ad4
+BILOO XR production release
+Requested deployment retry: 2026-08-05T20:53:00Z
+Includes Samsung Galaxy XR / Android XR immersive WebXR experience at /xr.
+Source commit: e347afe581766503a401c06e3fbda4fa09e2479e
