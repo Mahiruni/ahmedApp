@@ -1,0 +1,57 @@
+/* Final footer positioning contract. Imported last.
+   Keeps the application navigation attached to the viewport foot on every screen. */
+
+main:has(> [data-biloo-header]) [data-biloo-role-rail],
+.biloo-customer-nav[data-biloo-role-rail],
+.biloo-workspace-rail[data-biloo-role-rail] {
+  position: fixed !important;
+  inset: auto auto 0 50% !important;
+  bottom: 0 !important;
+  left: 50% !important;
+  z-index: 95 !important;
+  display: block !important;
+  width: min(100vw, var(--biloo-app-frame, 480px)) !important;
+  max-width: var(--biloo-app-frame, 480px) !important;
+  height: auto !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border-width: 1px 1px 0 !important;
+  border-color: rgba(81, 70, 229, 0.16) !important;
+  border-radius: 20px 20px 0 0 !important;
+  background: rgba(250, 250, 255, 0.98) !important;
+  padding: 4px 8px max(5px, env(safe-area-inset-bottom)) !important;
+  box-shadow:
+    0 -12px 30px rgba(30, 24, 83, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+  transform: translateX(-50%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(155%);
+  backdrop-filter: blur(18px) saturate(155%);
+}
+
+main:has(> [data-biloo-header]) .biloo-customer-nav-list,
+main:has(> [data-biloo-header]) .biloo-workspace-list {
+  width: 100% !important;
+  min-height: 58px !important;
+  margin: 0 !important;
+}
+
+main:has(> [data-biloo-header]) > div > section {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+}
+
+@media (max-width: 480px) {
+  main:has(> [data-biloo-header]) [data-biloo-role-rail],
+  .biloo-customer-nav[data-biloo-role-rail],
+  .biloo-workspace-rail[data-biloo-role-rail] {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  main:has(> [data-biloo-header]) [data-biloo-role-rail],
+  .biloo-customer-nav[data-biloo-role-rail],
+  .biloo-workspace-rail[data-biloo-role-rail] {
+    background: #fbfbff !important;
+  }
+}
