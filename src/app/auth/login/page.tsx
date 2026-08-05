@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import {
-  signInWithGoogleAction,
-} from "@/app/auth/actions";
+import { signInWithGoogleAction } from "@/app/auth/actions";
 import { AuthError, AuthShell } from "@/components/auth/auth-shell";
 import { AuthGoogleButton, LoginForm } from "@/components/auth/login-form";
 
@@ -24,21 +22,13 @@ export default async function LoginPage({
     <AuthShell
       eyebrow="WELCOME BACK"
       title="Sign in to BILOO"
-      description="Continue to your rides, orders, saved locations and role workspace."
+      description="Access your rides, orders and BILOO workspace."
       footer={
         <p className="biloo-auth-switch-copy">
           New to BILOO? <Link href="/auth/sign-up">Create an account</Link>
         </p>
       }
     >
-      <div className="biloo-auth-welcome-note">
-        <span className="biloo-auth-welcome-mark" aria-hidden="true">✓</span>
-        <div>
-          <strong>Your BILOO account is protected</strong>
-          <small>Use your registered email or continue securely with Google.</small>
-        </div>
-      </div>
-
       <AuthError message={params.error} />
 
       <form action={signInWithGoogleAction}>
@@ -48,15 +38,15 @@ export default async function LoginPage({
 
       <div className="biloo-auth-divider" aria-hidden="true">
         <span />
-        <b>or sign in with email</b>
+        <b>or use email</b>
         <span />
       </div>
 
       <LoginForm next={next} />
 
       <p className="biloo-auth-legal-copy">
-        By continuing, you agree to the BILOO <Link href="/terms">Terms of Service</Link>{" "}
-        and acknowledge the <Link href="/privacy">Privacy Policy</Link>.
+        By continuing, you agree to the BILOO <Link href="/terms">Terms</Link> and{" "}
+        <Link href="/privacy">Privacy Policy</Link>.
       </p>
     </AuthShell>
   );
