@@ -3,7 +3,9 @@ import { Inter_Tight, Manrope } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { ReactNode } from "react";
 
+import { BilooLoadingController } from "@/components/biloo/biloo-loading-controller";
 import { InteractionFeedbackController } from "@/components/biloo/interaction-feedback-controller";
+import { ProductTour } from "@/components/biloo/product-tour";
 import { SearchFocusController } from "@/components/biloo/search-focus-controller";
 import { SearchMotionController } from "@/components/biloo/search-motion-controller";
 import { EthiopianPhoneController } from "@/components/forms/ethiopian-phone-controller";
@@ -47,6 +49,7 @@ import "./premium-homepage.css";
 import "./role-experience.css";
 import "./account-settings.css";
 import "./phone-verification.css";
+import "./biloo-loading-tour.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -123,9 +126,11 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
         <PwaRegister />
         <EthiopianPhoneController />
+        <BilooLoadingController />
         <InteractionFeedbackController />
         <SearchFocusController />
         <SearchMotionController />
+        <ProductTour />
         {children}
         <SpeedInsights />
       </body>

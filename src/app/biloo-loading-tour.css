@@ -1,0 +1,734 @@
+/* BILOO loading language and first-run product tour. Imported last. */
+
+.biloo-route-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: grid;
+  min-height: 100vh;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  background: #f7f7fb;
+  color: #241d86;
+  isolation: isolate;
+}
+
+.biloo-route-loader::before,
+.biloo-route-loader::after {
+  position: absolute;
+  z-index: -1;
+  border: 1px solid rgba(81, 70, 229, 0.13);
+  border-radius: 999px;
+  content: "";
+}
+
+.biloo-route-loader::before {
+  top: -11rem;
+  right: -8rem;
+  width: 25rem;
+  height: 25rem;
+}
+
+.biloo-route-loader::after {
+  bottom: -13rem;
+  left: -10rem;
+  width: 31rem;
+  height: 31rem;
+  box-shadow: inset 0 0 0 3.5rem rgba(81, 70, 229, 0.035);
+}
+
+.biloo-route-loader-fallback {
+  position: relative;
+}
+
+.biloo-route-loader-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  background: rgba(81, 70, 229, 0.1);
+}
+
+.biloo-route-loader-progress::before,
+.biloo-route-loader-progress::after {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  content: "";
+  transform-origin: left center;
+}
+
+.biloo-route-loader-progress::before {
+  width: 74%;
+  background: #5146e5;
+  animation: biloo-route-progress 1.3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.biloo-route-loader-progress::after {
+  width: 18%;
+  background: #c7f000;
+  animation: biloo-route-accent 1.3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.biloo-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 22px;
+  padding: 24px;
+  text-align: center;
+}
+
+.biloo-loader-stage {
+  position: relative;
+  display: grid;
+  width: 132px;
+  height: 132px;
+  place-items: center;
+}
+
+.biloo-loader-mark {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 74px;
+  height: 74px;
+  place-items: center;
+  border-radius: 23px;
+  background: #5146e5;
+  box-shadow:
+    0 18px 42px rgba(52, 41, 184, 0.22),
+    0 0 0 7px #f7f7fb;
+  animation: biloo-loader-mark 1.45s ease-in-out infinite;
+}
+
+.biloo-loader-mark img {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+}
+
+.biloo-loader-orbit {
+  position: absolute;
+  inset: 4px;
+  border: 2px solid rgba(81, 70, 229, 0.18);
+  border-right-color: #5146e5;
+  border-radius: 999px;
+  animation: biloo-loader-orbit 1.35s linear infinite;
+}
+
+.biloo-loader-orbit::before {
+  position: absolute;
+  top: 8px;
+  right: 13px;
+  width: 13px;
+  height: 13px;
+  border: 3px solid #f7f7fb;
+  border-radius: 999px;
+  background: #c7f000;
+  box-shadow: 0 4px 12px rgba(86, 103, 0, 0.22);
+  content: "";
+}
+
+.biloo-loader-orbit i {
+  position: absolute;
+  right: 20px;
+  bottom: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #5146e5;
+}
+
+.biloo-loader-route {
+  position: absolute;
+  right: 4px;
+  bottom: 9px;
+  left: 4px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.biloo-loader-route b {
+  display: block;
+  height: 2px;
+  flex: 1;
+  overflow: hidden;
+  background: rgba(81, 70, 229, 0.18);
+}
+
+.biloo-loader-route b::after {
+  display: block;
+  width: 38%;
+  height: 100%;
+  background: #5146e5;
+  content: "";
+  animation: biloo-loader-route 1.1s ease-in-out infinite;
+}
+
+.biloo-loader-route i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border: 2px solid #5146e5;
+  border-radius: 999px;
+  background: #f7f7fb;
+}
+
+.biloo-loader-route i:last-child {
+  border-color: #9ab900;
+  background: #c7f000;
+}
+
+.biloo-loader-copy,
+.biloo-loader-copy strong,
+.biloo-loader-copy small {
+  display: block;
+}
+
+.biloo-loader-copy strong {
+  color: #241d86;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(20px, 5vw, 28px);
+  font-weight: 780;
+  letter-spacing: -0.045em;
+}
+
+.biloo-loader-copy small {
+  margin-top: 7px;
+  color: #716ca0;
+  font-size: 11px;
+  font-weight: 680;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.biloo-process-loader {
+  position: fixed;
+  right: 18px;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 560;
+  width: min(420px, calc(100vw - 36px));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 22px;
+  background: #241d86;
+  color: #ffffff;
+  box-shadow: 0 20px 54px rgba(18, 13, 72, 0.28);
+  animation: biloo-process-enter 220ms ease-out both;
+}
+
+.biloo-process-loader .biloo-loader[data-compact="true"] {
+  min-height: 92px;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 15px;
+  padding: 13px 16px;
+  text-align: left;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-stage {
+  width: 62px;
+  height: 62px;
+  flex: 0 0 62px;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(8, 5, 48, 0.3), 0 0 0 4px #241d86;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-mark img {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-orbit {
+  inset: 1px;
+  border-color: rgba(255, 255, 255, 0.22);
+  border-right-color: #c7f000;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-orbit::before {
+  top: 2px;
+  right: 5px;
+  width: 9px;
+  height: 9px;
+  border-color: #241d86;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-orbit i,
+.biloo-loader[data-compact="true"] .biloo-loader-route {
+  display: none;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-copy {
+  min-width: 0;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-copy strong {
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-loader[data-compact="true"] .biloo-loader-copy small {
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 8px;
+}
+
+.biloo-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  pointer-events: none;
+}
+
+.biloo-tour-shade {
+  position: fixed;
+  z-index: 0;
+  background: rgba(21, 16, 82, 0.79);
+  pointer-events: auto;
+}
+
+.biloo-tour-shade-top {
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.biloo-tour-shade-left {
+  left: 0;
+}
+
+.biloo-tour-shade-right {
+  width: auto;
+}
+
+.biloo-tour-shade-bottom {
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.biloo-tour-shade-full {
+  inset: 0;
+}
+
+.biloo-tour-spotlight {
+  position: fixed;
+  z-index: 1;
+  border: 3px solid #c7f000;
+  border-radius: 19px;
+  box-shadow:
+    0 0 0 5px rgba(199, 240, 0, 0.16),
+    0 16px 40px rgba(17, 12, 73, 0.24);
+  pointer-events: none;
+  animation: biloo-tour-spotlight 1.6s ease-in-out infinite;
+}
+
+.biloo-tour-card {
+  position: fixed;
+  z-index: 3;
+  width: min(390px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid rgba(81, 70, 229, 0.16);
+  border-radius: 24px;
+  background: #ffffff;
+  color: #211d42;
+  box-shadow: 0 28px 80px rgba(14, 9, 65, 0.34);
+  pointer-events: auto;
+  animation: biloo-tour-card-enter 240ms ease-out both;
+}
+
+.biloo-tour-card:not([style]) {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.biloo-tour-card:focus {
+  outline: none;
+}
+
+.biloo-tour-card-top {
+  display: flex;
+  min-height: 68px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: #241d86;
+  padding: 12px 15px;
+  color: #ffffff;
+}
+
+.biloo-tour-brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.biloo-tour-brand > i {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  flex: 0 0 39px;
+  place-items: center;
+  border-radius: 12px;
+  background: #5146e5;
+  color: #ffffff;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 850;
+  letter-spacing: -0.08em;
+  box-shadow: inset -7px -7px 0 rgba(199, 240, 0, 0.16);
+}
+
+.biloo-tour-brand span,
+.biloo-tour-brand strong,
+.biloo-tour-brand small {
+  display: block;
+}
+
+.biloo-tour-brand strong {
+  font-size: 11px;
+  font-weight: 830;
+  letter-spacing: 0.09em;
+}
+
+.biloo-tour-brand small {
+  margin-top: 3px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 8px;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.biloo-tour-skip {
+  min-height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 8px 13px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.biloo-tour-skip:hover {
+  border-color: rgba(255, 255, 255, 0.52);
+  color: #ffffff;
+}
+
+.biloo-tour-copy {
+  padding: 22px 20px 18px;
+}
+
+.biloo-tour-copy > span {
+  color: #5146e5;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+}
+
+.biloo-tour-copy h2 {
+  margin-top: 9px;
+  color: #1e194b;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 24px;
+  font-weight: 780;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+.biloo-tour-copy > p {
+  margin-top: 12px;
+  color: #66627f;
+  font-size: 12px;
+  font-weight: 520;
+  line-height: 1.65;
+}
+
+.biloo-tour-copy aside {
+  display: flex;
+  margin-top: 16px;
+  align-items: flex-start;
+  gap: 9px;
+  border-left: 3px solid #c7f000;
+  background: #f5f4ff;
+  padding: 11px 12px;
+  color: #423d68;
+  font-size: 10px;
+  font-weight: 680;
+  line-height: 1.5;
+}
+
+.biloo-tour-copy aside svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  color: #5146e5;
+}
+
+.biloo-tour-progress {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 4px;
+  padding: 0 20px;
+}
+
+.biloo-tour-progress i {
+  height: 3px;
+  border-radius: 999px;
+  background: #e6e4f2;
+}
+
+.biloo-tour-progress i[data-active="true"] {
+  background: #5146e5;
+}
+
+.biloo-tour-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 20px 20px;
+}
+
+.biloo-tour-actions > span {
+  color: #8b87a3;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.biloo-tour-actions > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.biloo-tour-back,
+.biloo-tour-next {
+  min-height: 43px;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.biloo-tour-back {
+  border: 1px solid #dedbea;
+  color: #565172;
+}
+
+.biloo-tour-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #5146e5;
+  background: #5146e5;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(81, 70, 229, 0.2);
+}
+
+.biloo-tour-next svg {
+  width: 14px;
+  height: 14px;
+}
+
+.biloo-tour-back:hover {
+  border-color: #a7a2bd;
+}
+
+.biloo-tour-next:hover {
+  background: #3429b8;
+}
+
+.biloo-tour-skip:focus-visible,
+.biloo-tour-back:focus-visible,
+.biloo-tour-next:focus-visible {
+  outline: 3px solid rgba(199, 240, 0, 0.52);
+  outline-offset: 2px;
+}
+
+@keyframes biloo-route-progress {
+  0% {
+    transform: translateX(-105%) scaleX(0.35);
+  }
+  55% {
+    transform: translateX(48%) scaleX(0.82);
+  }
+  100% {
+    transform: translateX(148%) scaleX(0.25);
+  }
+}
+
+@keyframes biloo-route-accent {
+  0%, 24% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(590%);
+  }
+}
+
+@keyframes biloo-loader-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes biloo-loader-mark {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes biloo-loader-route {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(285%);
+  }
+}
+
+@keyframes biloo-process-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes biloo-tour-spotlight {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(199, 240, 0, 0.13), 0 16px 40px rgba(17, 12, 73, 0.24);
+  }
+  50% {
+    box-shadow: 0 0 0 9px rgba(199, 240, 0, 0.06), 0 16px 40px rgba(17, 12, 73, 0.24);
+  }
+}
+
+@keyframes biloo-tour-card-enter {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .biloo-process-loader {
+    right: 12px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    width: calc(100vw - 24px);
+    border-radius: 19px;
+  }
+
+  .biloo-tour-card,
+  .biloo-tour-card:not([style]) {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: min(76svh, 620px);
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 24px 24px 0 0;
+    transform: none;
+  }
+
+  .biloo-tour-copy {
+    padding: 19px 18px 15px;
+  }
+
+  .biloo-tour-copy h2 {
+    font-size: 22px;
+  }
+
+  .biloo-tour-progress {
+    padding-inline: 18px;
+  }
+
+  .biloo-tour-actions {
+    padding: 15px 18px max(18px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 380px) {
+  .biloo-tour-copy > p {
+    line-height: 1.5;
+  }
+
+  .biloo-tour-copy aside {
+    margin-top: 12px;
+  }
+
+  .biloo-tour-back,
+  .biloo-tour-next {
+    padding-inline: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-route-loader-progress::before,
+  .biloo-route-loader-progress::after,
+  .biloo-loader-mark,
+  .biloo-loader-orbit,
+  .biloo-loader-route b::after,
+  .biloo-process-loader,
+  .biloo-tour-spotlight,
+  .biloo-tour-card {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .biloo-route-loader,
+  .biloo-process-loader,
+  .biloo-tour-card,
+  .biloo-tour-card-top,
+  .biloo-tour-copy aside {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .biloo-tour-shade {
+    background: rgba(0, 0, 0, 0.72);
+  }
+
+  .biloo-tour-spotlight,
+  .biloo-tour-next,
+  .biloo-tour-back,
+  .biloo-tour-skip {
+    border: 2px solid Highlight;
+  }
+}
