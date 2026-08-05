@@ -51,6 +51,7 @@ import "./account-settings.css";
 import "./phone-verification.css";
 import "./biloo-loading-tour.css";
 import "./mobile-footer-polish.css";
+import "./mobile-app-frame.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
