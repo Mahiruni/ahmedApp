@@ -1,0 +1,248 @@
+/* BILOO authenticated phone verification. Imported after account styles. */
+
+.biloo-phone-verification {
+  margin-top: 12px;
+  border: 1px solid #dedbeb;
+  border-radius: 15px;
+  background: #faf9ff;
+  padding: 13px;
+}
+
+.biloo-phone-verification[data-state="verified"] {
+  border-color: #b8dac7;
+  background: #f3fbf6;
+}
+
+.biloo-phone-verification-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.biloo-phone-verification-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  border-radius: 10px;
+  background: #e9e6ff;
+  color: #5146e5;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.biloo-phone-verification[data-state="verified"] .biloo-phone-verification-icon {
+  background: #dff3e7;
+  color: #177443;
+}
+
+.biloo-phone-verification-heading strong,
+.biloo-phone-verification-heading small {
+  display: block;
+}
+
+.biloo-phone-verification-heading strong {
+  color: #292538;
+  font-size: 10.5px;
+  font-weight: 780;
+}
+
+.biloo-phone-verification-heading small {
+  margin-top: 3px;
+  color: #777384;
+  font-size: 9px;
+  font-weight: 540;
+  line-height: 1.4;
+}
+
+.biloo-phone-otp-secondary,
+.biloo-phone-otp-primary,
+.biloo-phone-otp-link {
+  min-height: 40px;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 10px;
+  font-weight: 760;
+  transition:
+    transform 120ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease,
+    opacity 140ms ease;
+}
+
+.biloo-phone-otp-secondary {
+  width: 100%;
+  margin-top: 12px;
+  border: 1px solid #c8c3e9;
+  background: #fff;
+  color: #3429b8;
+}
+
+.biloo-phone-otp-primary {
+  border: 1px solid #5146e5;
+  background: #5146e5;
+  color: #fff;
+}
+
+.biloo-phone-otp-link {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #5146e5;
+}
+
+.biloo-phone-otp-secondary:hover:not(:disabled),
+.biloo-phone-otp-primary:hover:not(:disabled),
+.biloo-phone-otp-link:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.biloo-phone-otp-secondary:hover:not(:disabled) {
+  border-color: #9289d6;
+  background: #f4f2ff;
+}
+
+.biloo-phone-otp-primary:hover:not(:disabled) {
+  background: #3429b8;
+}
+
+.biloo-phone-otp-secondary:disabled,
+.biloo-phone-otp-primary:disabled,
+.biloo-phone-otp-link:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.biloo-phone-otp-entry {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.biloo-phone-otp-entry label > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #464153;
+  font-size: 9.5px;
+  font-weight: 720;
+}
+
+.biloo-phone-otp-entry input {
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 780;
+  letter-spacing: 0.34em;
+  text-align: center;
+}
+
+.biloo-phone-otp-entry input::placeholder {
+  color: #c2becd;
+}
+
+.biloo-phone-otp-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.biloo-phone-otp-primary {
+  flex: 1;
+}
+
+.biloo-phone-otp-link {
+  flex: 0 0 auto;
+}
+
+.biloo-phone-otp-loading {
+  display: flex;
+  min-height: 40px;
+  margin-top: 12px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 10px;
+  background: #f0eeff;
+  color: #5146e5;
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.biloo-phone-otp-loading > span {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(81, 70, 229, 0.2);
+  border-top-color: #5146e5;
+  border-radius: 999px;
+  animation: biloo-phone-otp-spin 700ms linear infinite;
+}
+
+.biloo-phone-otp-message {
+  margin-top: 10px;
+  border-radius: 9px;
+  padding: 8px 9px;
+  font-size: 9px;
+  font-weight: 620;
+  line-height: 1.45;
+}
+
+.biloo-phone-otp-message[data-tone="info"] {
+  background: #efedff;
+  color: #4438bd;
+}
+
+.biloo-phone-otp-message[data-tone="success"] {
+  background: #e7f6ed;
+  color: #176a40;
+}
+
+.biloo-phone-otp-message[data-tone="error"] {
+  background: #fff0f2;
+  color: #a43b49;
+}
+
+.biloo-phone-otp-secondary:focus-visible,
+.biloo-phone-otp-primary:focus-visible,
+.biloo-phone-otp-link:focus-visible {
+  outline: 3px solid rgba(81, 70, 229, 0.22);
+  outline-offset: 2px;
+}
+
+@keyframes biloo-phone-otp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 520px) {
+  .biloo-phone-otp-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .biloo-phone-otp-link {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-phone-otp-secondary,
+  .biloo-phone-otp-primary,
+  .biloo-phone-otp-link {
+    transition: none;
+  }
+
+  .biloo-phone-otp-loading > span {
+    animation-duration: 1.4s;
+  }
+}
+
+@media (forced-colors: active) {
+  .biloo-phone-verification,
+  .biloo-phone-otp-secondary,
+  .biloo-phone-otp-primary,
+  .biloo-phone-otp-message {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}
