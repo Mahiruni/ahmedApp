@@ -1,0 +1,1 @@
+Temporary CI verification marker for https://biloo.hisabtechnologies.com metadata, sitemap and robots configuration.
