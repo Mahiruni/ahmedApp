@@ -1,154 +1,466 @@
-/* Google OAuth verification-safe public homepage additions. */
+/* Public BILOO homepage used for OAuth brand verification. Imported last. */
 
-.biloo-entry-page {
-  overflow-x: hidden;
-  overflow-y: auto;
+.biloo-oauth-homepage {
+  min-height: 100vh;
+  background: #f7f7fb;
+  color: #17152b;
 }
 
-.biloo-entry-shell {
-  width: min(100%, 760px);
+.biloo-oauth-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid rgba(23, 21, 43, 0.08);
+  background: rgba(255, 255, 255, 0.96);
 }
 
-.biloo-entry-service-list {
+.biloo-oauth-header-inner,
+.biloo-oauth-hero,
+.biloo-oauth-section,
+.biloo-oauth-access,
+.biloo-oauth-footer {
+  width: min(1180px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+.biloo-oauth-header-inner {
   display: flex;
-  margin: 24px 0 0;
-  padding: 0;
-  flex-wrap: wrap;
-  gap: 9px;
-  list-style: none;
-}
-
-.biloo-entry-service-list li {
-  display: inline-flex;
-  min-height: 34px;
+  min-height: 74px;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.075);
-  padding: 8px 13px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 10.5px;
-  font-weight: 720;
-  line-height: 1.2;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.biloo-entry-data-card {
-  margin-top: clamp(34px, 6vh, 58px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  background: rgba(20, 14, 87, 0.36);
-  padding: clamp(22px, 4vw, 34px);
-  box-shadow: 0 22px 52px rgba(13, 7, 72, 0.18);
-}
-
-.biloo-entry-data-kicker {
-  color: #d7ff36;
-  font-size: 9px;
-  font-weight: 820;
-  letter-spacing: 0.16em;
-}
-
-.biloo-entry-data-card h2 {
-  margin-top: 11px;
-  color: #ffffff;
+.biloo-oauth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #241d86;
   font-family: var(--font-biloo-display), sans-serif;
-  font-size: clamp(25px, 5vw, 37px);
+  font-size: 23px;
+  font-weight: 850;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+}
+
+.biloo-oauth-brand img {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+.biloo-oauth-nav,
+.biloo-oauth-footer nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.biloo-oauth-nav a,
+.biloo-oauth-footer a {
+  color: #4e4b62;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.biloo-oauth-nav a:hover,
+.biloo-oauth-footer a:hover {
+  color: #5146e5;
+}
+
+.biloo-oauth-hero {
+  display: grid;
+  padding-block: clamp(72px, 10vw, 128px);
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  align-items: center;
+  gap: clamp(48px, 8vw, 110px);
+}
+
+.biloo-oauth-eyebrow,
+.biloo-oauth-section-heading > p {
+  margin: 0;
+  color: #5146e5;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+}
+
+.biloo-oauth-hero h1 {
+  margin: 12px 0 0;
+  color: #241d86;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(64px, 10vw, 132px);
+  font-weight: 880;
+  line-height: 0.88;
+  letter-spacing: -0.08em;
+}
+
+.biloo-oauth-hero h2 {
+  max-width: 720px;
+  margin: 28px 0 0;
+  color: #17152b;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(28px, 4.2vw, 54px);
   font-weight: 760;
-  line-height: 1.05;
+  line-height: 1.02;
   letter-spacing: -0.045em;
 }
 
-.biloo-entry-data-card > p:not(.biloo-entry-data-kicker) {
-  margin-top: 15px;
-  color: rgba(255, 255, 255, 0.74);
-  font-size: 12.5px;
-  font-weight: 520;
+.biloo-oauth-hero-copy > p:not(.biloo-oauth-eyebrow) {
+  max-width: 730px;
+  margin: 18px 0 0;
+  color: #5f5b70;
+  font-size: clamp(15px, 1.8vw, 18px);
+  line-height: 1.72;
+}
+
+.biloo-oauth-hero-links {
+  display: flex;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.biloo-oauth-hero-links a {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.biloo-oauth-hero-links a:first-child {
+  background: #5146e5;
+  color: #fff;
+}
+
+.biloo-oauth-hero-links a:last-child {
+  border: 1px solid rgba(81, 70, 229, 0.22);
+  background: #fff;
+  color: #5146e5;
+}
+
+.biloo-oauth-identity {
+  display: flex;
+  min-height: 420px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 36px;
+  background: #241d86;
+  padding: 42px;
+  flex-direction: column;
+  text-align: center;
+}
+
+.biloo-oauth-identity img {
+  width: 148px;
+  height: 148px;
+  border-radius: 42px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.24);
+}
+
+.biloo-oauth-identity strong {
+  margin-top: 28px;
+  color: #fff;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 54px;
+  font-weight: 850;
+  letter-spacing: -0.07em;
+}
+
+.biloo-oauth-identity span,
+.biloo-oauth-identity small {
+  margin-top: 7px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.biloo-oauth-section {
+  padding-block: clamp(68px, 9vw, 112px);
+}
+
+.biloo-oauth-section-heading {
+  max-width: 760px;
+}
+
+.biloo-oauth-section-heading h2,
+.biloo-oauth-access h2 {
+  margin: 12px 0 0;
+  color: #17152b;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(34px, 5vw, 62px);
+  font-weight: 780;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.biloo-oauth-section-heading > span,
+.biloo-oauth-access > div > p:last-child {
+  display: block;
+  margin-top: 18px;
+  color: #666276;
+  font-size: 16px;
   line-height: 1.7;
 }
 
-.biloo-entry-data-card strong {
-  color: #ffffff;
-  font-weight: 780;
+.biloo-oauth-service-grid {
+  display: grid;
+  margin-top: 42px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.biloo-entry-data-card a,
-.biloo-entry-legal a,
-.biloo-entry-public-links a {
-  color: #e3ff6b;
-  font-weight: 760;
-  text-underline-offset: 3px;
+.biloo-oauth-service-grid article,
+.biloo-oauth-data-grid article {
+  border: 1px solid rgba(23, 21, 43, 0.08);
+  border-radius: 24px;
+  background: #fff;
+  padding: 24px;
 }
 
-.biloo-entry-public-links {
+.biloo-oauth-service-grid article > span {
+  color: #5146e5;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.biloo-oauth-service-grid h3,
+.biloo-oauth-data-grid h3 {
+  margin: 28px 0 0;
+  color: #241d86;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.biloo-oauth-service-grid p,
+.biloo-oauth-data-grid p {
+  margin: 12px 0 0;
+  color: #676376;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.biloo-oauth-data {
+  width: 100%;
+  max-width: none;
+  background: #241d86;
+  color: #fff;
+  padding-inline: max(16px, calc((100vw - 1180px) / 2));
+}
+
+.biloo-oauth-data .biloo-oauth-section-heading > p {
+  color: #c7f000;
+}
+
+.biloo-oauth-data .biloo-oauth-section-heading h2,
+.biloo-oauth-data .biloo-oauth-section-heading > span {
+  color: #fff;
+}
+
+.biloo-oauth-data .biloo-oauth-section-heading > span {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.biloo-oauth-data-grid {
+  display: grid;
+  margin-top: 40px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.biloo-oauth-data-grid article {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.biloo-oauth-data-grid h3,
+.biloo-oauth-data-grid p {
+  color: #fff;
+}
+
+.biloo-oauth-data-grid p {
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.biloo-oauth-privacy-callout {
+  margin: 28px 0 0;
+  border-left: 4px solid #c7f000;
+  padding: 8px 0 8px 18px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.biloo-oauth-privacy-callout a {
+  color: #dfff57;
+  font-weight: 800;
+}
+
+.biloo-oauth-access {
+  display: grid;
+  padding-block: clamp(72px, 10vw, 118px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+  align-items: start;
+  gap: clamp(48px, 8vw, 100px);
+}
+
+.biloo-oauth-actions {
+  border: 1px solid rgba(23, 21, 43, 0.09);
+  border-radius: 28px;
+  background: #fff;
+  padding: 26px;
+}
+
+.biloo-oauth-actions .biloo-entry-secondary {
+  border-color: rgba(81, 70, 229, 0.25);
+  color: #5146e5;
+}
+
+.biloo-oauth-actions .biloo-entry-google {
+  margin-top: 12px;
+  border-color: rgba(23, 21, 43, 0.14);
+}
+
+.biloo-oauth-legal {
+  margin: 16px 0 0;
+  color: #777386;
+  font-size: 11px;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.biloo-oauth-legal a {
+  color: #5146e5;
+  font-weight: 750;
+}
+
+.biloo-oauth-footer {
   display: flex;
-  margin-top: 18px;
+  min-height: 110px;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.42);
-  font-size: 10px;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid rgba(23, 21, 43, 0.08);
 }
 
-.biloo-entry-public-links a {
-  min-height: 30px;
-  display: inline-flex;
-  align-items: center;
+.biloo-oauth-footer > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.biloo-entry-data-card a:focus-visible,
-.biloo-entry-legal a:focus-visible,
-.biloo-entry-public-links a:focus-visible {
-  border-radius: 5px;
-  outline: 3px solid rgba(215, 255, 54, 0.44);
-  outline-offset: 3px;
+.biloo-oauth-footer strong {
+  color: #241d86;
+  font-size: 20px;
+  font-weight: 850;
 }
 
-@media (min-width: 760px) {
-  .biloo-entry-actions {
-    max-width: 620px;
-  }
+.biloo-oauth-footer span {
+  color: #777386;
+  font-size: 12px;
 }
 
-@media (max-width: 520px) {
-  .biloo-entry-service-list {
-    gap: 7px;
+@media (max-width: 980px) {
+  .biloo-oauth-hero,
+  .biloo-oauth-access {
+    grid-template-columns: 1fr;
   }
 
-  .biloo-entry-service-list li {
-    min-height: 32px;
-    padding-inline: 11px;
-    font-size: 9.5px;
+  .biloo-oauth-identity {
+    min-height: 330px;
   }
 
-  .biloo-entry-data-card {
-    border-radius: 21px;
-  }
-}
-
-@media (max-height: 760px) {
-  .biloo-entry-data-card {
-    margin-top: 28px;
+  .biloo-oauth-service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .biloo-entry-signature {
-    margin-top: 28px;
+  .biloo-oauth-data-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (forced-colors: active) {
-  .biloo-entry-service-list li,
-  .biloo-entry-data-card {
-    border: 1px solid CanvasText;
-    background: Canvas;
-    color: CanvasText;
+@media (max-width: 640px) {
+  .biloo-oauth-header-inner,
+  .biloo-oauth-hero,
+  .biloo-oauth-section,
+  .biloo-oauth-access,
+  .biloo-oauth-footer {
+    width: min(100% - 24px, 1180px);
   }
 
-  .biloo-entry-data-card h2,
-  .biloo-entry-data-card strong,
-  .biloo-entry-data-card a,
-  .biloo-entry-legal a,
-  .biloo-entry-public-links a {
-    color: CanvasText;
+  .biloo-oauth-header-inner {
+    min-height: 66px;
+  }
+
+  .biloo-oauth-nav {
+    gap: 12px;
+  }
+
+  .biloo-oauth-nav a:not(:nth-child(2)) {
+    display: none;
+  }
+
+  .biloo-oauth-hero {
+    padding-block: 54px 72px;
+    gap: 38px;
+  }
+
+  .biloo-oauth-hero h1 {
+    font-size: clamp(68px, 24vw, 96px);
+  }
+
+  .biloo-oauth-hero h2 {
+    font-size: 34px;
+  }
+
+  .biloo-oauth-identity {
+    min-height: 290px;
+    border-radius: 28px;
+  }
+
+  .biloo-oauth-identity img {
+    width: 110px;
+    height: 110px;
+    border-radius: 32px;
+  }
+
+  .biloo-oauth-identity strong {
+    font-size: 42px;
+  }
+
+  .biloo-oauth-service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-oauth-data {
+    width: 100%;
+    padding-inline: 16px;
+  }
+
+  .biloo-oauth-access {
+    padding-block: 68px;
+  }
+
+  .biloo-oauth-footer {
+    padding-block: 28px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .biloo-oauth-footer nav {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-oauth-homepage * {
+    scroll-behavior: auto;
   }
 }
