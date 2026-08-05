@@ -116,23 +116,115 @@ textarea::placeholder {
   color: #2f24a7 !important;
 }
 
-/* Compact mobile navigation labels stay visible over the translucent footer. */
-.biloo-customer-nav-item,
-.biloo-workspace-item,
-.biloo-customer-nav-item > span:last-child,
-.biloo-workspace-item > span:last-child {
-  color: #302c38 !important;
+/* Header navigation uses deep BILOO navy and purple over its light surface. */
+[data-biloo-header] {
+  border-bottom-color: rgba(36, 29, 134, 0.12) !important;
+  background: rgba(255, 255, 255, 0.98) !important;
+  color: #241d86 !important;
 }
 
-.biloo-customer-nav-item:hover,
-.biloo-customer-nav-item[data-active="true"],
-.biloo-workspace-item:hover,
-.biloo-workspace-item[data-active="true"],
-.biloo-customer-nav-item:hover > span:last-child,
-.biloo-customer-nav-item[data-active="true"] > span:last-child,
-.biloo-workspace-item:hover > span:last-child,
-.biloo-workspace-item[data-active="true"] > span:last-child {
-  color: #2f24a7 !important;
+[data-biloo-header] .biloo-header-brand,
+[data-biloo-header] .biloo-header-workspace-pill,
+[data-biloo-header] .biloo-header-action,
+[data-biloo-header] .biloo-header-menu-button {
+  color: #241d86 !important;
+}
+
+[data-biloo-header] .biloo-header-action,
+[data-biloo-header] .biloo-header-menu-button {
+  border-color: rgba(81, 70, 229, 0.16) !important;
+  background: #f3f2fb !important;
+}
+
+[data-biloo-header] .biloo-header-action:hover,
+[data-biloo-header] .biloo-header-action:focus-visible,
+[data-biloo-header] .biloo-header-menu-button:hover,
+[data-biloo-header] .biloo-header-menu-button:focus-visible,
+[data-biloo-header] .biloo-header-menu-button[data-open="true"] {
+  border-color: rgba(81, 70, 229, 0.28) !important;
+  background: #eceafd !important;
+  color: #5146e5 !important;
+}
+
+[data-biloo-header] .biloo-header-action svg,
+[data-biloo-header] .biloo-header-workspace-pill svg,
+[data-biloo-header] .biloo-header-brand svg,
+[data-biloo-header] button svg,
+[data-biloo-header] a svg {
+  color: inherit !important;
+  stroke: currentColor !important;
+}
+
+[data-biloo-header] .biloo-header-menu-lines i {
+  background: currentColor !important;
+}
+
+/* Compact footer navigation stays legible on the white glass dock. */
+[data-biloo-role-rail] {
+  border-color: rgba(81, 70, 229, 0.16) !important;
+  background: rgba(250, 250, 255, 0.96) !important;
+  color: #474351 !important;
+}
+
+[data-biloo-role-rail] .biloo-customer-nav-item,
+[data-biloo-role-rail] .biloo-workspace-item,
+[data-biloo-role-rail] .biloo-customer-nav-item > span:last-child,
+[data-biloo-role-rail] .biloo-workspace-item > span:last-child {
+  color: #474351 !important;
+}
+
+[data-biloo-role-rail] .biloo-customer-nav-item svg,
+[data-biloo-role-rail] .biloo-workspace-item svg,
+[data-biloo-role-rail] .biloo-customer-nav-icon svg,
+[data-biloo-role-rail] .biloo-workspace-icon svg {
+  color: inherit !important;
+  stroke: currentColor !important;
+}
+
+[data-biloo-role-rail] button.biloo-customer-nav-item > span.biloo-customer-nav-icon,
+[data-biloo-role-rail] a.biloo-customer-nav-item > span.biloo-customer-nav-icon,
+[data-biloo-role-rail] button.biloo-workspace-item > span.biloo-workspace-icon,
+[data-biloo-role-rail] a.biloo-workspace-item > span.biloo-workspace-icon {
+  border: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+
+[data-biloo-role-rail] .biloo-customer-nav-item:hover,
+[data-biloo-role-rail] .biloo-customer-nav-item:focus-visible,
+[data-biloo-role-rail] .biloo-customer-nav-item[data-active="true"],
+[data-biloo-role-rail] .biloo-workspace-item:hover,
+[data-biloo-role-rail] .biloo-workspace-item:focus-visible,
+[data-biloo-role-rail] .biloo-workspace-item[data-active="true"] {
+  background: rgba(81, 70, 229, 0.08) !important;
+  color: #3429b8 !important;
+}
+
+[data-biloo-role-rail] .biloo-customer-nav-item:hover > span:last-child,
+[data-biloo-role-rail] .biloo-customer-nav-item:focus-visible > span:last-child,
+[data-biloo-role-rail] .biloo-customer-nav-item[data-active="true"] > span:last-child,
+[data-biloo-role-rail] .biloo-workspace-item:hover > span:last-child,
+[data-biloo-role-rail] .biloo-workspace-item:focus-visible > span:last-child,
+[data-biloo-role-rail] .biloo-workspace-item[data-active="true"] > span:last-child {
+  color: #3429b8 !important;
+}
+
+[data-biloo-role-rail] button.biloo-customer-nav-item[aria-current="page"] > span.biloo-customer-nav-icon,
+[data-biloo-role-rail] button.biloo-customer-nav-item[data-active="true"] > span.biloo-customer-nav-icon,
+[data-biloo-role-rail] a.biloo-customer-nav-item[aria-current="page"] > span.biloo-customer-nav-icon,
+[data-biloo-role-rail] button.biloo-workspace-item[aria-current="page"] > span.biloo-workspace-icon,
+[data-biloo-role-rail] button.biloo-workspace-item[data-active="true"] > span.biloo-workspace-icon,
+[data-biloo-role-rail] a.biloo-workspace-item[aria-current="page"] > span.biloo-workspace-icon {
+  border: 0 !important;
+  background: rgba(81, 70, 229, 0.12) !important;
+  color: #3429b8 !important;
+}
+
+[data-biloo-role-rail] .biloo-customer-nav-item[aria-current="page"]::before,
+[data-biloo-role-rail] .biloo-customer-nav-item[data-active="true"]::before,
+[data-biloo-role-rail] .biloo-workspace-item[aria-current="page"]::before,
+[data-biloo-role-rail] .biloo-workspace-item[data-active="true"]::before {
+  background: #5146e5 !important;
 }
 
 /* Dark surfaces use brighter secondary copy instead of low-opacity gray. */
@@ -168,6 +260,14 @@ textarea::placeholder {
   .biloo-public-page,
   main:has(> [data-biloo-header]) {
     color: CanvasText;
+  }
+
+  [data-biloo-header],
+  [data-biloo-role-rail],
+  [data-biloo-header] button,
+  [data-biloo-role-rail] button,
+  [data-biloo-role-rail] a {
+    color: CanvasText !important;
   }
 
   input,
