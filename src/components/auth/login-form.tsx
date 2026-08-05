@@ -22,11 +22,11 @@ function SignInButton() {
       {pending ? (
         <>
           <span aria-hidden="true" className="biloo-feedback-spinner" />
-          <span>Signing you in…</span>
+          <span>Signing in…</span>
         </>
       ) : (
         <>
-          <span>Sign in securely</span>
+          <span>Sign in</span>
           <Icon aria-hidden="true" className="size-[17px]" name="arrow" />
         </>
       )}
@@ -66,7 +66,7 @@ export function AuthGoogleButton({ label }: { label: string }) {
           />
         </svg>
       )}
-      <span>{pending ? "Connecting securely…" : label}</span>
+      <span>{pending ? "Connecting…" : label}</span>
     </button>
   );
 }
@@ -83,7 +83,6 @@ export function LoginForm({ next }: { next: string }) {
         <input
           autoCapitalize="none"
           autoComplete="email"
-          autoFocus
           className={authInputClass}
           inputMode="email"
           name="email"
@@ -119,7 +118,7 @@ export function LoginForm({ next }: { next: string }) {
       <div className="biloo-auth-form-options">
         <label className="biloo-auth-remember">
           <input name="rememberDevice" type="checkbox" />
-          <span>Remember this device</span>
+          <span>Remember me</span>
         </label>
         <Link href="/auth/forgot-password">Forgot password?</Link>
       </div>
