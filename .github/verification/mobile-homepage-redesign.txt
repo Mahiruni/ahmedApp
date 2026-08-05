@@ -1,0 +1,1 @@
+Validate the mobile-only BILOO homepage redesign applied on main at commit fb965e77bac8713c3cde12fdf7bd9565e1a8ebe8.
