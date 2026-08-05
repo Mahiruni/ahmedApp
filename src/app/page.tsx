@@ -11,15 +11,16 @@ import { signInWithGoogleAction } from "./auth/actions";
 
 export const dynamic = "force-dynamic";
 
+const description =
+  "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.";
+
 export const metadata: Metadata = {
   title: { absolute: "BILOO" },
-  description:
-    "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.",
+  description,
   applicationName: "BILOO",
   openGraph: {
     title: "BILOO",
-    description:
-      "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.",
+    description,
     siteName: "BILOO",
     type: "website",
   },
@@ -27,11 +28,26 @@ export const metadata: Metadata = {
 };
 
 const services = [
-  "Taxi booking",
-  "Food delivery",
-  "Supermarket shopping",
-  "Construction materials",
-  "Car parts",
+  {
+    title: "Taxi booking",
+    description: "Request local rides, choose pickup and destination locations, and follow trip progress.",
+  },
+  {
+    title: "Food delivery",
+    description: "Order meals from participating restaurants and receive preparation and delivery updates.",
+  },
+  {
+    title: "Supermarket shopping",
+    description: "Shop groceries and household essentials and arrange delivery to your location.",
+  },
+  {
+    title: "Construction materials",
+    description: "Find and order building supplies from participating local vendors.",
+  },
+  {
+    title: "Car parts",
+    description: "Browse vehicle parts and connect with local automotive suppliers.",
+  },
 ];
 
 export default async function HomePage({
@@ -51,94 +67,137 @@ export default async function HomePage({
   const params = await searchParams;
 
   return (
-    <main className="biloo-entry-page">
-      <div aria-hidden="true" className="biloo-entry-orbit biloo-entry-orbit-one" />
-      <div aria-hidden="true" className="biloo-entry-orbit biloo-entry-orbit-two" />
+    <main className="biloo-oauth-homepage">
+      <header className="biloo-oauth-header">
+        <div className="biloo-oauth-header-inner">
+          <Link className="biloo-oauth-brand" href="/" aria-label="BILOO homepage">
+            <Image
+              alt="BILOO app logo"
+              height={44}
+              priority
+              src="/icons/biloo-mark.svg"
+              width={44}
+            />
+            <span>BILOO</span>
+          </Link>
 
-      <section className="biloo-entry-shell" aria-labelledby="biloo-entry-title">
-        <header className="biloo-entry-brand">
-          <Image
-            alt="BILOO app logo"
-            height={48}
-            priority
-            src="/icons/biloo-mark.svg"
-            width={48}
-          />
-          <span>
-            <strong>BILOO</strong>
-            <small>One app. Every move.</small>
-          </span>
-        </header>
-
-        <div className="biloo-entry-hero">
-          <p className="biloo-entry-eyebrow">ETHIOPIA&apos;S CONNECTED SUPER APP</p>
-          <h1 id="biloo-entry-title">BILOO</h1>
-          <p className="biloo-entry-description">
-            BILOO helps people in Ethiopia book taxi rides, order food and
-            groceries, buy construction materials and find car parts through one
-            secure customer account.
-          </p>
-          <p className="biloo-entry-description">
-            Customers can choose a service, select a provider, place a ride or
-            delivery request, review prices, receive status updates and manage
-            their activity in one app.
-          </p>
-
-          <ul className="biloo-entry-service-list" aria-label="BILOO app functionality">
-            {services.map((service) => (
-              <li key={service}>{service}</li>
-            ))}
-          </ul>
+          <nav aria-label="BILOO public pages" className="biloo-oauth-nav">
+            <Link href="/about">About</Link>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms</Link>
+          </nav>
         </div>
+      </header>
 
-        <section
-          aria-labelledby="biloo-entry-data-title"
-          className="biloo-entry-data-card"
-        >
-          <p className="biloo-entry-data-kicker">DATA TRANSPARENCY</p>
-          <h2 id="biloo-entry-data-title">Why BILOO requests your information</h2>
+      <section className="biloo-oauth-hero" aria-labelledby="biloo-home-title">
+        <div className="biloo-oauth-hero-copy">
+          <p className="biloo-oauth-eyebrow">ETHIOPIA&apos;S CONNECTED SUPER APP</p>
+          <h1 id="biloo-home-title">BILOO</h1>
+          <h2>Move, order and shop through one connected application.</h2>
           <p>
-            BILOO collects the account, contact, location and service information
-            needed to create your account, process rides and orders, connect you
-            with drivers or vendors, show service progress and protect the platform.
+            BILOO helps people in Ethiopia book taxi rides, order food and groceries,
+            buy construction materials and find car parts through one secure account.
           </p>
           <p>
-            When you choose <strong>Continue with Google</strong>, BILOO requests
-            only the basic Google profile information you approve—typically your
-            name, email address, profile image and account identifier. This data is
-            used only to authenticate you, create or connect your BILOO account and
-            secure the sign-in process.
+            Customers can select a service and provider, place a ride or delivery
+            request, review prices, receive status notifications and manage their
+            activity without switching between unrelated apps.
           </p>
-          <p>
-            BILOO does not request access to Gmail, Google Drive, contacts or
-            calendars, and does not sell Google user data. Read the complete{" "}
-            <Link href="/privacy">BILOO Privacy Policy</Link>.
-          </p>
-        </section>
-
-        <div className="biloo-entry-signature" aria-label="BILOO services">
-          <Image
-            alt="BILOO"
-            height={112}
-            priority
-            src="/icons/biloo-mark.svg"
-            width={112}
-          />
-          <div>
-            <strong>BILOO</strong>
-            <span>Taxi · Food · Grocery · Materials · Car parts</span>
+          <div className="biloo-oauth-hero-links">
+            <Link href="#biloo-services">Explore BILOO services</Link>
+            <Link href="/privacy">Read our Privacy Policy</Link>
           </div>
         </div>
 
-        <div className="biloo-entry-proof">
-          <span aria-hidden="true">✓</span>
+        <div className="biloo-oauth-identity" aria-label="BILOO application identity">
+          <Image
+            alt="BILOO app logo"
+            height={148}
+            priority
+            src="/icons/biloo-mark.svg"
+            width={148}
+          />
+          <strong>BILOO</strong>
+          <span>Operated by BILOO Group</span>
+          <small>Addis Ababa, Ethiopia</small>
+        </div>
+      </section>
+
+      <section className="biloo-oauth-section" id="biloo-services" aria-labelledby="biloo-services-title">
+        <div className="biloo-oauth-section-heading">
+          <p>APPLICATION FUNCTIONALITY</p>
+          <h2 id="biloo-services-title">What users can do with BILOO</h2>
+          <span>
+            BILOO combines five practical services in one application for customers,
+            drivers, delivery partners, stores and local vendors.
+          </span>
+        </div>
+
+        <div className="biloo-oauth-service-grid">
+          {services.map((service, index) => (
+            <article key={service.title}>
+              <span aria-hidden="true">0{index + 1}</span>
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="biloo-oauth-section biloo-oauth-data" aria-labelledby="biloo-data-title">
+        <div className="biloo-oauth-section-heading">
+          <p>DATA TRANSPARENCY</p>
+          <h2 id="biloo-data-title">Why BILOO requests user information</h2>
+          <span>
+            BILOO requests only the information needed to operate accounts, rides,
+            orders, deliveries and secure authentication.
+          </span>
+        </div>
+
+        <div className="biloo-oauth-data-grid">
+          <article>
+            <h3>Account and service information</h3>
+            <p>
+              BILOO uses account, contact, location and service information to create
+              your account, process rides and orders, connect you with drivers or
+              vendors, display progress and protect the platform.
+            </p>
+          </article>
+          <article>
+            <h3>Google sign-in information</h3>
+            <p>
+              When you choose Continue with Google, BILOO receives the basic profile
+              information you approve, normally your name, email address, profile image
+              and Google account identifier. It is used only to authenticate you and
+              create or connect your BILOO account.
+            </p>
+          </article>
+          <article>
+            <h3>What BILOO does not request</h3>
+            <p>
+              BILOO does not request access to Gmail, Google Drive, Google Contacts or
+              Google Calendar, and BILOO does not sell Google user data.
+            </p>
+          </article>
+        </div>
+
+        <p className="biloo-oauth-privacy-callout">
+          Full details about collection, use, retention and user choices are available
+          in the <Link href="/privacy">BILOO Privacy Policy</Link>.
+        </p>
+      </section>
+
+      <section className="biloo-oauth-access" aria-labelledby="biloo-access-title">
+        <div>
+          <p className="biloo-oauth-eyebrow">ACCESS BILOO</p>
+          <h2 id="biloo-access-title">Create an account or sign in</h2>
           <p>
-            <strong>Built for daily life in Ethiopia</strong>
-            <small>Secure accounts, local services and real-time progress.</small>
+            The information above and BILOO&apos;s legal pages are publicly available
+            without requiring an account.
           </p>
         </div>
 
-        <div className="biloo-entry-actions">
+        <div className="biloo-oauth-actions">
           {params.error ? (
             <div className="biloo-entry-error" role="alert">
               {params.error}
@@ -152,12 +211,6 @@ export default async function HomePage({
             I have an account
           </Link>
 
-          <div className="biloo-entry-divider" aria-hidden="true">
-            <span />
-            <b>or</b>
-            <span />
-          </div>
-
           {configured ? (
             <form action={signInWithGoogleAction}>
               <input name="next" type="hidden" value="/biloo" />
@@ -165,25 +218,28 @@ export default async function HomePage({
             </form>
           ) : (
             <button className="biloo-entry-google" disabled type="button">
-              <span>Google sign-in unavailable in preview</span>
+              Google sign-in unavailable in preview
             </button>
           )}
 
-          <p className="biloo-entry-legal">
-            By continuing, you agree to BILOO&apos;s{" "}
-            <Link href="/terms">Terms of Service</Link> and{" "}
-            <Link href="/privacy">Privacy Policy</Link>.
+          <p className="biloo-oauth-legal">
+            By continuing, you agree to BILOO&apos;s <Link href="/terms">Terms of Service</Link>{" "}
+            and <Link href="/privacy">Privacy Policy</Link>.
           </p>
-
-          <nav aria-label="BILOO public information" className="biloo-entry-public-links">
-            <Link href="/about">About BILOO</Link>
-            <span aria-hidden="true">·</span>
-            <Link href="/privacy">Privacy Policy</Link>
-            <span aria-hidden="true">·</span>
-            <Link href="/terms">Terms of Service</Link>
-          </nav>
         </div>
       </section>
+
+      <footer className="biloo-oauth-footer">
+        <div>
+          <strong>BILOO</strong>
+          <span>Operated by BILOO Group · Addis Ababa, Ethiopia</span>
+        </div>
+        <nav aria-label="BILOO legal links">
+          <Link href="/about">About BILOO</Link>
+          <Link href="/privacy">Privacy Policy</Link>
+          <Link href="/terms">Terms of Service</Link>
+        </nav>
+      </footer>
     </main>
   );
 }
