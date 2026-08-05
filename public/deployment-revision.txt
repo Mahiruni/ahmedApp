@@ -1,5 +1,6 @@
 BILOO production release
-Source commit: f48d4644c5166e3d5d86c4acb096c5ae1f43eee2
-Release scope: complete customer, vendor, driver, admin, authentication, cart, payment, order confirmation, navigation, forms and shared UI/UX standardization.
-Google Maps: optional production key pending; safe fallback remains enabled.
-Deployment retry: 2026-08-04T14:23:00+03:00
+Source commit: db6b2d37dcc479be2cf930df9aa321d9864bd375
+Release scope: fixed +251 Ethiopian phone prefix across onboarding, customer signup and every current or dynamically rendered phone field; users enter only the 9 national digits.
+Normalization: accepts pasted 09…, 9… and +251… formats and stores valid numbers as +251XXXXXXXXX.
+Validation: TypeScript, ESLint, production build and Vercel preview passed.
+Deployment trigger: 2026-08-05T14:02:00+03:00
