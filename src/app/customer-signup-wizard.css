@@ -1,0 +1,297 @@
+/* Focused multi-step Ethiopian customer registration. */
+
+.biloo-auth-form-wrap:has(.biloo-signup-form) {
+  width: min(100%, 760px);
+  max-width: 760px;
+}
+
+.biloo-signup-progress {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e8e5f2;
+  border-radius: 18px;
+  background: #fbfaff;
+  padding: 16px;
+}
+
+.biloo-signup-progress-track {
+  position: absolute;
+  top: 31px;
+  right: 44px;
+  left: 44px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8e5f0;
+}
+
+.biloo-signup-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #5146e5;
+  transition: width 220ms ease;
+}
+
+.biloo-signup-progress ol {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.biloo-signup-progress li {
+  display: grid;
+  min-width: 0;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.biloo-signup-progress li > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 3px solid #fbfaff;
+  border-radius: 999px;
+  background: #e8e5f0;
+  color: #7a7687;
+  font-size: 11px;
+  font-weight: 850;
+  box-shadow: 0 0 0 1px #dfdbe9;
+}
+
+.biloo-signup-progress li[data-state="current"] > span,
+.biloo-signup-progress li[data-state="complete"] > span {
+  background: #5146e5;
+  color: #fff;
+  box-shadow: 0 0 0 1px #5146e5;
+}
+
+.biloo-signup-progress li[data-state="current"] > span {
+  box-shadow:
+    0 0 0 1px #5146e5,
+    0 0 0 5px rgba(81, 70, 229, 0.12);
+}
+
+.biloo-signup-progress li strong,
+.biloo-signup-progress li small {
+  display: block;
+}
+
+.biloo-signup-progress li strong {
+  color: #777384;
+  font-size: 10.5px;
+  font-weight: 760;
+}
+
+.biloo-signup-progress li small {
+  margin-top: 2px;
+  color: #9a96a5;
+  font-size: 8.5px;
+  line-height: 1.35;
+}
+
+.biloo-signup-progress li[data-state="current"] strong,
+.biloo-signup-progress li[data-state="complete"] strong {
+  color: #29243c;
+}
+
+.biloo-signup-panel {
+  min-height: 330px;
+}
+
+.biloo-signup-panel[hidden] {
+  display: none;
+}
+
+.biloo-signup-review {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #e6e3ef;
+  border-radius: 15px;
+  background: #f8f7fc;
+  padding: 13px;
+}
+
+.biloo-signup-review > div {
+  min-width: 0;
+  border-radius: 11px;
+  background: #fff;
+  padding: 10px 11px;
+}
+
+.biloo-signup-review span,
+.biloo-signup-review strong {
+  display: block;
+}
+
+.biloo-signup-review span {
+  color: #8b8798;
+  font-size: 9px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.biloo-signup-review strong {
+  margin-top: 4px;
+  overflow: hidden;
+  color: #282338;
+  font-size: 11.5px;
+  font-weight: 740;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-signup-consent {
+  margin-top: 16px;
+}
+
+.biloo-signup-consent a {
+  color: #5146e5;
+  font-weight: 720;
+  text-decoration: none;
+}
+
+.biloo-signup-consent a:hover {
+  text-decoration: underline;
+}
+
+.biloo-signup-navigation {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr minmax(160px, auto);
+  align-items: center;
+  gap: 12px;
+}
+
+.biloo-signup-previous,
+.biloo-signup-next {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 12px 20px;
+  font-size: 12px;
+  font-weight: 780;
+  transition:
+    transform 130ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.biloo-signup-previous {
+  border: 1px solid #dcd8e8;
+  background: #fff;
+  color: #413b52;
+}
+
+.biloo-signup-next {
+  border: 1px solid #5146e5;
+  background: #5146e5;
+  color: #fff;
+  box-shadow: 0 12px 25px rgba(81, 70, 229, 0.2);
+}
+
+.biloo-signup-next:hover,
+.biloo-signup-previous:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.biloo-signup-previous:disabled {
+  cursor: not-allowed;
+  opacity: 0.36;
+}
+
+.biloo-signup-step-count {
+  color: #8d8999;
+  font-size: 10px;
+  font-weight: 650;
+  text-align: center;
+}
+
+.biloo-signup-navigation .biloo-signup-submit {
+  width: auto;
+  min-width: 220px;
+  margin: 0;
+}
+
+.biloo-signup-previous:focus-visible,
+.biloo-signup-next:focus-visible {
+  outline: 3px solid rgba(81, 70, 229, 0.2);
+  outline-offset: 2px;
+}
+
+@media (max-width: 620px) {
+  .biloo-signup-progress {
+    border-radius: 15px;
+    padding: 13px 9px;
+  }
+
+  .biloo-signup-progress-track {
+    top: 27px;
+    right: 32px;
+    left: 32px;
+  }
+
+  .biloo-signup-progress ol {
+    gap: 4px;
+  }
+
+  .biloo-signup-progress li > span {
+    width: 29px;
+    height: 29px;
+  }
+
+  .biloo-signup-progress li small {
+    display: none;
+  }
+
+  .biloo-signup-progress li strong {
+    font-size: 9px;
+  }
+
+  .biloo-signup-panel {
+    min-height: 0;
+  }
+
+  .biloo-signup-review {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-signup-navigation {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .biloo-signup-step-count {
+    display: none;
+  }
+
+  .biloo-signup-navigation .biloo-signup-submit {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .biloo-signup-previous,
+  .biloo-signup-next {
+    width: 100%;
+    min-height: 48px;
+    padding-inline: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-signup-progress-track > span,
+  .biloo-signup-previous,
+  .biloo-signup-next {
+    transition: none;
+  }
+}
