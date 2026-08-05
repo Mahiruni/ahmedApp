@@ -15,6 +15,8 @@ type EthiopianPhoneInputProps = {
   disabled?: boolean;
   id?: string;
   name: string;
+  onValueChange?: (value: string) => void;
+  readOnly?: boolean;
   required?: boolean;
 };
 
@@ -25,6 +27,8 @@ export function EthiopianPhoneInput({
   disabled = false,
   id,
   name,
+  onValueChange,
+  readOnly = false,
   required = false,
 }: EthiopianPhoneInputProps) {
   const generatedId = useId();
@@ -37,6 +41,17 @@ export function EthiopianPhoneInput({
   const submittedValue = nationalDigits
     ? `${ETHIOPIAN_COUNTRY_CODE}${nationalDigits}`
     : "";
+
+  function handleChange(value: string) {
+    const nextDisplayValue = formatEthiopianNationalPhone(value);
+    const nextNationalDigits = ethiopianNationalDigits(nextDisplayValue);
+    const nextSubmittedValue = nextNationalDigits
+      ? `${ETHIOPIAN_COUNTRY_CODE}${nextNationalDigits}`
+      : "";
+
+    setDisplayValue(nextDisplayValue);
+    onValueChange?.(nextSubmittedValue);
+  }
 
   return (
     <div className="biloo-phone-input">
@@ -53,11 +68,10 @@ export function EthiopianPhoneInput({
         id={inputId}
         inputMode="numeric"
         maxLength={11}
-        onChange={(event) =>
-          setDisplayValue(formatEthiopianNationalPhone(event.target.value))
-        }
+        onChange={(event) => handleChange(event.target.value)}
         pattern="[79][0-9]{2} [0-9]{3} [0-9]{3}"
         placeholder="912 345 678"
+        readOnly={readOnly}
         required={required}
         type="tel"
         value={displayValue}
