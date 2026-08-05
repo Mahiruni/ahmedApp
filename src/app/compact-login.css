@@ -1,0 +1,396 @@
+/* Award-grade BILOO sign-in screen.
+   Login only: one polished viewport, no vertical page movement. */
+
+html:has(body > .biloo-auth-page:has(.biloo-login-form)),
+body:has(> .biloo-auth-page:has(.biloo-login-form)) {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  background: #ecebf4 !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) {
+  position: relative;
+  width: min(100%, var(--biloo-app-frame, 480px)) !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  max-height: 100dvh !important;
+  margin-inline: auto;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+  background:
+    radial-gradient(circle at 90% 5%, rgba(81, 70, 229, 0.16), transparent 28%),
+    radial-gradient(circle at 5% 93%, rgba(199, 240, 0, 0.12), transparent 24%),
+    linear-gradient(160deg, #f8f7ff 0%, #f1f1f8 48%, #f7f8fb 100%) !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form)::before,
+.biloo-auth-page:has(.biloo-login-form)::after {
+  position: absolute;
+  border-radius: 999px;
+  content: "";
+  pointer-events: none;
+}
+
+.biloo-auth-page:has(.biloo-login-form)::before {
+  top: -96px;
+  right: -106px;
+  width: 230px;
+  height: 230px;
+  border: 1px solid rgba(81, 70, 229, 0.1);
+  box-shadow: inset 0 0 0 34px rgba(81, 70, 229, 0.025);
+}
+
+.biloo-auth-page:has(.biloo-login-form)::after {
+  bottom: -84px;
+  left: -80px;
+  width: 190px;
+  height: 190px;
+  border: 1px solid rgba(199, 240, 0, 0.18);
+  box-shadow: inset 0 0 0 28px rgba(199, 240, 0, 0.025);
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-shell,
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-panel {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-panel {
+  position: relative;
+  z-index: 1;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    12px
+    max(10px, env(safe-area-inset-bottom)) !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-wrap {
+  position: relative;
+  width: min(100%, 420px) !important;
+  max-width: 420px !important;
+  max-height: calc(100dvh - max(20px, env(safe-area-inset-top)) - max(20px, env(safe-area-inset-bottom))) !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(47, 39, 123, 0.1);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  padding: clamp(17px, 2.8vh, 23px) !important;
+  box-shadow:
+    0 26px 70px rgba(35, 28, 102, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(20px) saturate(145%);
+  backdrop-filter: blur(20px) saturate(145%);
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-wrap::before {
+  position: absolute;
+  top: 0;
+  right: 25%;
+  left: 25%;
+  height: 3px;
+  border-radius: 0 0 999px 999px;
+  background: linear-gradient(90deg, #5146e5, #766df0 70%, #c7f000);
+  content: "";
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-topbar {
+  min-height: 36px;
+  justify-content: center !important;
+  margin-bottom: clamp(11px, 2vh, 17px) !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-mobile-brand {
+  display: inline-flex !important;
+  gap: 8px;
+  color: #241d86;
+  font-size: 18px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-mobile-brand img {
+  width: 35px;
+  height: 35px;
+  border-radius: 12px;
+  box-shadow: 0 9px 22px rgba(81, 70, 229, 0.2);
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-secure-label {
+  display: none !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading {
+  text-align: center;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading > span {
+  color: #5146e5;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading h1 {
+  margin-top: 6px;
+  color: #19162a !important;
+  font-size: clamp(28px, 7.6vw, 34px) !important;
+  font-weight: 790 !important;
+  line-height: 0.98;
+  letter-spacing: -0.055em !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading p {
+  max-width: 310px;
+  margin: 7px auto 0;
+  color: #696474 !important;
+  font-size: 10.5px !important;
+  line-height: 1.42;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-content {
+  margin-top: clamp(13px, 2.2vh, 18px) !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-error {
+  margin-bottom: 10px;
+  border-radius: 11px;
+  padding: 8px 10px;
+  font-size: 9.5px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-google-button {
+  min-height: 46px;
+  border-color: #dfddea;
+  border-radius: 14px;
+  background: #fff;
+  padding: 9px 14px;
+  font-size: 11px;
+  box-shadow: 0 7px 20px rgba(36, 29, 134, 0.055);
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-google-icon {
+  width: 18px;
+  height: 18px;
+  flex-basis: 18px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-divider {
+  margin-block: clamp(10px, 1.8vh, 14px);
+  gap: 9px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-divider b {
+  color: #777283 !important;
+  font-size: 7.5px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-login-form {
+  gap: clamp(9px, 1.65vh, 13px);
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-field,
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-field > span:first-child {
+  color: #35303f !important;
+  font-size: 9.5px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-field > span:first-child {
+  min-height: 15px;
+  margin-bottom: 5px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-input {
+  min-height: 46px;
+  border-color: #dedce7 !important;
+  border-radius: 13px !important;
+  background: #fbfbfd !important;
+  padding: 10px 13px;
+  font-size: 16px !important;
+  box-shadow: inset 0 1px 0 rgba(30, 26, 58, 0.015) !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-input:focus {
+  border-color: #5146e5 !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 3px rgba(81, 70, 229, 0.1) !important;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-password-toggle {
+  right: 7px;
+  min-width: 45px;
+  min-height: 30px;
+  border-radius: 9px;
+  font-size: 8.5px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-options {
+  min-height: 25px;
+  gap: 10px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-remember {
+  min-height: 25px;
+  gap: 6px;
+  color: #696574;
+  font-size: 9px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-remember input {
+  width: 14px;
+  height: 14px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-options > a {
+  font-size: 9px;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-submit {
+  min-height: 48px;
+  margin-top: 0;
+  border-radius: 14px;
+  padding: 10px 15px;
+  font-size: 11px;
+  box-shadow: 0 12px 26px rgba(81, 70, 229, 0.2);
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-legal-copy {
+  margin-top: clamp(9px, 1.6vh, 13px);
+  font-size: 7.6px;
+  line-height: 1.4;
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-footer {
+  margin-top: clamp(10px, 1.8vh, 15px);
+  padding-top: clamp(9px, 1.5vh, 12px);
+}
+
+.biloo-auth-page:has(.biloo-login-form) .biloo-auth-switch-copy {
+  font-size: 9.5px;
+}
+
+@media (max-height: 700px) {
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-wrap {
+    border-radius: 23px;
+    padding: 14px 17px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-topbar {
+    min-height: 32px;
+    margin-bottom: 8px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-mobile-brand img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading h1 {
+    margin-top: 4px;
+    font-size: 29px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading p {
+    margin-top: 5px;
+    font-size: 9.5px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-content {
+    margin-top: 10px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-google-button,
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-input {
+    min-height: 43px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-divider {
+    margin-block: 9px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-login-form {
+    gap: 8px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-submit {
+    min-height: 44px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-legal-copy {
+    margin-top: 8px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-footer {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+}
+
+@media (max-height: 620px) {
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading p,
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-legal-copy {
+    display: none;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-wrap {
+    padding-block: 12px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-topbar {
+    margin-bottom: 6px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading h1 {
+    font-size: 27px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-content {
+    margin-top: 8px !important;
+  }
+}
+
+@media (max-height: 520px) {
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading > span {
+    display: none;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-topbar {
+    min-height: 28px;
+    margin-bottom: 4px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-mobile-brand img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-heading h1 {
+    margin-top: 0;
+    font-size: 24px !important;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-google-button,
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-input,
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-submit {
+    min-height: 40px;
+  }
+
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-footer {
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+}
+
+@media (forced-colors: active) {
+  .biloo-auth-page:has(.biloo-login-form),
+  .biloo-auth-page:has(.biloo-login-form) .biloo-auth-form-wrap {
+    background: Canvas !important;
+    color: CanvasText !important;
+  }
+}
