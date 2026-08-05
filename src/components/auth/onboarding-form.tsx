@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { completeOnboardingAction } from "@/app/onboarding/actions";
 import { Icon } from "@/components/biloo/ui";
+import { EthiopianPhoneInput } from "@/components/forms/ethiopian-phone-input";
 import { authButtonClass, authInputClass } from "./auth-shell";
 
 type RequestedRole = "customer" | "driver" | "vendor_owner";
@@ -57,14 +58,10 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
           </label>
           <label className="biloo-auth-field">
             <span>Phone number</span>
-            <input
-              autoComplete="tel"
-              className={authInputClass}
-              name="phone"
-              placeholder="+251 9..."
-              required
-              type="tel"
-            />
+            <EthiopianPhoneInput className={authInputClass} name="phone" required />
+            <small className="biloo-signup-help">
+              +251 is fixed. Enter only the 9 digits starting with 9 or 7.
+            </small>
           </label>
           <label className="biloo-auth-field full-width">
             <span>City</span>
