@@ -12,11 +12,26 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     background_color: "#17105f",
     theme_color: "#5146e5",
-    orientation: "portrait-primary",
+    orientation: "any",
     lang: "en",
     dir: "ltr",
-    categories: ["shopping", "food", "travel", "business"],
+    categories: ["shopping", "food", "travel", "business", "utilities"],
     prefer_related_applications: false,
+    shortcuts: [
+      {
+        name: "BILOO Spatial for Galaxy XR",
+        short_name: "BILOO Spatial",
+        description: "Launch the immersive BILOO workspace for Samsung Galaxy XR and Android XR.",
+        url: "/xr",
+        icons: [
+          {
+            src: "/icons/icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+        ],
+      },
+    ],
     icons: [
       {
         src: "/icons/icon-192.png",
