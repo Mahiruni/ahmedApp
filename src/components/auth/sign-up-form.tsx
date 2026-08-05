@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useMemo, useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 
-import { Icon } from "@/components/biloo/ui";
 import { signUpAction } from "@/app/auth/actions";
+import { Icon } from "@/components/biloo/ui";
+import { EthiopianPhoneInput } from "@/components/forms/ethiopian-phone-input";
 
 import { authButtonClass, authInputClass } from "./auth-shell";
 
@@ -29,15 +31,13 @@ function FieldLabel({
   children,
   optional = false,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   optional?: boolean;
 }) {
   return (
-    <span className="mb-2 flex items-center justify-between gap-3 text-[12px] font-semibold text-[#252238]">
+    <span className="biloo-signup-field-label">
       <span>{children}</span>
-      {optional ? (
-        <span className="text-[10px] font-medium text-[#8a8798]">Optional</span>
-      ) : null}
+      {optional ? <small>Optional</small> : null}
     </span>
   );
 }
@@ -54,7 +54,7 @@ function SubmitButton({ passwordReady }: { passwordReady: boolean }) {
     >
       {pending ? (
         <>
-          <span className="biloo-feedback-spinner" aria-hidden="true" />
+          <span className="biloo-auth-spinner" aria-hidden="true" />
           <span>Creating your secure account…</span>
         </>
       ) : (
@@ -72,6 +72,8 @@ export function SignUpForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const usernameValid = /^[a-z][a-z0-9._]{2,29}$/.test(username);
   const passwordChecks = useMemo(
@@ -103,7 +105,7 @@ export function SignUpForm() {
     <form action={signUpAction} className="biloo-signup-form">
       <section className="biloo-signup-section">
         <div className="biloo-signup-section-heading">
-          <span className="biloo-signup-step">1</span>
+          <span className="biloo-signup-step">01</span>
           <div>
             <h2>Personal information</h2>
             <p>Enter your name as you normally use it in Ethiopia.</p>
@@ -125,7 +127,7 @@ export function SignUpForm() {
             />
           </label>
           <label>
-            <FieldLabel>Father’s name</FieldLabel>
+            <FieldLabel>Father&apos;s name</FieldLabel>
             <input
               autoCapitalize="words"
               autoComplete="additional-name"
@@ -138,7 +140,7 @@ export function SignUpForm() {
             />
           </label>
           <label>
-            <FieldLabel>Grandfather’s name</FieldLabel>
+            <FieldLabel>Grandfather&apos;s name</FieldLabel>
             <input
               autoCapitalize="words"
               className={authInputClass}
@@ -154,10 +156,10 @@ export function SignUpForm() {
 
       <section className="biloo-signup-section">
         <div className="biloo-signup-section-heading">
-          <span className="biloo-signup-step">2</span>
+          <span className="biloo-signup-step">02</span>
           <div>
             <h2>Account details</h2>
-            <p>Your username identifies you inside BILOO.</p>
+            <p>Your username and contact details identify your BILOO account.</p>
           </div>
         </div>
 
@@ -190,21 +192,21 @@ export function SignUpForm() {
               ) : null}
             </div>
             <small id="biloo-username-help" className="biloo-signup-help">
-              3–30 characters. Start with a letter; use letters, numbers, dots or underscores.
+              Start with a letter. Use letters, numbers, dots or underscores.
             </small>
           </label>
 
           <label>
             <FieldLabel>Ethiopian mobile number</FieldLabel>
-            <input
-              autoComplete="tel"
+            <EthiopianPhoneInput
               className={authInputClass}
-              inputMode="tel"
+              describedBy="biloo-signup-phone-help"
               name="phone"
-              placeholder="0912 345 678"
               required
-              type="tel"
             />
+            <small id="biloo-signup-phone-help" className="biloo-signup-help">
+              +251 is fixed. Enter only the 9 digits beginning with 7 or 9.
+            </small>
           </label>
 
           <label>
@@ -213,9 +215,11 @@ export function SignUpForm() {
               autoCapitalize="none"
               autoComplete="email"
               className={authInputClass}
+              inputMode="email"
               name="email"
               placeholder="you@example.com"
               required
+              spellCheck={false}
               type="email"
             />
           </label>
@@ -224,29 +228,20 @@ export function SignUpForm() {
 
       <section className="biloo-signup-section">
         <div className="biloo-signup-section-heading">
-          <span className="biloo-signup-step">3</span>
+          <span className="biloo-signup-step">03</span>
           <div>
-            <h2>Location</h2>
-            <p>This helps BILOO prepare local services and saved delivery details.</p>
+            <h2>Local address</h2>
+            <p>Used to prepare saved delivery details and nearby services.</p>
           </div>
         </div>
 
         <div className="biloo-signup-grid">
           <label>
             <FieldLabel>Region or city administration</FieldLabel>
-            <select
-              className={authInputClass}
-              defaultValue=""
-              name="region"
-              required
-            >
-              <option disabled value="">
-                Select region
-              </option>
+            <select className={authInputClass} defaultValue="" name="region" required>
+              <option disabled value="">Select region</option>
               {ethiopianRegions.map((region) => (
-                <option key={region} value={region}>
-                  {region}
-                </option>
+                <option key={region} value={region}>{region}</option>
               ))}
             </select>
           </label>
@@ -288,50 +283,68 @@ export function SignUpForm() {
 
       <section className="biloo-signup-section">
         <div className="biloo-signup-section-heading">
-          <span className="biloo-signup-step">4</span>
+          <span className="biloo-signup-step">04</span>
           <div>
-            <h2>Security</h2>
-            <p>Create a password that you do not use on another service.</p>
+            <h2>Secure your account</h2>
+            <p>Create a password you do not use on another service.</p>
           </div>
         </div>
 
         <div className="biloo-signup-grid">
           <label>
             <FieldLabel>Password</FieldLabel>
-            <input
-              autoComplete="new-password"
-              className={authInputClass}
-              minLength={8}
-              name="password"
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="At least 8 characters"
-              required
-              type="password"
-              value={password}
-            />
+            <div className="biloo-auth-password-frame">
+              <input
+                autoComplete="new-password"
+                className={authInputClass}
+                minLength={8}
+                name="password"
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="At least 8 characters"
+                required
+                type={showPassword ? "text" : "password"}
+                value={password}
+              />
+              <button
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="biloo-auth-password-toggle"
+                onClick={() => setShowPassword((visible) => !visible)}
+                type="button"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </label>
 
           <label>
             <FieldLabel>Confirm password</FieldLabel>
-            <input
-              aria-invalid={
-                confirmPassword.length > 0 && !passwordChecks.match
-              }
-              autoComplete="new-password"
-              className={authInputClass}
-              minLength={8}
-              name="confirmPassword"
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              placeholder="Enter password again"
-              required
-              type="password"
-              value={confirmPassword}
-            />
+            <div className="biloo-auth-password-frame">
+              <input
+                aria-invalid={confirmPassword.length > 0 && !passwordChecks.match}
+                autoComplete="new-password"
+                className={authInputClass}
+                minLength={8}
+                name="confirmPassword"
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="Enter password again"
+                required
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+              />
+              <button
+                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                className="biloo-auth-password-toggle"
+                onClick={() => setShowConfirmPassword((visible) => !visible)}
+                type="button"
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </label>
         </div>
 
         <div className="biloo-signup-password-checks" aria-live="polite">
-          <span data-complete={passwordChecks.length}>8 or more characters</span>
+          <span data-complete={passwordChecks.length}>8+ characters</span>
           <span data-complete={passwordChecks.letter}>Contains a letter</span>
           <span data-complete={passwordChecks.number}>Contains a number</span>
           <span data-complete={passwordChecks.match}>Passwords match</span>
@@ -341,14 +354,14 @@ export function SignUpForm() {
       <label className="biloo-signup-consent">
         <input name="terms" required type="checkbox" />
         <span>
-          I agree to the BILOO Terms of Service and acknowledge the Privacy Notice.
+          I agree to the BILOO <Link href="/terms">Terms of Service</Link> and acknowledge the <Link href="/privacy">Privacy Policy</Link>.
         </span>
       </label>
 
       <SubmitButton passwordReady={passwordReady} />
       <p className="biloo-signup-security-note">
         <Icon className="size-[15px]" name="shield" />
-        Your password is handled by Supabase Auth and is never stored in this form.
+        Authentication is protected by Supabase. BILOO never stores your password in this form.
       </p>
     </form>
   );
