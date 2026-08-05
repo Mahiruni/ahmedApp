@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { Icon } from "@/components/biloo/ui";
 import { EthiopianPhoneInput } from "@/components/forms/ethiopian-phone-input";
@@ -24,6 +24,18 @@ const defaultPreferences: Preferences = {
   compactMode: false,
   language: "English",
 };
+
+function storedPreferences(): Preferences {
+  if (typeof window === "undefined") return defaultPreferences;
+  try {
+    const stored = window.localStorage.getItem(storageKey);
+    return stored
+      ? { ...defaultPreferences, ...(JSON.parse(stored) as Partial<Preferences>) }
+      : defaultPreferences;
+  } catch {
+    return defaultPreferences;
+  }
+}
 
 function roleLabel(role: AppViewer["databaseRole"]) {
   if (role === "vendor_owner") return "Vendor owner";
@@ -88,18 +100,9 @@ function Toggle({
 }
 
 export function AccountSettingsClient({ viewer }: { viewer: AppViewer }) {
-  const [preferences, setPreferences] = useState<Preferences>(defaultPreferences);
+  const [preferences, setPreferences] = useState<Preferences>(storedPreferences);
   const [saved, setSaved] = useState(false);
   const workspace = workspaceCopy(viewer.uiRole);
-
-  useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(storageKey);
-      if (stored) setPreferences({ ...defaultPreferences, ...JSON.parse(stored) });
-    } catch {
-      // The settings remain usable during this session when storage is blocked.
-    }
-  }, []);
 
   const completion = useMemo(() => {
     let score = 70;
