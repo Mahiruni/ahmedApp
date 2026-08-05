@@ -1,0 +1,995 @@
+/* Premium BILOO account settings experience. */
+
+.biloo-settings-page {
+  min-height: 100vh;
+  background: #f4f4f8;
+  color: #1d1a2d;
+  font-family: var(--font-biloo-sans), sans-serif;
+}
+
+.biloo-settings-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  display: flex;
+  min-height: 76px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(23, 21, 43, 0.08);
+  background: rgba(255, 255, 255, 0.97);
+  padding-inline: max(20px, calc((100vw - 1320px) / 2));
+}
+
+.biloo-settings-brand,
+.biloo-settings-brand > span:last-child,
+.biloo-settings-brand strong,
+.biloo-settings-brand small {
+  display: flex;
+}
+
+.biloo-settings-brand {
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+}
+
+.biloo-settings-brand-mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 13px;
+  background: #5146e5;
+  color: #fff;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 19px;
+  font-weight: 850;
+  box-shadow: 0 10px 24px rgba(81, 70, 229, 0.22);
+}
+
+.biloo-settings-brand > span:last-child {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.biloo-settings-brand strong {
+  color: #241d86;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 20px;
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.biloo-settings-brand small {
+  margin-top: 4px;
+  color: #888494;
+  font-size: 8px;
+  font-weight: 730;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.biloo-settings-back {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(23, 21, 43, 0.08);
+  border-radius: 999px;
+  background: #fff;
+  padding: 10px 16px;
+  color: #393548;
+  font-size: 12px;
+  font-weight: 780;
+  text-decoration: none;
+}
+
+.biloo-settings-back svg {
+  width: 15px;
+  height: 15px;
+  transform: rotate(180deg);
+}
+
+.biloo-settings-layout {
+  display: grid;
+  width: min(1320px, calc(100% - 40px));
+  margin-inline: auto;
+  padding-block: 32px 80px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: start;
+  gap: 28px;
+}
+
+.biloo-settings-sidebar {
+  position: sticky;
+  top: 108px;
+  min-height: calc(100vh - 140px);
+  overflow: hidden;
+  border-radius: 28px;
+  background: #241d86;
+  padding: 22px 16px 18px;
+  color: #fff;
+  box-shadow: 0 22px 58px rgba(36, 29, 134, 0.16);
+}
+
+.biloo-settings-profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 6px 20px;
+}
+
+.biloo-settings-profile-mini > span {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  place-items: center;
+  border-radius: 16px;
+  background: #c7f000;
+  color: #241d86;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.biloo-settings-profile-mini strong,
+.biloo-settings-profile-mini small {
+  display: block;
+}
+
+.biloo-settings-profile-mini strong {
+  max-width: 154px;
+  overflow: hidden;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-settings-profile-mini small {
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 9px;
+  font-weight: 680;
+}
+
+.biloo-settings-sidebar nav {
+  display: grid;
+  margin-top: 18px;
+  gap: 5px;
+}
+
+.biloo-settings-sidebar nav a {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 11px;
+  border-radius: 15px;
+  padding: 10px 12px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 11px;
+  font-weight: 720;
+  text-decoration: none;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.biloo-settings-sidebar nav a:hover,
+.biloo-settings-sidebar nav a.is-active {
+  background: rgba(255, 255, 255, 0.11);
+  color: #fff;
+}
+
+.biloo-settings-sidebar nav a.is-active {
+  box-shadow: inset 3px 0 #c7f000;
+}
+
+.biloo-settings-sidebar nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.biloo-settings-sidebar-status {
+  position: absolute;
+  right: 16px;
+  bottom: 18px;
+  left: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 17px 7px 0;
+}
+
+.biloo-settings-sidebar-status span,
+.biloo-settings-sidebar-status small {
+  display: block;
+}
+
+.biloo-settings-sidebar-status span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 760;
+}
+
+.biloo-settings-sidebar-status i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c7f000;
+  box-shadow: 0 0 0 5px rgba(199, 240, 0, 0.12);
+}
+
+.biloo-settings-sidebar-status small {
+  margin-top: 7px;
+  color: rgba(255, 255, 255, 0.47);
+  font-size: 8.5px;
+}
+
+.biloo-settings-content {
+  min-width: 0;
+}
+
+.biloo-settings-hero {
+  display: grid;
+  min-height: 210px;
+  overflow: hidden;
+  border-radius: 30px;
+  background: #5146e5;
+  padding: 34px;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.45fr);
+  align-items: center;
+  gap: 36px;
+  color: #fff;
+  box-shadow: 0 22px 58px rgba(81, 70, 229, 0.18);
+}
+
+.biloo-settings-hero-profile {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 20px;
+}
+
+.biloo-settings-avatar {
+  display: grid;
+  width: 86px;
+  height: 86px;
+  flex: 0 0 86px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 28px;
+  background: #fff;
+  color: #5146e5;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 26px;
+  font-weight: 850;
+  box-shadow: 0 18px 38px rgba(23, 16, 96, 0.18);
+}
+
+.biloo-settings-hero-profile small,
+.biloo-settings-hero-profile h1,
+.biloo-settings-hero-profile p {
+  display: block;
+  margin: 0;
+}
+
+.biloo-settings-hero-profile small {
+  color: #dfff57;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+}
+
+.biloo-settings-hero-profile h1 {
+  max-width: 560px;
+  margin-top: 8px;
+  overflow: hidden;
+  color: #fff;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 790;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.biloo-settings-hero-profile p {
+  margin-top: 9px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.biloo-settings-completion {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 20px;
+}
+
+.biloo-settings-completion > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.biloo-settings-completion > div span {
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 9px;
+  font-weight: 720;
+}
+
+.biloo-settings-completion > div strong {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 850;
+}
+
+.biloo-settings-completion > i {
+  display: block;
+  height: 7px;
+  margin-top: 13px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.biloo-settings-completion > i b {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #c7f000;
+}
+
+.biloo-settings-completion > small {
+  display: block;
+  margin-top: 11px;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 8.5px;
+  line-height: 1.5;
+}
+
+.biloo-settings-workspace-card {
+  display: grid;
+  min-height: 116px;
+  margin-top: 18px;
+  align-items: center;
+  border: 1px solid rgba(23, 21, 43, 0.08);
+  border-radius: 25px;
+  background: #fff;
+  padding: 20px 22px;
+  grid-template-columns: 54px 1fr 34px;
+  gap: 16px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.biloo-settings-workspace-card:hover {
+  border-color: rgba(81, 70, 229, 0.25);
+  box-shadow: 0 16px 40px rgba(31, 25, 91, 0.08);
+  transform: translateY(-2px);
+}
+
+.biloo-settings-workspace-card > span {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 17px;
+  background: #f0eff8;
+  color: #5146e5;
+}
+
+.biloo-settings-workspace-card > span svg {
+  width: 25px;
+  height: 25px;
+}
+
+.biloo-settings-workspace-card small,
+.biloo-settings-workspace-card strong,
+.biloo-settings-workspace-card p {
+  display: block;
+  margin: 0;
+}
+
+.biloo-settings-workspace-card small {
+  color: #5146e5;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+}
+
+.biloo-settings-workspace-card strong {
+  margin-top: 5px;
+  color: #262235;
+  font-size: 16px;
+  font-weight: 820;
+}
+
+.biloo-settings-workspace-card p {
+  margin-top: 4px;
+  color: #7a7686;
+  font-size: 10px;
+}
+
+.biloo-settings-workspace-card > svg {
+  width: 19px;
+  height: 19px;
+  color: #777386;
+}
+
+.biloo-settings-form {
+  display: grid;
+  margin-top: 18px;
+  gap: 18px;
+}
+
+.biloo-settings-panel {
+  scroll-margin-top: 105px;
+  border: 1px solid rgba(23, 21, 43, 0.08);
+  border-radius: 28px;
+  background: #fff;
+  padding: 28px;
+}
+
+.biloo-settings-panel > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid #eeedf2;
+  padding-bottom: 22px;
+}
+
+.biloo-settings-panel header small,
+.biloo-settings-panel header h2,
+.biloo-settings-panel header p {
+  display: block;
+  margin: 0;
+}
+
+.biloo-settings-panel header small {
+  color: #5146e5;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+}
+
+.biloo-settings-panel header h2 {
+  margin-top: 7px;
+  color: #252133;
+  font-family: var(--font-biloo-display), sans-serif;
+  font-size: 26px;
+  font-weight: 780;
+  letter-spacing: -0.04em;
+}
+
+.biloo-settings-panel header p {
+  max-width: 580px;
+  margin-top: 7px;
+  color: #777386;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.biloo-settings-panel-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 14px;
+  background: #f0eff8;
+  color: #5146e5;
+}
+
+.biloo-settings-panel-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.biloo-settings-fields {
+  display: grid;
+  margin-top: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.biloo-settings-fields label,
+.biloo-settings-preference-grid > label {
+  display: block;
+  min-width: 0;
+}
+
+.biloo-settings-fields label > span,
+.biloo-settings-preference-grid > label > span {
+  display: block;
+  margin-bottom: 8px;
+  color: #3f3b4e;
+  font-size: 10px;
+  font-weight: 780;
+}
+
+.biloo-settings-fields input,
+.biloo-settings-preference-grid select {
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid #dedce6;
+  border-radius: 15px;
+  background: #fff;
+  padding: 12px 14px;
+  color: #242133;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.biloo-settings-fields input:focus,
+.biloo-settings-preference-grid select:focus {
+  border-color: #5146e5;
+  box-shadow: 0 0 0 4px rgba(81, 70, 229, 0.1);
+}
+
+.biloo-settings-fields input:disabled {
+  background: #f7f7fa;
+  color: #777386;
+  cursor: not-allowed;
+}
+
+.biloo-settings-fields label > small,
+.biloo-settings-preference-grid > label > small {
+  display: block;
+  margin-top: 7px;
+  color: #9692a0;
+  font-size: 8.5px;
+  line-height: 1.45;
+}
+
+.biloo-settings-phone-field .biloo-phone-input {
+  min-height: 52px;
+  border: 1px solid #dedce6;
+  border-radius: 15px;
+  background: #fff;
+}
+
+.biloo-settings-phone-field .biloo-phone-prefix {
+  min-width: 69px;
+  border-right: 1px solid #e2e0e8;
+  color: #5146e5;
+  font-size: 13px;
+  font-weight: 820;
+}
+
+.biloo-settings-phone-field .biloo-phone-local-input {
+  min-height: 50px;
+  border: 0 !important;
+  border-radius: 0 15px 15px 0 !important;
+  box-shadow: none !important;
+  padding-left: 13px !important;
+}
+
+.biloo-settings-toggle-list {
+  display: grid;
+  margin-top: 8px;
+}
+
+.biloo-settings-toggle-row {
+  position: relative;
+  display: flex;
+  min-height: 82px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid #efedf2;
+  padding-block: 17px;
+  cursor: pointer;
+}
+
+.biloo-settings-toggle-row:last-child {
+  border-bottom: 0;
+}
+
+.biloo-settings-toggle-row > span,
+.biloo-settings-toggle-row strong,
+.biloo-settings-toggle-row small {
+  display: block;
+}
+
+.biloo-settings-toggle-row strong {
+  color: #2b2739;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.biloo-settings-toggle-row small {
+  max-width: 590px;
+  margin-top: 5px;
+  color: #85818f;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.biloo-settings-toggle-row input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.biloo-settings-toggle-row > i {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 28px;
+  flex: 0 0 48px;
+  border-radius: 999px;
+  background: #d9d7df;
+  transition: background-color 140ms ease;
+}
+
+.biloo-settings-toggle-row > i b {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(23, 21, 43, 0.2);
+  transition: transform 140ms ease;
+}
+
+.biloo-settings-toggle-row input:checked + i {
+  background: #5146e5;
+}
+
+.biloo-settings-toggle-row input:checked + i b {
+  transform: translateX(20px);
+}
+
+.biloo-settings-toggle-row input:focus-visible + i {
+  outline: 3px solid rgba(81, 70, 229, 0.25);
+  outline-offset: 3px;
+}
+
+.biloo-settings-preference-grid {
+  display: grid;
+  margin-top: 24px;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 28px;
+}
+
+.biloo-settings-preference-grid .biloo-settings-toggle-row {
+  min-height: 74px;
+  border: 1px solid #e7e5eb;
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+
+.biloo-settings-security-grid {
+  display: grid;
+  margin-top: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.biloo-settings-security-grid article {
+  position: relative;
+  min-height: 148px;
+  border: 1px solid #e8e6ed;
+  border-radius: 21px;
+  background: #fafafd;
+  padding: 18px;
+}
+
+.biloo-settings-security-grid article > span {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 12px;
+  background: #eeedf8;
+  color: #5146e5;
+}
+
+.biloo-settings-security-grid svg {
+  width: 19px;
+  height: 19px;
+}
+
+.biloo-settings-security-grid strong,
+.biloo-settings-security-grid small {
+  display: block;
+}
+
+.biloo-settings-security-grid strong {
+  margin-top: 16px;
+  color: #2b2739;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.biloo-settings-security-grid small {
+  margin-top: 5px;
+  color: #85818f;
+  font-size: 8.5px;
+  line-height: 1.5;
+}
+
+.biloo-settings-security-grid a {
+  display: inline-flex;
+  margin-top: 12px;
+  color: #5146e5;
+  font-size: 9px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.biloo-settings-savebar {
+  position: sticky;
+  bottom: 14px;
+  z-index: 30;
+  display: flex;
+  min-height: 74px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid rgba(23, 21, 43, 0.09);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.97);
+  padding: 13px 16px 13px 22px;
+  box-shadow: 0 16px 42px rgba(31, 25, 91, 0.12);
+}
+
+.biloo-settings-savebar > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #777386;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.biloo-settings-savebar > span svg {
+  width: 16px;
+  height: 16px;
+  color: #5146e5;
+}
+
+.biloo-settings-savebar button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: #5146e5;
+  padding: 12px 21px;
+  color: #fff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 820;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(81, 70, 229, 0.22);
+}
+
+.biloo-settings-savebar button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.biloo-settings-danger-footer {
+  width: min(1040px, calc(100% - 40px));
+  margin: -48px auto 64px;
+  border: 1px solid #f0d8dc;
+  border-radius: 24px;
+  background: #fff;
+  padding: 22px;
+}
+
+.biloo-settings-danger-footer > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.biloo-settings-danger-footer strong,
+.biloo-settings-danger-footer p {
+  display: block;
+  margin: 0;
+}
+
+.biloo-settings-danger-footer strong {
+  color: #33242a;
+  font-size: 13px;
+  font-weight: 820;
+}
+
+.biloo-settings-danger-footer p {
+  margin-top: 5px;
+  color: #8f7a80;
+  font-size: 9px;
+}
+
+.biloo-settings-danger-footer button {
+  min-height: 44px;
+  border: 1px solid #efd1d7;
+  border-radius: 999px;
+  background: #fff7f8;
+  padding: 10px 17px;
+  color: #a33c50;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 1040px) {
+  .biloo-settings-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+
+  .biloo-settings-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-settings-security-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-settings-security-grid article {
+    min-height: 112px;
+  }
+}
+
+@media (max-width: 780px) {
+  .biloo-settings-layout {
+    width: min(100% - 24px, 1320px);
+    padding-top: 20px;
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-settings-sidebar {
+    position: static;
+    min-height: 0;
+    border-radius: 23px;
+  }
+
+  .biloo-settings-sidebar nav {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .biloo-settings-sidebar nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .biloo-settings-sidebar nav a {
+    min-width: max-content;
+  }
+
+  .biloo-settings-sidebar-status {
+    display: none;
+  }
+
+  .biloo-settings-fields,
+  .biloo-settings-preference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .biloo-settings-danger-footer {
+    width: min(100% - 24px, 1040px);
+    margin-top: -48px;
+  }
+}
+
+@media (max-width: 560px) {
+  .biloo-settings-topbar {
+    min-height: 68px;
+    padding-inline: 12px;
+  }
+
+  .biloo-settings-brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .biloo-settings-brand small {
+    display: none;
+  }
+
+  .biloo-settings-back {
+    min-height: 40px;
+    padding-inline: 12px;
+    font-size: 10px;
+  }
+
+  .biloo-settings-hero {
+    min-height: 0;
+    border-radius: 24px;
+    padding: 24px 20px;
+    gap: 24px;
+  }
+
+  .biloo-settings-avatar {
+    width: 66px;
+    height: 66px;
+    flex-basis: 66px;
+    border-radius: 21px;
+    font-size: 20px;
+  }
+
+  .biloo-settings-hero-profile h1 {
+    font-size: 29px;
+  }
+
+  .biloo-settings-workspace-card {
+    padding: 17px;
+    grid-template-columns: 46px 1fr 24px;
+  }
+
+  .biloo-settings-workspace-card > span {
+    width: 46px;
+    height: 46px;
+  }
+
+  .biloo-settings-panel {
+    border-radius: 23px;
+    padding: 21px 17px;
+  }
+
+  .biloo-settings-panel > header {
+    gap: 13px;
+  }
+
+  .biloo-settings-panel header h2 {
+    font-size: 23px;
+  }
+
+  .biloo-settings-panel-icon {
+    width: 39px;
+    height: 39px;
+    flex-basis: 39px;
+  }
+
+  .biloo-settings-toggle-row {
+    gap: 14px;
+  }
+
+  .biloo-settings-savebar {
+    bottom: 8px;
+    align-items: stretch;
+    border-radius: 20px;
+    padding: 13px;
+    flex-direction: column;
+  }
+
+  .biloo-settings-savebar button {
+    width: 100%;
+  }
+
+  .biloo-settings-danger-footer > div {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-settings-page * {
+    transition-duration: 0.01ms !important;
+  }
+}
