@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { normalizeEthiopianPhone } from "@/lib/biloo/phone";
 import { createClient } from "@/lib/supabase/server";
 
 function value(formData: FormData, key: string) {
@@ -35,17 +36,6 @@ function normalizePersonName(input: string) {
 
 function normalizeUsername(input: string) {
   return input.toLowerCase().replace(/\s+/g, "").trim();
-}
-
-function normalizeEthiopianPhone(input: string) {
-  const digits = input.replace(/\D/g, "");
-  const national = digits.startsWith("251")
-    ? digits.slice(3)
-    : digits.startsWith("0")
-      ? digits.slice(1)
-      : digits;
-
-  return /^[79]\d{8}$/.test(national) ? `+251${national}` : null;
 }
 
 export async function signInAction(formData: FormData) {
@@ -124,7 +114,7 @@ export async function signUpAction(formData: FormData) {
   if (!phone) {
     authError(
       "/auth/sign-up",
-      "Enter a valid Ethiopian mobile number such as 0912 345 678 or +251 912 345 678.",
+      "Enter the 9 Ethiopian mobile digits after +251, beginning with 9 or 7.",
     );
   }
 
@@ -150,7 +140,7 @@ export async function signUpAction(formData: FormData) {
   if (!acceptedTerms) {
     authError(
       "/auth/sign-up",
-      "Accept the BILOO terms and privacy notice to create your account.",
+      "Accept the BILOO terms and privacy policy to create your account.",
     );
   }
 
@@ -165,6 +155,11 @@ export async function signUpAction(formData: FormData) {
       emailRedirectTo: `${origin}/auth/callback?next=/onboarding`,
       data: {
         account_type: "customer",
+        registration_version: "ethiopian_customer_v2",
+        registration_completed: true,
+        terms_accepted: true,
+        country: "Ethiopia",
+        phone_country_code: "+251",
         display_name: displayName,
         first_name: firstName,
         father_name: fatherName,
