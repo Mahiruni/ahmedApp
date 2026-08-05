@@ -1,4 +1,4 @@
-BILOO XR production release
-Requested deployment retry: 2026-08-05T20:53:00Z
-Includes Samsung Galaxy XR / Android XR immersive WebXR experience at /xr.
-Source commit: e347afe581766503a401c06e3fbda4fa09e2479e
+BILOO official header logo release
+Requested deployment retry: 2026-08-05T21:03:00Z
+The application header now uses the exact /icons/biloo-mark.svg asset shown on the loading screen.
+Source commit: 7c53fbe77decc046bb6fe281b4150db934fcdb04
