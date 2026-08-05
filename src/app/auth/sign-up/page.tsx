@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
+import { signInWithGoogleAction } from "@/app/auth/actions";
 import { AuthError, AuthShell } from "@/components/auth/auth-shell";
+import { AuthGoogleButton } from "@/components/auth/login-form";
 import { SignUpForm } from "@/components/auth/sign-up-form";
+
+export const metadata: Metadata = {
+  title: "Create account",
+  description: "Create a secure BILOO customer account for rides, delivery and shopping.",
+};
 
 export default async function SignUpPage({
   searchParams,
@@ -12,15 +20,12 @@ export default async function SignUpPage({
 
   return (
     <AuthShell
-      eyebrow="Customer registration"
+      eyebrow="JOIN BILOO"
       title="Create your BILOO account"
-      description="Complete your customer profile using your Ethiopian name, mobile number, username and local address."
+      description="One secure profile for taxi rides, food, groceries, construction materials and car parts."
       footer={
-        <p className="text-center text-sm font-semibold text-slate-500">
-          Already registered?{" "}
-          <Link className="font-black text-[#5146e5]" href="/auth/login">
-            Sign in
-          </Link>
+        <p className="biloo-auth-switch-copy">
+          Already registered? <Link href="/auth/login">Sign in</Link>
         </p>
       }
     >
@@ -31,7 +36,20 @@ export default async function SignUpPage({
         </span>
         <span className="biloo-signup-intro-status">Secure signup</span>
       </div>
+
       <AuthError message={params.error} />
+
+      <form action={signInWithGoogleAction}>
+        <input name="next" type="hidden" value="/onboarding" />
+        <AuthGoogleButton label="Continue with Google" />
+      </form>
+
+      <div className="biloo-auth-divider" aria-hidden="true">
+        <span />
+        <b>or create with email</b>
+        <span />
+      </div>
+
       <SignUpForm />
     </AuthShell>
   );
