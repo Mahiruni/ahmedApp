@@ -1,6 +1,7 @@
 BILOO production release
-Source commit: db6b2d37dcc479be2cf930df9aa321d9864bd375
+Source commit: 38cb61aa2ecdac619730073742286361ddda0074
 Release scope: fixed +251 Ethiopian phone prefix across onboarding, customer signup and every current or dynamically rendered phone field; users enter only the 9 national digits.
 Normalization: accepts pasted 09…, 9… and +251… formats and stores valid numbers as +251XXXXXXXXX.
-Validation: TypeScript, ESLint, production build and Vercel preview passed.
-Deployment trigger: 2026-08-05T14:02:00+03:00
+Additional scope: secure onboarding phone OTP verification, branded loading system, guided product tour and compact mobile footer navigation.
+Validation: prior +251 release passed TypeScript, ESLint, production build and Vercel deployment; retrying the current main release.
+Deployment trigger: 2026-08-05T19:46:00+03:00
