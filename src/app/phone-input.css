@@ -1,0 +1,59 @@
+/* Shared Ethiopian phone field with a fixed +251 prefix. */
+
+.biloo-phone-input {
+  position: relative;
+  width: 100%;
+}
+
+.biloo-phone-prefix {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  border-right: 1px solid rgba(81, 70, 229, 0.2);
+  padding-right: 12px;
+  color: #3429b8;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.biloo-phone-local-input {
+  padding-left: 82px !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.015em;
+}
+
+.biloo-phone-local-input::placeholder {
+  letter-spacing: 0;
+}
+
+.biloo-phone-input:focus-within .biloo-phone-prefix {
+  border-right-color: rgba(81, 70, 229, 0.42);
+  color: #241d86;
+}
+
+@media (max-width: 420px) {
+  .biloo-phone-prefix {
+    left: 14px;
+    padding-right: 10px;
+  }
+
+  .biloo-phone-local-input {
+    padding-left: 76px !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .biloo-phone-prefix {
+    border-right-color: CanvasText;
+    color: CanvasText;
+  }
+}
