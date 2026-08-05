@@ -18,9 +18,10 @@ export default async function OnboardingPage({
 
   return (
     <AuthShell
-      eyebrow="Phase 2.2 account activation"
-      title="Choose how you operate in BILOO"
-      description="Create a customer account instantly or submit complete driver and vendor details for secure operations review."
+      eyebrow="COMPLETE YOUR ACCOUNT"
+      title="Choose how you use BILOO"
+      description="Activate customer access immediately or submit driver and vendor details for secure operations verification."
+      wide
     >
       <AuthError message={params.error} />
       <OnboardingForm displayName={viewer.displayName} />
