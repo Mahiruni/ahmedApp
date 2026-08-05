@@ -1,0 +1,178 @@
+/* Final BILOO text-contrast contract. Imported last.
+   Keeps secondary copy readable without flattening the visual hierarchy. */
+
+:root {
+  --biloo-contrast-heading: #17151f;
+  --biloo-contrast-body: #373340;
+  --biloo-contrast-muted: #57525f;
+  --biloo-contrast-subtle: #67616f;
+}
+
+/* Light application and account surfaces. */
+.biloo-auth-page,
+.biloo-settings-page,
+.biloo-public-page,
+main:has(> [data-biloo-header]) {
+  color: var(--biloo-contrast-body);
+}
+
+.biloo-auth-heading h1,
+.biloo-form-section-heading h2,
+.biloo-form-section-heading legend,
+.biloo-settings-hero h1,
+.biloo-settings-section-heading h2,
+.biloo-public-card h2,
+.biloo-public-section-heading h2,
+.biloo-public-document-section h2 {
+  color: var(--biloo-contrast-heading) !important;
+}
+
+.biloo-auth-heading p,
+.biloo-auth-welcome-note small,
+.biloo-signup-intro small,
+.biloo-form-section-heading p,
+.biloo-role-option-copy small,
+.biloo-form-disclosure p,
+.biloo-settings-hero p,
+.biloo-settings-section-heading p,
+.biloo-settings-field small,
+.biloo-settings-helper,
+.biloo-phone-verification-copy p,
+.biloo-phone-verification-note,
+.biloo-public-section-heading > p:last-child,
+.biloo-public-service-card p,
+.biloo-public-value-grid p,
+.biloo-public-document-section p,
+.biloo-public-document-section li {
+  color: var(--biloo-contrast-muted) !important;
+}
+
+.biloo-auth-secure-label,
+.biloo-auth-divider b,
+.biloo-signup-field-label > span:last-child,
+.biloo-public-brand small,
+.biloo-public-company-card dt,
+.biloo-public-document-meta span,
+.biloo-public-nav a,
+.biloo-public-footer-nav a {
+  color: var(--biloo-contrast-subtle) !important;
+}
+
+.biloo-auth-field,
+.biloo-auth-field > span:first-child,
+.biloo-signup-field-label,
+.biloo-role-option-copy strong,
+.biloo-settings-field label,
+.biloo-settings-field > span,
+.biloo-public-company-card dd,
+.biloo-public-value-grid strong {
+  color: #24212c !important;
+}
+
+/* Utility copy inside the mobile application shell. */
+main:has(> [data-biloo-header]) .text-slate-300 {
+  color: #68707c !important;
+}
+
+main:has(> [data-biloo-header]) .text-slate-400 {
+  color: #5d6470 !important;
+}
+
+main:has(> [data-biloo-header]) .text-slate-500 {
+  color: #4d535e !important;
+}
+
+main:has(> [data-biloo-header]) .text-gray-400 {
+  color: #5f626b !important;
+}
+
+main:has(> [data-biloo-header]) .text-gray-500 {
+  color: #50535c !important;
+}
+
+/* Inputs must remain readable before and while typing. */
+.biloo-auth-input,
+.biloo-phone-local-input,
+.biloo-settings-input,
+input[type="tel"],
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  color: #211e2a;
+}
+
+.biloo-auth-input::placeholder,
+.biloo-phone-local-input::placeholder,
+.biloo-settings-input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: #77717f !important;
+  opacity: 1 !important;
+}
+
+.biloo-phone-prefix {
+  color: #2f24a7 !important;
+}
+
+/* Compact mobile navigation labels stay visible over the translucent footer. */
+.biloo-customer-nav-item,
+.biloo-workspace-item,
+.biloo-customer-nav-item > span:last-child,
+.biloo-workspace-item > span:last-child {
+  color: #302c38 !important;
+}
+
+.biloo-customer-nav-item:hover,
+.biloo-customer-nav-item[data-active="true"],
+.biloo-workspace-item:hover,
+.biloo-workspace-item[data-active="true"],
+.biloo-customer-nav-item:hover > span:last-child,
+.biloo-customer-nav-item[data-active="true"] > span:last-child,
+.biloo-workspace-item:hover > span:last-child,
+.biloo-workspace-item[data-active="true"] > span:last-child {
+  color: #2f24a7 !important;
+}
+
+/* Dark surfaces use brighter secondary copy instead of low-opacity gray. */
+.biloo-entry-description,
+.biloo-entry-proof small,
+.biloo-entry-signature > div > span,
+.biloo-entry-legal,
+.biloo-auth-story-copy > p,
+.biloo-auth-brand small,
+.biloo-auth-public-nav a,
+.biloo-auth-benefits small,
+.biloo-auth-story-footer,
+.biloo-admin-hero p,
+.biloo-vendor-hero p,
+.biloo-driver-hero p,
+.biloo-public-hero-inner > span,
+.biloo-public-card-primary > p:last-child,
+.biloo-public-cta > div:first-child > p:last-child {
+  color: rgba(255, 255, 255, 0.84) !important;
+}
+
+.biloo-entry-eyebrow,
+.biloo-auth-story-kicker,
+.biloo-public-hero-inner > p,
+.biloo-public-card-primary .biloo-public-kicker,
+.biloo-public-cta .biloo-public-kicker {
+  color: #dcff48 !important;
+}
+
+@media (forced-colors: active) {
+  .biloo-auth-page,
+  .biloo-settings-page,
+  .biloo-public-page,
+  main:has(> [data-biloo-header]) {
+    color: CanvasText;
+  }
+
+  input,
+  textarea,
+  select {
+    color: FieldText;
+  }
+}
