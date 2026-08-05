@@ -2,8 +2,9 @@
 
 import { redirect } from "next/navigation";
 
-import type { Json } from "@/types/database";
+import { normalizeEthiopianPhone } from "@/lib/biloo/phone";
 import { createClient } from "@/lib/supabase/server";
+import type { Json } from "@/types/database";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -11,13 +12,13 @@ function value(formData: FormData, key: string) {
 
 export async function completeOnboardingAction(formData: FormData) {
   const displayName = value(formData, "displayName");
-  const phone = value(formData, "phone");
+  const phone = normalizeEthiopianPhone(value(formData, "phone"));
   const city = value(formData, "city") || "Addis Ababa";
   const requestedRole = value(formData, "requestedRole");
 
-  if (displayName.length < 2 || phone.length < 7) {
+  if (displayName.length < 2 || !phone) {
     redirect(
-      "/onboarding?error=Enter%20your%20name%20and%20a%20valid%20phone%20number.",
+      "/onboarding?error=Enter%20your%20name%20and%20the%209%20mobile%20digits%20after%20%2B251.",
     );
   }
 
