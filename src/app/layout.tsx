@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { InteractionFeedbackController } from "@/components/biloo/interaction-feedback-controller";
 import { SearchFocusController } from "@/components/biloo/search-focus-controller";
 import { SearchMotionController } from "@/components/biloo/search-motion-controller";
+import { EthiopianPhoneController } from "@/components/forms/ethiopian-phone-controller";
 import { PwaRegister } from "@/components/pwa-register";
 
 import "./globals.css";
@@ -39,6 +40,7 @@ import "./app-entry.css";
 import "./public-pages.css";
 import "./oauth-homepage.css";
 import "./mobile-homepage.css";
+import "./phone-input.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -113,6 +115,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang="en">
       <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
         <PwaRegister />
+        <EthiopianPhoneController />
         <InteractionFeedbackController />
         <SearchFocusController />
         <SearchMotionController />
