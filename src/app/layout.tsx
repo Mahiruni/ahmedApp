@@ -56,6 +56,7 @@ import "./text-contrast.css";
 import "./header-visibility-fix.css";
 import "./footer-sticky-fix.css";
 import "./compact-login.css";
+import "./header-brand-emergency-fix.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
