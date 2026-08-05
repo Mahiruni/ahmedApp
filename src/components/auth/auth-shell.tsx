@@ -1,7 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { BrandMark, Icon } from "@/components/biloo/ui";
+import { Icon } from "@/components/biloo/ui";
 import type { IconName } from "@/data/biloo";
 
 const authBenefits: Array<{
@@ -11,20 +12,22 @@ const authBenefits: Array<{
 }> = [
   {
     icon: "shield",
-    label: "Protected sessions",
-    detail: "Secure account access across devices",
+    label: "Protected access",
+    detail: "Secure sessions powered by Supabase Auth",
   },
   {
     icon: "customer",
-    label: "Role-based workspace",
-    detail: "Customer, driver, vendor and admin access",
+    label: "One BILOO identity",
+    detail: "Rides, deliveries, shopping and workspaces",
   },
   {
     icon: "bell",
-    label: "Live updates",
-    detail: "Orders, payments and verification status",
+    label: "Live progress",
+    detail: "Orders, trips and account updates in one place",
   },
 ];
+
+const serviceLabels = ["Taxi", "Food", "Market", "Materials", "Car parts"];
 
 export function AuthShell({
   eyebrow,
@@ -43,38 +46,80 @@ export function AuthShell({
     <main className="biloo-auth-page">
       <div className="biloo-auth-shell">
         <section className="biloo-auth-story" aria-label="BILOO account benefits">
-          <div>
+          <div className="biloo-auth-story-top">
             <Link className="biloo-auth-brand" href="/" aria-label="BILOO home">
-              <BrandMark />
+              <Image
+                alt=""
+                height={44}
+                priority
+                src="/icons/biloo-mark.svg"
+                width={44}
+              />
+              <span>
+                <strong>BILOO</strong>
+                <small>Connected super app</small>
+              </span>
             </Link>
-            <span className="biloo-auth-story-kicker">One account. Every service.</span>
-            <h2>Move, order and operate with confidence.</h2>
+
+            <nav aria-label="Public pages" className="biloo-auth-public-nav">
+              <Link href="/about">About</Link>
+              <Link href="/privacy">Privacy</Link>
+            </nav>
+          </div>
+
+          <div className="biloo-auth-story-copy">
+            <span className="biloo-auth-story-kicker">ONE ACCOUNT. EVERY MOVE.</span>
+            <h2>Everything you need, connected through BILOO.</h2>
             <p>
-              A secure BILOO identity connects rides, food, groceries, materials, deliveries and operational workspaces.
+              Book rides, order essentials and manage every service through one
+              secure account designed for daily life in Ethiopia.
             </p>
+
+            <div aria-label="BILOO services" className="biloo-auth-service-list">
+              {serviceLabels.map((service) => (
+                <span key={service}>{service}</span>
+              ))}
+            </div>
           </div>
 
           <div className="biloo-auth-benefits">
             {authBenefits.map((benefit) => (
               <article key={benefit.label}>
-                <span><Icon name={benefit.icon} /></span>
-                <div><strong>{benefit.label}</strong><small>{benefit.detail}</small></div>
+                <span className="biloo-auth-benefit-icon">
+                  <Icon name={benefit.icon} />
+                </span>
+                <div>
+                  <strong>{benefit.label}</strong>
+                  <small>{benefit.detail}</small>
+                </div>
               </article>
             ))}
           </div>
+
+          <p className="biloo-auth-story-footer">
+            Built for customers, drivers, delivery partners and local vendors.
+          </p>
         </section>
 
         <section className="biloo-auth-form-panel">
           <div className="biloo-auth-form-wrap">
-            <div className="biloo-auth-mobile-brand">
-              <Link href="/" aria-label="BILOO home"><BrandMark /></Link>
-              <span>Secure account</span>
+            <div className="biloo-auth-form-topbar">
+              <Link className="biloo-auth-mobile-brand" href="/" aria-label="BILOO home">
+                <Image alt="" height={38} src="/icons/biloo-mark.svg" width={38} />
+                <span>BILOO</span>
+              </Link>
+              <span className="biloo-auth-secure-label">
+                <Icon aria-hidden="true" name="shield" />
+                Secure connection
+              </span>
             </div>
+
             <header className="biloo-auth-heading">
               <span>{eyebrow}</span>
               <h1>{title}</h1>
               <p>{description}</p>
             </header>
+
             <div className="biloo-auth-content">{children}</div>
             {footer ? <footer className="biloo-auth-footer">{footer}</footer> : null}
           </div>
