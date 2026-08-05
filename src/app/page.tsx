@@ -3,11 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { AppEntryGoogleButton } from "@/components/auth/app-entry-actions";
+import { Icon } from "@/components/biloo/ui";
 import { getViewer } from "@/lib/biloo/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-
-import { signInWithGoogleAction } from "./auth/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +13,11 @@ const description =
   "BILOO is Ethiopia's connected super app for taxi booking, food delivery, supermarket shopping, construction materials and car parts.";
 
 export const metadata: Metadata = {
-  title: { absolute: "BILOO" },
+  title: { absolute: "BILOO — One app for every move" },
   description,
   applicationName: "BILOO",
   openGraph: {
-    title: "BILOO",
+    title: "BILOO — One app for every move",
     description,
     siteName: "BILOO",
     type: "website",
@@ -29,260 +27,293 @@ export const metadata: Metadata = {
 
 const services = [
   {
+    key: "taxi",
     title: "Taxi booking",
-    description: "Request local rides, choose pickup and destination locations, and follow trip progress.",
-    icon: "↗",
+    description: "Request a ride, choose pickup and destination, and follow trip progress.",
+    icon: "taxi" as const,
+    meta: "Move around your city",
   },
   {
+    key: "food",
     title: "Food delivery",
-    description: "Order meals from participating restaurants and receive preparation and delivery updates.",
-    icon: "●",
+    description: "Discover local restaurants and receive preparation and delivery updates.",
+    icon: "food" as const,
+    meta: "Meals from nearby kitchens",
   },
   {
+    key: "market",
     title: "Supermarket shopping",
-    description: "Shop groceries and household essentials and arrange delivery to your location.",
-    icon: "▦",
+    description: "Order groceries and household essentials from participating stores.",
+    icon: "market" as const,
+    meta: "Daily essentials delivered",
   },
   {
+    key: "construction",
     title: "Construction materials",
-    description: "Find and order building supplies from participating local vendors.",
-    icon: "◆",
+    description: "Find cement, steel, blocks, tools and building supplies from local vendors.",
+    icon: "construction" as const,
+    meta: "Supplies for every project",
   },
   {
+    key: "parts",
     title: "Car parts",
-    description: "Browse vehicle parts and connect with local automotive suppliers.",
-    icon: "⚙",
+    description: "Browse vehicle parts and connect with trusted automotive suppliers.",
+    icon: "parts" as const,
+    meta: "Parts matched to your needs",
   },
 ];
 
-const particles = Array.from({ length: 14 }, (_, index) => index + 1);
+const experiences = [
+  {
+    title: "For customers",
+    description: "One simple home for rides, delivery, shopping, orders and saved places.",
+    icon: "customer" as const,
+    points: ["Five connected services", "Clear prices and progress", "One account and order history"],
+  },
+  {
+    title: "For vendors",
+    description: "A focused command center for incoming orders, inventory and store availability.",
+    icon: "vendor" as const,
+    points: ["Prioritized order queue", "Inventory health controls", "Store status and performance"],
+  },
+  {
+    title: "For drivers",
+    description: "Trips, deliveries, navigation, customer contact and earnings around the next action.",
+    icon: "driver" as const,
+    points: ["Nearby job requests", "Step-by-step route progress", "Earnings and service rating"],
+  },
+];
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>;
-}) {
-  const configured = isSupabaseConfigured();
-
-  if (configured) {
+export default async function HomePage() {
+  if (isSupabaseConfigured()) {
     const viewer = await getViewer();
-    if (viewer) {
-      redirect(viewer.onboardingComplete ? "/biloo" : "/onboarding");
-    }
+    if (viewer) redirect(viewer.onboardingComplete ? "/biloo" : "/onboarding");
   }
 
-  const params = await searchParams;
-
   return (
-    <main className="biloo-oauth-homepage">
-      <header className="biloo-oauth-header">
-        <div className="biloo-oauth-header-inner">
-          <Link className="biloo-oauth-brand" href="/" aria-label="BILOO homepage">
-            <Image
-              alt="BILOO app logo"
-              height={44}
-              priority
-              src="/icons/biloo-mark.svg"
-              width={44}
-            />
-            <span>BILOO</span>
+    <main className="biloo-home-page">
+      <header className="biloo-home-header">
+        <div className="biloo-home-container biloo-home-header-inner">
+          <Link aria-label="BILOO homepage" className="biloo-home-brand" href="/">
+            <Image alt="BILOO" height={42} priority src="/icons/biloo-mark.svg" width={42} />
+            <span><strong>BILOO</strong><small>One app. Every move.</small></span>
           </Link>
 
-          <nav aria-label="BILOO public pages" className="biloo-oauth-nav">
+          <nav aria-label="BILOO website navigation" className="biloo-home-nav">
+            <a href="#services">Services</a>
+            <a href="#experience">Who it is for</a>
+            <a href="#how-it-works">How it works</a>
             <Link href="/about">About</Link>
-            <Link href="/privacy">Privacy Policy</Link>
-            <Link href="/terms">Terms</Link>
           </nav>
 
-          <Link className="biloo-oauth-mobile-signin" href="/auth/login?next=/biloo">
-            Sign in <span aria-hidden="true">↗</span>
-          </Link>
+          <div className="biloo-home-header-actions">
+            <Link className="biloo-home-login" href="/auth/login?next=/biloo">Sign in</Link>
+            <Link className="biloo-home-get-started" href="/auth/sign-up">
+              Get started <Icon name="arrow" />
+            </Link>
+          </div>
         </div>
       </header>
 
-      <section className="biloo-oauth-hero" aria-labelledby="biloo-home-title">
-        <div className="biloo-mobile-particles" aria-hidden="true">
-          {particles.map((particle) => (
-            <span className={`biloo-mobile-particle biloo-mobile-particle-${particle}`} key={particle} />
-          ))}
-        </div>
-
-        <div className="biloo-oauth-hero-copy">
-          <p className="biloo-oauth-eyebrow">ETHIOPIA&apos;S CONNECTED SUPER APP</p>
-          <h1 id="biloo-home-title">BILOO</h1>
-          <h2>Move, order and shop through one connected application.</h2>
-          <p>
-            BILOO helps people in Ethiopia book taxi rides, order food and groceries,
-            buy construction materials and find car parts through one secure account.
-          </p>
-          <p>
-            Customers can select a service and provider, place a ride or delivery
-            request, review prices, receive status notifications and manage their
-            activity without switching between unrelated apps.
-          </p>
-          <div className="biloo-oauth-hero-links">
-            <Link className="biloo-oauth-explore-link" href="#biloo-services">
-              Explore BILOO services
-            </Link>
-            <Link className="biloo-oauth-privacy-link" href="/privacy">
-              Read our Privacy Policy
-            </Link>
-            <Link className="biloo-oauth-mobile-hero-signin" href="/auth/login?next=/biloo">
-              Sign in to BILOO <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-
-          <a className="biloo-mobile-scroll-cue" href="#biloo-services">
-            <span>Discover the experience</span>
-            <i aria-hidden="true">↓</i>
-          </a>
-        </div>
-
-        <div className="biloo-oauth-identity" aria-label="BILOO application identity">
-          <div className="biloo-oauth-logo-stage">
-            <span className="biloo-oauth-logo-ring biloo-oauth-logo-ring-one" aria-hidden="true" />
-            <span className="biloo-oauth-logo-ring biloo-oauth-logo-ring-two" aria-hidden="true" />
-            <Image
-              alt="BILOO app logo"
-              height={148}
-              priority
-              src="/icons/biloo-mark.svg"
-              width={148}
-            />
-          </div>
-          <strong>BILOO</strong>
-          <span>Operated by BILOO Group</span>
-          <small>Addis Ababa, Ethiopia</small>
-        </div>
-      </section>
-
-      <section className="biloo-oauth-section" id="biloo-services" aria-labelledby="biloo-services-title">
-        <div className="biloo-oauth-section-heading">
-          <p>APPLICATION FUNCTIONALITY</p>
-          <h2 id="biloo-services-title">What users can do with BILOO</h2>
-          <span>
-            BILOO combines five practical services in one application for customers,
-            drivers, delivery partners, stores and local vendors.
-          </span>
-        </div>
-
-        <div className="biloo-oauth-service-grid">
-          {services.map((service, index) => (
-            <article key={service.title} tabIndex={0}>
-              <div className="biloo-oauth-service-topline">
-                <span className="biloo-oauth-service-icon" aria-hidden="true">
-                  {service.icon}
-                </span>
-                <span className="biloo-oauth-service-number" aria-hidden="true">
-                  0{index + 1}
-                </span>
-              </div>
-              <h3>{service.title}</h3>
-              <p>{service.description}</p>
-              <span className="biloo-oauth-service-arrow" aria-hidden="true">↗</span>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="biloo-oauth-section biloo-oauth-data" aria-labelledby="biloo-data-title">
-        <div className="biloo-oauth-section-heading">
-          <p>DATA TRANSPARENCY</p>
-          <h2 id="biloo-data-title">Why BILOO requests user information</h2>
-          <span>
-            BILOO requests only the information needed to operate accounts, rides,
-            orders, deliveries and secure authentication.
-          </span>
-        </div>
-
-        <div className="biloo-oauth-data-grid">
-          <article>
-            <h3>Account and service information</h3>
+      <section className="biloo-home-hero">
+        <div className="biloo-home-container biloo-home-hero-grid">
+          <div className="biloo-home-hero-copy">
+            <span className="biloo-home-kicker"><i /> Built around everyday life in Ethiopia</span>
+            <h1>Everything you need. <strong>One BILOO.</strong></h1>
             <p>
-              BILOO uses account, contact, location and service information to create
-              your account, process rides and orders, connect you with drivers or
-              vendors, display progress and protect the platform.
+              Book a taxi, order food and groceries, find construction materials,
+              and shop for car parts through one beautifully connected experience.
             </p>
-          </article>
-          <article>
-            <h3>Google sign-in information</h3>
-            <p>
-              When you choose Continue with Google, BILOO receives the basic profile
-              information you approve, normally your name, email address, profile image
-              and Google account identifier. It is used only to authenticate you and
-              create or connect your BILOO account.
-            </p>
-          </article>
-          <article>
-            <h3>What BILOO does not request</h3>
-            <p>
-              BILOO does not request access to Gmail, Google Drive, Google Contacts or
-              Google Calendar, and BILOO does not sell Google user data.
-            </p>
-          </article>
-        </div>
-
-        <p className="biloo-oauth-privacy-callout">
-          Full details about collection, use, retention and user choices are available
-          in the <Link href="/privacy">BILOO Privacy Policy</Link>.
-        </p>
-      </section>
-
-      <section className="biloo-oauth-access" aria-labelledby="biloo-access-title">
-        <div>
-          <p className="biloo-oauth-eyebrow">ACCESS BILOO</p>
-          <h2 id="biloo-access-title">Create an account or sign in</h2>
-          <p>
-            The information above and BILOO&apos;s legal pages are publicly available
-            without requiring an account.
-          </p>
-        </div>
-
-        <div className="biloo-oauth-actions">
-          {params.error ? (
-            <div className="biloo-entry-error" role="alert">
-              {params.error}
+            <div className="biloo-home-hero-actions">
+              <Link className="biloo-home-primary" href="/auth/sign-up">
+                Start with BILOO <Icon name="arrow" />
+              </Link>
+              <a className="biloo-home-secondary" href="#services">
+                Explore services
+              </a>
             </div>
-          ) : null}
+            <div className="biloo-home-proof-row" aria-label="BILOO platform highlights">
+              <span><Icon name="check" /> One secure account</span>
+              <span><Icon name="location" /> Location-aware services</span>
+              <span><Icon name="bell" /> Progress updates</span>
+            </div>
+          </div>
 
-          <Link className="biloo-entry-primary" href="/auth/sign-up">
-            Create account
-          </Link>
-          <Link className="biloo-entry-secondary" href="/auth/login?next=/biloo">
-            I have an account
-          </Link>
+          <div className="biloo-home-product-stage" aria-label="Preview of the BILOO application">
+            <div className="biloo-home-app-card">
+              <div className="biloo-home-app-topbar">
+                <span className="biloo-home-mini-brand">B</span>
+                <div><small>Good afternoon</small><strong>Where to today?</strong></div>
+                <span className="biloo-home-avatar">MA</span>
+              </div>
 
-          {configured ? (
-            <form action={signInWithGoogleAction}>
-              <input name="next" type="hidden" value="/biloo" />
-              <AppEntryGoogleButton />
-            </form>
-          ) : (
-            <button className="biloo-entry-google" disabled type="button">
-              Google sign-in unavailable in preview
-            </button>
-          )}
+              <div className="biloo-home-location-pill">
+                <Icon name="location" />
+                <span><small>Your location</small><strong>Bole, Addis Ababa</strong></span>
+                <Icon name="arrow" />
+              </div>
 
-          <p className="biloo-oauth-legal">
-            By continuing, you agree to BILOO&apos;s <Link href="/terms">Terms of Service</Link>{" "}
-            and <Link href="/privacy">Privacy Policy</Link>.
-          </p>
+              <div className="biloo-home-app-services">
+                {services.slice(0, 4).map((service) => (
+                  <span key={service.key}><i><Icon name={service.icon} /></i><small>{service.title.split(" ")[0]}</small></span>
+                ))}
+              </div>
+
+              <div className="biloo-home-ride-preview">
+                <div>
+                  <span className="biloo-home-live-dot"><i /> DRIVER MATCHED</span>
+                  <h2>Your ride is 3 min away</h2>
+                  <p>Toyota Corolla · Code 4821</p>
+                </div>
+                <span className="biloo-home-car-icon"><Icon name="taxi" /></span>
+                <div className="biloo-home-route-line"><i /><b /><i /></div>
+                <div className="biloo-home-ride-meta">
+                  <span><small>Pickup</small><strong>Bole Medhanialem</strong></span>
+                  <span><small>Destination</small><strong>Meskel Square</strong></span>
+                </div>
+              </div>
+
+              <div className="biloo-home-bottom-nav" aria-hidden="true">
+                <span className="is-active"><Icon name="home" /><small>Home</small></span>
+                <span><Icon name="search" /><small>Explore</small></span>
+                <span><Icon name="receipt" /><small>Activity</small></span>
+                <span><Icon name="customer" /><small>Account</small></span>
+              </div>
+            </div>
+
+            <div className="biloo-home-floating-card biloo-home-floating-order">
+              <span><Icon name="food" /></span>
+              <div><small>Food order</small><strong>Preparing now</strong><p>12–18 min</p></div>
+            </div>
+            <div className="biloo-home-floating-card biloo-home-floating-rating">
+              <span><Icon name="star" /></span>
+              <div><small>Trusted service</small><strong>4.93 rating</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="biloo-home-container biloo-home-stat-strip">
+          <div><strong>5</strong><span>connected services</span></div>
+          <div><strong>1</strong><span>account and activity history</span></div>
+          <div><strong>3</strong><span>dedicated role experiences</span></div>
+          <div><strong>24/7</strong><span>access to your BILOO account</span></div>
         </div>
       </section>
 
-      <footer className="biloo-oauth-footer">
-        <div className="biloo-oauth-footer-brand">
-          <Image alt="BILOO app logo" height={38} src="/icons/biloo-mark.svg" width={38} />
-          <div>
-            <strong>BILOO</strong>
-            <span>Operated by BILOO Group · Addis Ababa, Ethiopia</span>
+      <section className="biloo-home-section" id="services">
+        <div className="biloo-home-container">
+          <div className="biloo-home-section-head">
+            <div><span className="biloo-home-overline">THE SUPER APP</span><h2>Five essential services, designed as one.</h2></div>
+            <p>BILOO removes the friction of switching between separate apps and creates one familiar way to move, order and shop.</p>
+          </div>
+
+          <div className="biloo-home-services-grid">
+            {services.map((service, index) => (
+              <article className={index === 0 ? "is-featured" : ""} key={service.key}>
+                <div className="biloo-home-service-top">
+                  <span className="biloo-home-service-icon"><Icon name={service.icon} /></span>
+                  <small>0{index + 1}</small>
+                </div>
+                <div>
+                  <span>{service.meta}</span>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </div>
+                <Link href="/auth/sign-up" aria-label={`Get started with ${service.title}`}><Icon name="arrow" /></Link>
+              </article>
+            ))}
           </div>
         </div>
-        <nav aria-label="BILOO legal links">
-          <Link href="/about">About BILOO</Link>
-          <Link href="/privacy">Privacy Policy</Link>
-          <Link href="/terms">Terms of Service</Link>
-        </nav>
+      </section>
+
+      <section className="biloo-home-experience" id="experience">
+        <div className="biloo-home-container">
+          <div className="biloo-home-section-head biloo-home-section-head-light">
+            <div><span className="biloo-home-overline">ONE PLATFORM, THREE EXPERIENCES</span><h2>Beautiful for customers. Powerful for operators.</h2></div>
+            <p>Each role gets a focused interface built around what matters next—without losing the shared BILOO identity.</p>
+          </div>
+
+          <div className="biloo-home-experience-grid">
+            {experiences.map((experience, index) => (
+              <article key={experience.title}>
+                <div className="biloo-home-experience-number">0{index + 1}</div>
+                <span className="biloo-home-experience-icon"><Icon name={experience.icon} /></span>
+                <h3>{experience.title}</h3>
+                <p>{experience.description}</p>
+                <ul>
+                  {experience.points.map((point) => <li key={point}><Icon name="check" />{point}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="biloo-home-section biloo-home-how" id="how-it-works">
+        <div className="biloo-home-container biloo-home-how-grid">
+          <div className="biloo-home-how-copy">
+            <span className="biloo-home-overline">SIMPLE BY DESIGN</span>
+            <h2>From need to done in three clear steps.</h2>
+            <p>Every service follows a familiar flow, so BILOO feels easy from the first ride or order.</p>
+            <Link className="biloo-home-text-link" href="/auth/sign-up">Create your BILOO account <Icon name="arrow" /></Link>
+          </div>
+
+          <div className="biloo-home-steps">
+            <article><span>01</span><div><strong>Choose what you need</strong><p>Select taxi, food, groceries, construction materials or car parts.</p></div></article>
+            <article><span>02</span><div><strong>Review and confirm</strong><p>See the provider, route or items, then confirm your request with confidence.</p></div></article>
+            <article><span>03</span><div><strong>Follow every update</strong><p>Track progress and keep your activity organized inside one account.</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section className="biloo-home-trust">
+        <div className="biloo-home-container biloo-home-trust-grid">
+          <div>
+            <span className="biloo-home-overline">TRUSTED BY DESIGN</span>
+            <h2>Your account, location and activity deserve clear protection.</h2>
+            <p>BILOO is designed around secure authentication, transparent data use and clear controls for everyday services.</p>
+            <div className="biloo-home-trust-links">
+              <Link href="/privacy">Privacy Policy <Icon name="arrow" /></Link>
+              <Link href="/terms">Terms of Service <Icon name="arrow" /></Link>
+            </div>
+          </div>
+          <div className="biloo-home-trust-cards">
+            <article><Icon name="shield" /><div><strong>Secure sign-in</strong><p>Protected account access through Supabase Auth and optional Google authentication.</p></div></article>
+            <article><Icon name="location" /><div><strong>Permission-based location</strong><p>Location is used when you request nearby services, routing or delivery support.</p></div></article>
+            <article><Icon name="customer" /><div><strong>Clear user control</strong><p>Public privacy and terms pages explain how BILOO handles account and service data.</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section className="biloo-home-final-cta">
+        <div className="biloo-home-container">
+          <div>
+            <span className="biloo-home-overline">WELCOME TO BILOO</span>
+            <h2>Move. Order. Shop. One connected experience.</h2>
+            <p>Explore the public website freely. Create an account only when you are ready to use BILOO.</p>
+          </div>
+          <div className="biloo-home-final-actions">
+            <Link className="biloo-home-primary" href="/auth/sign-up">Get started <Icon name="arrow" /></Link>
+            <Link className="biloo-home-final-login" href="/auth/login?next=/biloo">Sign in to your account</Link>
+          </div>
+        </div>
+      </section>
+
+      <footer className="biloo-home-footer">
+        <div className="biloo-home-container biloo-home-footer-grid">
+          <div className="biloo-home-footer-brand">
+            <Image alt="BILOO" height={42} src="/icons/biloo-mark.svg" width={42} />
+            <div><strong>BILOO</strong><span>One app. Every move.</span></div>
+            <p>Operated by BILOO Group in Addis Ababa, Ethiopia.</p>
+          </div>
+          <div><strong>Product</strong><a href="#services">Services</a><a href="#experience">Experiences</a><a href="#how-it-works">How it works</a></div>
+          <div><strong>Company</strong><Link href="/about">About BILOO</Link><a href="mailto:yenedeen@gmail.com">Contact</a><Link href="/auth/login?next=/biloo">Sign in</Link></div>
+          <div><strong>Legal</strong><Link href="/privacy">Privacy Policy</Link><Link href="/terms">Terms of Service</Link></div>
+        </div>
+        <div className="biloo-home-container biloo-home-footer-bottom">
+          <span>© 2026 BILOO Group. All rights reserved.</span>
+          <span>Addis Ababa · Ethiopia</span>
+        </div>
       </footer>
     </main>
   );
