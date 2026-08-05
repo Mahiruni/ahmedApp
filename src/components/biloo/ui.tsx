@@ -261,12 +261,27 @@ export function Icon({
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-black text-[11px] font-bold tracking-[-0.04em] text-white">
-        BL
+    <div className="biloo-brand-lockup flex items-center gap-2.5">
+      <span
+        aria-hidden="true"
+        className="biloo-brand-glyph grid size-9 shrink-0 place-items-center overflow-hidden rounded-lg bg-[#5146e5]"
+      >
+        <svg
+          className="biloo-brand-glyph-svg block size-full"
+          fill="none"
+          viewBox="0 0 64 64"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="64" height="64" rx="16" fill="#5146E5" />
+          <path
+            d="M15 11.5h11.5c10.5 0 16.8 4.7 16.8 12.4 0 4.5-2.1 7.9-6.2 10 5.6 1.8 8.4 5.3 8.4 10.4 0 8.8-7 14.2-18.5 14.2H15v-47Zm11.5 18.2c4.1 0 6.4-1.7 6.4-4.8 0-3-2.3-4.6-6.4-4.6h-2.3v9.4h2.3Zm.8 19.8c5 0 7.8-1.9 7.8-5.5 0-3.5-2.8-5.4-7.8-5.4h-3.1v10.9h3.1Z"
+            fill="#FFFFFF"
+          />
+          <circle cx="49.5" cy="49.5" r="4.5" fill="#C7F000" />
+        </svg>
       </span>
       {!compact ? (
-        <div className="leading-none">
+        <div className="biloo-brand-copy leading-none">
           <p className="text-[19px] font-bold tracking-[-0.045em] text-black">
             BILOO
           </p>
