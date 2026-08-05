@@ -8,6 +8,8 @@ import { createClient } from "@/lib/supabase/server";
 export interface AppViewer {
   id: string;
   email: string | null;
+  phone: string | null;
+  city: string;
   displayName: string;
   initials: string;
   databaseRole: BilooUserRole;
@@ -62,6 +64,8 @@ export async function getViewer(): Promise<AppViewer | null> {
   return {
     id: userId,
     email,
+    phone: typedProfile.phone,
+    city: typedProfile.city || "Addis Ababa",
     displayName,
     initials: initials(displayName, email),
     databaseRole: typedProfile.role,
