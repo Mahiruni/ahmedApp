@@ -1,0 +1,105 @@
+/* Compact glassmorphic mobile footer navigation. Imported last. */
+
+@media (max-width: 1023px) {
+  .biloo-customer-nav,
+  .biloo-workspace-rail {
+    position: fixed !important;
+    inset-inline: 10px !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    z-index: 70 !important;
+    width: auto !important;
+    overflow: hidden;
+    border: 1px solid rgba(81, 70, 229, 0.16) !important;
+    border-radius: 19px !important;
+    background: rgba(250, 250, 255, 0.82) !important;
+    padding: 3px 6px !important;
+    box-shadow:
+      0 14px 34px rgba(30, 24, 83, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(155%);
+    backdrop-filter: blur(18px) saturate(155%);
+    transform: translateZ(0);
+  }
+
+  .biloo-customer-nav-list,
+  .biloo-workspace-list {
+    min-height: 54px;
+    align-items: center;
+  }
+
+  .biloo-customer-nav-item,
+  .biloo-workspace-item {
+    min-height: 52px !important;
+    gap: 2px !important;
+    border-radius: 13px;
+    padding: 4px 2px !important;
+    color: #474351 !important;
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+  }
+
+  .biloo-customer-nav-item > span:last-child,
+  .biloo-workspace-item > span:last-child {
+    color: inherit !important;
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+    line-height: 1.1;
+  }
+
+  .biloo-customer-nav-icon,
+  .biloo-workspace-icon {
+    width: 34px !important;
+    height: 28px !important;
+    border-radius: 10px !important;
+    color: inherit !important;
+  }
+
+  .biloo-customer-nav-item:hover,
+  .biloo-customer-nav-item[data-active="true"],
+  .biloo-workspace-item:hover,
+  .biloo-workspace-item[data-active="true"] {
+    background: rgba(81, 70, 229, 0.07) !important;
+    color: #3429b8 !important;
+  }
+
+  .biloo-customer-nav-item:hover .biloo-customer-nav-icon,
+  .biloo-customer-nav-item[data-active="true"] .biloo-customer-nav-icon,
+  .biloo-workspace-item:hover .biloo-workspace-icon,
+  .biloo-workspace-item[data-active="true"] .biloo-workspace-icon {
+    background: rgba(81, 70, 229, 0.11) !important;
+    color: #3429b8 !important;
+  }
+
+  .biloo-customer-nav-item::before {
+    top: 1px !important;
+    width: 20px !important;
+    height: 2px !important;
+    border-radius: 999px !important;
+  }
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  @media (max-width: 1023px) {
+    .biloo-customer-nav,
+    .biloo-workspace-rail {
+      background: #fbfbff !important;
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .biloo-customer-nav,
+  .biloo-workspace-rail {
+    inset-inline: 7px !important;
+  }
+
+  .biloo-customer-nav-item,
+  .biloo-workspace-item {
+    min-height: 50px !important;
+  }
+
+  .biloo-customer-nav-item > span:last-child,
+  .biloo-workspace-item > span:last-child {
+    font-size: 9px !important;
+  }
+}
