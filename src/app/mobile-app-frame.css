@@ -1,0 +1,350 @@
+/* BILOO application surfaces stay mobile-sized on every viewport.
+   Public marketing pages are intentionally not targeted here. */
+
+:root {
+  --biloo-app-frame: 480px;
+  --biloo-app-frame-gutter: max(0px, calc((100vw - var(--biloo-app-frame)) / 2));
+}
+
+@media (min-width: 481px) {
+  body:has(> main > [data-biloo-header]),
+  body:has(> .biloo-auth-page),
+  body:has(> .biloo-settings-page) {
+    background: #e9e9f0;
+  }
+}
+
+/* Customer, driver, vendor and admin application shell. */
+main:has(> [data-biloo-header]) {
+  position: relative;
+  width: min(100%, var(--biloo-app-frame));
+  min-height: 100svh;
+  margin-inline: auto;
+  overflow-x: clip;
+  background: #f2f5f7;
+}
+
+@media (min-width: 481px) {
+  main:has(> [data-biloo-header]) {
+    box-shadow: 0 0 0 1px rgba(39, 35, 75, 0.08), 0 24px 80px rgba(39, 35, 75, 0.14);
+  }
+}
+
+main:has(> [data-biloo-header]) > div {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+main:has(> [data-biloo-header]) > div > section {
+  min-width: 0 !important;
+  padding: 14px 12px 92px !important;
+}
+
+main:has(> [data-biloo-header]) .biloo-app-header-inner {
+  max-width: none !important;
+}
+
+main:has(> [data-biloo-header]) .biloo-header-workspace {
+  display: none !important;
+}
+
+main:has(> [data-biloo-header]) [class*="sm:grid-cols-"],
+main:has(> [data-biloo-header]) [class*="md:grid-cols-"],
+main:has(> [data-biloo-header]) [class*="lg:grid-cols-"],
+main:has(> [data-biloo-header]) [class*="xl:grid-cols-"] {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+main:has(> [data-biloo-header]) [class*="sm:flex-row"],
+main:has(> [data-biloo-header]) [class*="md:flex-row"],
+main:has(> [data-biloo-header]) [class*="lg:flex-row"],
+main:has(> [data-biloo-header]) [class*="xl:flex-row"] {
+  flex-direction: column !important;
+}
+
+main:has(> [data-biloo-header]) .hidden[class*="sm:grid"],
+main:has(> [data-biloo-header]) .hidden[class*="md:grid"],
+main:has(> [data-biloo-header]) .hidden[class*="lg:grid"],
+main:has(> [data-biloo-header]) .hidden[class*="xl:grid"] {
+  display: none !important;
+}
+
+/* Force mobile bottom navigation even when the browser viewport is desktop-sized. */
+.biloo-customer-nav,
+.biloo-workspace-rail {
+  position: fixed !important;
+  inset: auto auto max(8px, env(safe-area-inset-bottom)) 50% !important;
+  z-index: 70 !important;
+  display: block !important;
+  width: min(calc(100vw - 20px), 460px) !important;
+  height: auto !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(81, 70, 229, 0.16) !important;
+  border-radius: 19px !important;
+  background: rgba(250, 250, 255, 0.94) !important;
+  padding: 3px 6px max(3px, env(safe-area-inset-bottom)) !important;
+  box-shadow: 0 14px 34px rgba(30, 24, 83, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+  transform: translateX(-50%) !important;
+}
+
+.biloo-customer-nav-head,
+.biloo-workspace-rail-head,
+.biloo-customer-nav-status,
+.biloo-workspace-status {
+  display: none !important;
+}
+
+.biloo-customer-nav-list,
+.biloo-workspace-list {
+  display: grid !important;
+  width: 100% !important;
+  min-height: 54px !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  align-items: center !important;
+  flex-direction: initial !important;
+  padding: 0 !important;
+}
+
+.biloo-customer-nav-item,
+.biloo-workspace-item {
+  min-height: 52px !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  border-radius: 13px !important;
+  padding: 4px 2px !important;
+  color: #474351 !important;
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+}
+
+.biloo-customer-nav-item::before {
+  top: 1px !important;
+  left: 50% !important;
+  width: 20px !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  transform: translateX(-50%) !important;
+}
+
+.biloo-customer-nav-icon,
+.biloo-workspace-icon {
+  width: 34px !important;
+  height: 28px !important;
+  flex: 0 0 auto !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.biloo-customer-nav-item > span:last-child,
+.biloo-workspace-item > span:last-child {
+  color: inherit !important;
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+}
+
+.biloo-customer-nav-item:hover,
+.biloo-customer-nav-item[data-active="true"],
+.biloo-workspace-item:hover,
+.biloo-workspace-item[data-active="true"] {
+  background: rgba(81, 70, 229, 0.07) !important;
+  color: #3429b8 !important;
+}
+
+.biloo-customer-nav-item:hover .biloo-customer-nav-icon,
+.biloo-customer-nav-item[data-active="true"] .biloo-customer-nav-icon,
+.biloo-workspace-item:hover .biloo-workspace-icon,
+.biloo-workspace-item[data-active="true"] .biloo-workspace-icon {
+  border: 0 !important;
+  background: rgba(81, 70, 229, 0.11) !important;
+  color: #3429b8 !important;
+}
+
+/* Application drawers and dialogs retain their mobile bottom-sheet behavior. */
+.biloo-command-panel {
+  right: var(--biloo-app-frame-gutter) !important;
+}
+
+.biloo-cart-sheet,
+.biloo-payment-sheet,
+.biloo-tracking-sheet {
+  top: auto !important;
+  right: var(--biloo-app-frame-gutter) !important;
+  bottom: 0 !important;
+  left: auto !important;
+  width: min(100vw, var(--biloo-app-frame)) !important;
+  max-height: min(90svh, 820px) !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+  border-radius: 24px 24px 0 0 !important;
+  transform: translateY(104%) !important;
+}
+
+.biloo-cart-overlay[data-open="true"] .biloo-cart-sheet,
+.biloo-payment-overlay[data-open="true"] .biloo-payment-sheet,
+.biloo-tracking-overlay[data-open="true"] .biloo-tracking-sheet {
+  transform: translateY(0) !important;
+}
+
+.biloo-cart-handle,
+.biloo-payment-handle,
+.biloo-tracking-handle {
+  display: block !important;
+}
+
+[data-biloo-notification-center] > section {
+  inset: auto var(--biloo-app-frame-gutter) 0 auto !important;
+  width: min(100vw, var(--biloo-app-frame)) !important;
+  max-height: 88svh !important;
+  border-radius: 26px 26px 0 0 !important;
+}
+
+[data-biloo-notification-center] > section > div:first-child {
+  display: block !important;
+}
+
+/* Authentication, signup and onboarding remain a single mobile flow. */
+.biloo-auth-page {
+  width: min(100%, var(--biloo-app-frame)) !important;
+  min-height: 100svh !important;
+  margin-inline: auto !important;
+  overflow-x: clip !important;
+  background: #ffffff !important;
+}
+
+@media (min-width: 481px) {
+  .biloo-auth-page {
+    box-shadow: 0 0 0 1px rgba(39, 35, 75, 0.08), 0 24px 80px rgba(39, 35, 75, 0.14) !important;
+  }
+}
+
+.biloo-auth-shell {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100svh !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.biloo-auth-story {
+  display: none !important;
+}
+
+.biloo-auth-form-panel {
+  display: block !important;
+  width: 100% !important;
+  min-height: 100svh !important;
+}
+
+.biloo-auth-form-wrap {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom)) !important;
+}
+
+.biloo-auth-mobile-brand {
+  display: inline-flex !important;
+}
+
+.biloo-signup-grid,
+.biloo-signup-name-grid,
+.biloo-form-grid,
+.biloo-form-grid.two-column,
+.biloo-role-options,
+.biloo-phone-verification-actions {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.biloo-signup-wide,
+.biloo-auth-field.full-width {
+  grid-column: auto !important;
+}
+
+/* Account settings are an app screen, not a desktop control panel. */
+.biloo-settings-page,
+.biloo-settings-danger-footer {
+  width: min(100%, var(--biloo-app-frame)) !important;
+  margin-inline: auto !important;
+  overflow-x: clip !important;
+}
+
+@media (min-width: 481px) {
+  .biloo-settings-page,
+  .biloo-settings-danger-footer {
+    box-shadow: 0 0 0 1px rgba(39, 35, 75, 0.08), 0 24px 80px rgba(39, 35, 75, 0.14) !important;
+  }
+}
+
+.biloo-settings-topbar,
+.biloo-settings-layout,
+.biloo-settings-danger-footer > div {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.biloo-settings-layout {
+  display: block !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.biloo-settings-sidebar {
+  display: none !important;
+}
+
+.biloo-settings-content {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 14px 12px 96px !important;
+}
+
+.biloo-settings-hero,
+.biloo-settings-fields,
+.biloo-settings-preference-grid,
+.biloo-settings-security-grid,
+.biloo-settings-savebar,
+.biloo-settings-danger-footer > div {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.biloo-settings-hero,
+.biloo-settings-savebar,
+.biloo-settings-danger-footer > div {
+  align-items: stretch !important;
+  flex-direction: column !important;
+}
+
+.biloo-settings-topbar {
+  padding-inline: 14px !important;
+}
+
+.biloo-settings-back {
+  min-width: 44px !important;
+}
+
+@media (max-width: 360px) {
+  .biloo-auth-form-wrap {
+    padding-inline: 14px !important;
+  }
+
+  main:has(> [data-biloo-header]) > div > section,
+  .biloo-settings-content {
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .biloo-cart-sheet,
+  .biloo-payment-sheet,
+  .biloo-tracking-sheet,
+  [data-biloo-notification-center] > section {
+    transition: none !important;
+  }
+}
