@@ -15,7 +15,9 @@ type EthiopianPhoneInputProps = {
   disabled?: boolean;
   id?: string;
   name: string;
+  onValueChange?: (value: string) => void;
   required?: boolean;
+  value?: string;
 };
 
 export function EthiopianPhoneInput({
@@ -25,18 +27,34 @@ export function EthiopianPhoneInput({
   disabled = false,
   id,
   name,
+  onValueChange,
   required = false,
+  value,
 }: EthiopianPhoneInputProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
-  const [displayValue, setDisplayValue] = useState(() =>
+  const [internalDisplayValue, setInternalDisplayValue] = useState(() =>
     formatEthiopianNationalPhone(defaultValue),
   );
-
+  const controlled = value !== undefined;
+  const displayValue = controlled
+    ? formatEthiopianNationalPhone(value)
+    : internalDisplayValue;
   const nationalDigits = ethiopianNationalDigits(displayValue);
   const submittedValue = nationalDigits
     ? `${ETHIOPIAN_COUNTRY_CODE}${nationalDigits}`
     : "";
+
+  function updateValue(input: string) {
+    const formatted = formatEthiopianNationalPhone(input);
+    const nextNationalDigits = ethiopianNationalDigits(formatted);
+    const nextSubmittedValue = nextNationalDigits
+      ? `${ETHIOPIAN_COUNTRY_CODE}${nextNationalDigits}`
+      : "";
+
+    if (!controlled) setInternalDisplayValue(formatted);
+    onValueChange?.(nextSubmittedValue);
+  }
 
   return (
     <div className="biloo-phone-input">
@@ -53,9 +71,7 @@ export function EthiopianPhoneInput({
         id={inputId}
         inputMode="numeric"
         maxLength={11}
-        onChange={(event) =>
-          setDisplayValue(formatEthiopianNationalPhone(event.target.value))
-        }
+        onChange={(event) => updateValue(event.target.value)}
         pattern="[79][0-9]{2} [0-9]{3} [0-9]{3}"
         placeholder="912 345 678"
         required={required}
