@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import type { FormEvent } from "react";
+import { useEffect, useState } from "react";
 
 import { completeOnboardingAction } from "@/app/onboarding/actions";
 import { Icon } from "@/components/biloo/ui";
 import { EthiopianPhoneInput } from "@/components/forms/ethiopian-phone-input";
+import { normalizeEthiopianPhone } from "@/lib/biloo/phone";
+import { createClient } from "@/lib/supabase/client";
 import { authButtonClass, authInputClass } from "./auth-shell";
 
 type RequestedRole = "customer" | "driver" | "vendor_owner";
+type OtpStage = "idle" | "sending" | "code" | "verifying" | "verified";
+type OtpMessage = { tone: "error" | "success" | "info"; text: string } | null;
+
+type OnboardingFormProps = {
+  defaultPhone?: string;
+  displayName: string;
+  initialPhoneVerified?: boolean;
+  phoneVerificationEnabled?: boolean;
+};
 
 const roleOptions: Array<{
   value: RequestedRole;
@@ -35,11 +47,194 @@ const roleOptions: Array<{
   },
 ];
 
-export function OnboardingForm({ displayName }: { displayName: string }) {
+function phoneOtpError(message: string) {
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes("rate limit") || normalized.includes("security purposes")) {
+    return "Please wait before requesting another verification code.";
+  }
+
+  if (
+    normalized.includes("sms provider") ||
+    normalized.includes("phone provider") ||
+    normalized.includes("unsupported phone")
+  ) {
+    return "SMS verification is not active yet. BILOO must finish its SMS provider setup before codes can be delivered.";
+  }
+
+  if (normalized.includes("already") && normalized.includes("registered")) {
+    return "That phone number is already connected to another BILOO account.";
+  }
+
+  if (normalized.includes("expired") || normalized.includes("invalid")) {
+    return "That verification code is invalid or has expired. Request a new code and try again.";
+  }
+
+  return message;
+}
+
+export function OnboardingForm({
+  defaultPhone = "",
+  displayName,
+  initialPhoneVerified = false,
+  phoneVerificationEnabled = false,
+}: OnboardingFormProps) {
+  const normalizedDefaultPhone = normalizeEthiopianPhone(defaultPhone) ?? "";
   const [requestedRole, setRequestedRole] = useState<RequestedRole>("customer");
+  const [phone, setPhone] = useState(normalizedDefaultPhone);
+  const [verifiedPhone, setVerifiedPhone] = useState(
+    initialPhoneVerified ? normalizedDefaultPhone : "",
+  );
+  const [sentPhone, setSentPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpStage, setOtpStage] = useState<OtpStage>(
+    initialPhoneVerified ? "verified" : "idle",
+  );
+  const [otpMessage, setOtpMessage] = useState<OtpMessage>(
+    initialPhoneVerified
+      ? { tone: "success", text: "This phone number is already verified." }
+      : null,
+  );
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+
+  const phoneVerified = Boolean(phone && phone === verifiedPhone);
+  const otpBusy = otpStage === "sending" || otpStage === "verifying";
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+
+    const timer = window.setInterval(() => {
+      setCooldownSeconds((current) => Math.max(0, current - 1));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [cooldownSeconds]);
+
+  function handlePhoneChange(nextPhone: string) {
+    setPhone(nextPhone);
+
+    if (nextPhone !== verifiedPhone) {
+      setSentPhone("");
+      setOtp("");
+      setOtpStage("idle");
+      setOtpMessage(null);
+      setCooldownSeconds(0);
+    }
+  }
+
+  async function requestPhoneOtp() {
+    if (!phone) {
+      setOtpMessage({
+        tone: "error",
+        text: "Enter the 9 mobile digits after +251 before requesting a code.",
+      });
+      return;
+    }
+
+    setOtpStage("sending");
+    setOtpMessage({ tone: "info", text: "Sending your verification code…" });
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ phone });
+
+    if (error) {
+      setOtpStage("idle");
+      setOtpMessage({ tone: "error", text: phoneOtpError(error.message) });
+      return;
+    }
+
+    setSentPhone(phone);
+    setOtp("");
+    setOtpStage("code");
+    setCooldownSeconds(60);
+    setOtpMessage({
+      tone: "success",
+      text: `A 6-digit code was sent to ${phone}.`,
+    });
+  }
+
+  async function resendPhoneOtp() {
+    if (!sentPhone || cooldownSeconds > 0) return;
+
+    setOtpStage("sending");
+    setOtpMessage({ tone: "info", text: "Sending a new verification code…" });
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.resend({
+      phone: sentPhone,
+      type: "phone_change",
+    });
+
+    if (error) {
+      setOtpStage("code");
+      setOtpMessage({ tone: "error", text: phoneOtpError(error.message) });
+      return;
+    }
+
+    setOtp("");
+    setOtpStage("code");
+    setCooldownSeconds(60);
+    setOtpMessage({ tone: "success", text: "A new verification code was sent." });
+  }
+
+  async function verifyPhoneOtp() {
+    if (!sentPhone || otp.length !== 6) {
+      setOtpMessage({ tone: "error", text: "Enter the complete 6-digit code." });
+      return;
+    }
+
+    setOtpStage("verifying");
+    setOtpMessage({ tone: "info", text: "Verifying your phone number…" });
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.verifyOtp({
+      phone: sentPhone,
+      token: otp,
+      type: "phone_change",
+    });
+
+    if (error) {
+      setOtpStage("code");
+      setOtpMessage({ tone: "error", text: phoneOtpError(error.message) });
+      return;
+    }
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    const authenticatedPhone = normalizeEthiopianPhone(user?.phone ?? "");
+
+    if (userError || authenticatedPhone !== sentPhone || !user?.phone_confirmed_at) {
+      setOtpStage("code");
+      setOtpMessage({
+        tone: "error",
+        text: "The code was accepted, but BILOO could not confirm the updated phone. Please try once more.",
+      });
+      return;
+    }
+
+    setVerifiedPhone(sentPhone);
+    setOtpStage("verified");
+    setOtpMessage({ tone: "success", text: "Phone number verified successfully." });
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    if (phoneVerificationEnabled && !phoneVerified) {
+      event.preventDefault();
+      setOtpMessage({
+        tone: "error",
+        text: "Verify your phone number before completing onboarding.",
+      });
+    }
+  }
 
   return (
-    <form action={completeOnboardingAction} className="biloo-onboarding-form">
+    <form
+      action={completeOnboardingAction}
+      className="biloo-onboarding-form"
+      onSubmit={handleSubmit}
+    >
       <section className="biloo-onboarding-section">
         <div className="biloo-form-section-heading">
           <span>Personal details</span>
@@ -56,13 +251,115 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
               required
             />
           </label>
-          <label className="biloo-auth-field">
+          <div className="biloo-auth-field">
             <span>Phone number</span>
-            <EthiopianPhoneInput className={authInputClass} name="phone" required />
-            <small className="biloo-signup-help">
+            <EthiopianPhoneInput
+              className={authInputClass}
+              defaultValue={normalizedDefaultPhone}
+              describedBy="biloo-phone-help biloo-phone-otp-message"
+              name="phone"
+              onValueChange={handlePhoneChange}
+              readOnly={otpBusy}
+              required
+            />
+            <small className="biloo-signup-help" id="biloo-phone-help">
               +251 is fixed. Enter only the 9 digits starting with 9 or 7.
             </small>
-          </label>
+
+            {phoneVerificationEnabled ? (
+              <div
+                className="biloo-phone-verification"
+                data-state={phoneVerified ? "verified" : otpStage}
+              >
+                <div className="biloo-phone-verification-heading">
+                  <span aria-hidden="true" className="biloo-phone-verification-icon">
+                    {phoneVerified ? "✓" : "6"}
+                  </span>
+                  <div>
+                    <strong>
+                      {phoneVerified ? "Phone verified" : "Verify with a 6-digit code"}
+                    </strong>
+                    <small>
+                      {phoneVerified
+                        ? "This number is securely connected to your BILOO account."
+                        : "BILOO sends the code by SMS before account activation."}
+                    </small>
+                  </div>
+                </div>
+
+                {!phoneVerified && otpStage === "idle" ? (
+                  <button
+                    className="biloo-phone-otp-secondary"
+                    disabled={!phone}
+                    onClick={requestPhoneOtp}
+                    type="button"
+                  >
+                    Send verification code
+                  </button>
+                ) : null}
+
+                {!phoneVerified && (otpStage === "code" || otpStage === "verifying") ? (
+                  <div className="biloo-phone-otp-entry">
+                    <label htmlFor="biloo-phone-otp">
+                      <span>Verification code</span>
+                      <input
+                        autoComplete="one-time-code"
+                        className={authInputClass}
+                        id="biloo-phone-otp"
+                        inputMode="numeric"
+                        maxLength={6}
+                        onChange={(event) =>
+                          setOtp(event.target.value.replace(/\D/g, "").slice(0, 6))
+                        }
+                        pattern="[0-9]{6}"
+                        placeholder="000000"
+                        type="text"
+                        value={otp}
+                      />
+                    </label>
+                    <div className="biloo-phone-otp-actions">
+                      <button
+                        className="biloo-phone-otp-primary"
+                        disabled={otp.length !== 6 || otpStage === "verifying"}
+                        onClick={verifyPhoneOtp}
+                        type="button"
+                      >
+                        {otpStage === "verifying" ? "Verifying…" : "Verify phone"}
+                      </button>
+                      <button
+                        className="biloo-phone-otp-link"
+                        disabled={cooldownSeconds > 0 || otpStage === "verifying"}
+                        onClick={resendPhoneOtp}
+                        type="button"
+                      >
+                        {cooldownSeconds > 0
+                          ? `Resend in ${cooldownSeconds}s`
+                          : "Resend code"}
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+
+                {!phoneVerified && otpStage === "sending" ? (
+                  <div className="biloo-phone-otp-loading" role="status">
+                    <span aria-hidden="true" />
+                    Sending code…
+                  </div>
+                ) : null}
+
+                {otpMessage ? (
+                  <p
+                    aria-live="polite"
+                    className="biloo-phone-otp-message"
+                    data-tone={otpMessage.tone}
+                    id="biloo-phone-otp-message"
+                  >
+                    {otpMessage.text}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
           <label className="biloo-auth-field full-width">
             <span>City</span>
             <input
@@ -191,8 +488,16 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
         </p>
       </div>
 
-      <button className={authButtonClass} type="submit">
-        {requestedRole === "customer" ? "Activate customer account" : "Submit for verification"}
+      <button
+        className={authButtonClass}
+        disabled={phoneVerificationEnabled && !phoneVerified}
+        type="submit"
+      >
+        {phoneVerificationEnabled && !phoneVerified
+          ? "Verify phone to continue"
+          : requestedRole === "customer"
+            ? "Activate customer account"
+            : "Submit for verification"}
       </button>
     </form>
   );

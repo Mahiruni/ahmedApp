@@ -71,6 +71,27 @@ export async function completeOnboardingAction(formData: FormData) {
   }
 
   const supabase = await createClient();
+  const phoneVerificationEnabled =
+    process.env.NEXT_PUBLIC_BILOO_PHONE_VERIFICATION_ENABLED === "true";
+
+  if (phoneVerificationEnabled) {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    const authenticatedPhone = normalizeEthiopianPhone(user?.phone ?? "");
+
+    if (userError || !user) {
+      redirect("/auth/login?error=Sign%20in%20again%20before%20continuing.");
+    }
+
+    if (authenticatedPhone !== phone || !user.phone_confirmed_at) {
+      redirect(
+        "/onboarding?error=Verify%20this%20phone%20number%20before%20completing%20onboarding.",
+      );
+    }
+  }
+
   const { error } = await supabase.rpc("complete_biloo_onboarding", {
     p_display_name: displayName,
     p_phone: phone,
