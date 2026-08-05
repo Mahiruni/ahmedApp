@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight, Manrope } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { ReactNode } from "react";
 
 import { InteractionFeedbackController } from "@/components/biloo/interaction-feedback-controller";
@@ -126,6 +127,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <SearchFocusController />
         <SearchMotionController />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );
