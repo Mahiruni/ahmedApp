@@ -153,7 +153,7 @@ export function AccountSettingsClient({ viewer }: { viewer: AppViewer }) {
             <a className="is-active" href="#profile"><Icon name="customer" />Profile</a>
             <a href="#contact"><Icon name="phone" />Contact</a>
             <a href="#notifications"><Icon name="bell" />Notifications</a>
-            <a href="#preferences"><Icon name="settings" />Preferences</a>
+            <a href="#preferences"><Icon name="admin" />Preferences</a>
             <a href="#security"><Icon name="shield" />Security</a>
           </nav>
 
@@ -232,7 +232,7 @@ export function AccountSettingsClient({ viewer }: { viewer: AppViewer }) {
             <section className="biloo-settings-panel" id="preferences">
               <header>
                 <div><small>YOUR EXPERIENCE</small><h2>App preferences</h2><p>Make BILOO feel familiar across customer, vendor and driver workspaces.</p></div>
-                <span className="biloo-settings-panel-icon"><Icon name="settings" /></span>
+                <span className="biloo-settings-panel-icon"><Icon name="admin" /></span>
               </header>
               <div className="biloo-settings-preference-grid">
                 <label>
