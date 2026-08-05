@@ -50,6 +50,7 @@ import "./role-experience.css";
 import "./account-settings.css";
 import "./phone-verification.css";
 import "./biloo-loading-tour.css";
+import "./mobile-footer-polish.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
