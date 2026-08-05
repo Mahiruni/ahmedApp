@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { normalizeEthiopianPhone } from "@/lib/biloo/phone";
 import { createClient } from "@/lib/supabase/server";
 
 function value(formData: FormData, key: string) {
@@ -18,6 +19,12 @@ function destination(formData: FormData) {
 
 function authError(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
+}
+
+function oauthErrorPath(formData: FormData) {
+  return value(formData, "errorPath") === "/auth/login"
+    ? "/auth/login"
+    : "/";
 }
 
 async function requestOrigin() {
@@ -37,17 +44,6 @@ function normalizeUsername(input: string) {
   return input.toLowerCase().replace(/\s+/g, "").trim();
 }
 
-function normalizeEthiopianPhone(input: string) {
-  const digits = input.replace(/\D/g, "");
-  const national = digits.startsWith("251")
-    ? digits.slice(3)
-    : digits.startsWith("0")
-      ? digits.slice(1)
-      : digits;
-
-  return /^[79]\d{8}$/.test(national) ? `+251${national}` : null;
-}
-
 export async function signInAction(formData: FormData) {
   const email = value(formData, "email").toLowerCase();
   const password = value(formData, "password");
@@ -65,6 +61,7 @@ export async function signInAction(formData: FormData) {
 
 export async function signInWithGoogleAction(formData: FormData) {
   const next = destination(formData);
+  const errorPath = oauthErrorPath(formData);
   const origin = await requestOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -78,7 +75,7 @@ export async function signInWithGoogleAction(formData: FormData) {
 
   if (error || !redirectUrl) {
     authError(
-      "/",
+      errorPath,
       error?.message ?? "Google sign-in is not available right now.",
     );
   }
@@ -124,7 +121,7 @@ export async function signUpAction(formData: FormData) {
   if (!phone) {
     authError(
       "/auth/sign-up",
-      "Enter a valid Ethiopian mobile number such as 0912 345 678 or +251 912 345 678.",
+      "Enter the 9 Ethiopian mobile digits after +251, beginning with 7 or 9.",
     );
   }
 
