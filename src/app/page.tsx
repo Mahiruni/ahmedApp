@@ -31,24 +31,31 @@ const services = [
   {
     title: "Taxi booking",
     description: "Request local rides, choose pickup and destination locations, and follow trip progress.",
+    icon: "↗",
   },
   {
     title: "Food delivery",
     description: "Order meals from participating restaurants and receive preparation and delivery updates.",
+    icon: "●",
   },
   {
     title: "Supermarket shopping",
     description: "Shop groceries and household essentials and arrange delivery to your location.",
+    icon: "▦",
   },
   {
     title: "Construction materials",
     description: "Find and order building supplies from participating local vendors.",
+    icon: "◆",
   },
   {
     title: "Car parts",
     description: "Browse vehicle parts and connect with local automotive suppliers.",
+    icon: "⚙",
   },
 ];
+
+const particles = Array.from({ length: 14 }, (_, index) => index + 1);
 
 export default async function HomePage({
   searchParams,
@@ -86,10 +93,20 @@ export default async function HomePage({
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms</Link>
           </nav>
+
+          <Link className="biloo-oauth-mobile-signin" href="/auth/login?next=/biloo">
+            Sign in <span aria-hidden="true">↗</span>
+          </Link>
         </div>
       </header>
 
       <section className="biloo-oauth-hero" aria-labelledby="biloo-home-title">
+        <div className="biloo-mobile-particles" aria-hidden="true">
+          {particles.map((particle) => (
+            <span className={`biloo-mobile-particle biloo-mobile-particle-${particle}`} key={particle} />
+          ))}
+        </div>
+
         <div className="biloo-oauth-hero-copy">
           <p className="biloo-oauth-eyebrow">ETHIOPIA&apos;S CONNECTED SUPER APP</p>
           <h1 id="biloo-home-title">BILOO</h1>
@@ -104,19 +121,35 @@ export default async function HomePage({
             activity without switching between unrelated apps.
           </p>
           <div className="biloo-oauth-hero-links">
-            <Link href="#biloo-services">Explore BILOO services</Link>
-            <Link href="/privacy">Read our Privacy Policy</Link>
+            <Link className="biloo-oauth-explore-link" href="#biloo-services">
+              Explore BILOO services
+            </Link>
+            <Link className="biloo-oauth-privacy-link" href="/privacy">
+              Read our Privacy Policy
+            </Link>
+            <Link className="biloo-oauth-mobile-hero-signin" href="/auth/login?next=/biloo">
+              Sign in to BILOO <span aria-hidden="true">→</span>
+            </Link>
           </div>
+
+          <a className="biloo-mobile-scroll-cue" href="#biloo-services">
+            <span>Discover the experience</span>
+            <i aria-hidden="true">↓</i>
+          </a>
         </div>
 
         <div className="biloo-oauth-identity" aria-label="BILOO application identity">
-          <Image
-            alt="BILOO app logo"
-            height={148}
-            priority
-            src="/icons/biloo-mark.svg"
-            width={148}
-          />
+          <div className="biloo-oauth-logo-stage">
+            <span className="biloo-oauth-logo-ring biloo-oauth-logo-ring-one" aria-hidden="true" />
+            <span className="biloo-oauth-logo-ring biloo-oauth-logo-ring-two" aria-hidden="true" />
+            <Image
+              alt="BILOO app logo"
+              height={148}
+              priority
+              src="/icons/biloo-mark.svg"
+              width={148}
+            />
+          </div>
           <strong>BILOO</strong>
           <span>Operated by BILOO Group</span>
           <small>Addis Ababa, Ethiopia</small>
@@ -135,10 +168,18 @@ export default async function HomePage({
 
         <div className="biloo-oauth-service-grid">
           {services.map((service, index) => (
-            <article key={service.title}>
-              <span aria-hidden="true">0{index + 1}</span>
+            <article key={service.title} tabIndex={0}>
+              <div className="biloo-oauth-service-topline">
+                <span className="biloo-oauth-service-icon" aria-hidden="true">
+                  {service.icon}
+                </span>
+                <span className="biloo-oauth-service-number" aria-hidden="true">
+                  0{index + 1}
+                </span>
+              </div>
               <h3>{service.title}</h3>
               <p>{service.description}</p>
+              <span className="biloo-oauth-service-arrow" aria-hidden="true">↗</span>
             </article>
           ))}
         </div>
@@ -230,9 +271,12 @@ export default async function HomePage({
       </section>
 
       <footer className="biloo-oauth-footer">
-        <div>
-          <strong>BILOO</strong>
-          <span>Operated by BILOO Group · Addis Ababa, Ethiopia</span>
+        <div className="biloo-oauth-footer-brand">
+          <Image alt="BILOO app logo" height={38} src="/icons/biloo-mark.svg" width={38} />
+          <div>
+            <strong>BILOO</strong>
+            <span>Operated by BILOO Group · Addis Ababa, Ethiopia</span>
+          </div>
         </div>
         <nav aria-label="BILOO legal links">
           <Link href="/about">About BILOO</Link>
