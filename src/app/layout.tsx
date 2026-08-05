@@ -59,6 +59,7 @@ const bilooDisplay = Inter_Tight({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://biloo.hisabtechnologies.com"),
   title: {
     default: "BILOO Super App",
     template: "%s · BILOO",
