@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { completeOnboardingAction } from "@/app/onboarding/actions";
 import { Icon } from "@/components/biloo/ui";
+import { EthiopianPhoneInput } from "@/components/forms/ethiopian-phone-input";
 import { authButtonClass, authInputClass } from "./auth-shell";
 
 type RequestedRole = "customer" | "driver" | "vendor_owner";
@@ -56,15 +57,16 @@ export function OnboardingForm({ displayName }: { displayName: string }) {
             />
           </label>
           <label className="biloo-auth-field">
-            <span>Phone number</span>
-            <input
-              autoComplete="tel"
+            <span>Ethiopian mobile number</span>
+            <EthiopianPhoneInput
               className={authInputClass}
+              describedBy="biloo-onboarding-phone-help"
               name="phone"
-              placeholder="+251 9..."
               required
-              type="tel"
             />
+            <small className="biloo-auth-field-help" id="biloo-onboarding-phone-help">
+              +251 stays fixed. Enter the remaining 9 digits only.
+            </small>
           </label>
           <label className="biloo-auth-field full-width">
             <span>City</span>
