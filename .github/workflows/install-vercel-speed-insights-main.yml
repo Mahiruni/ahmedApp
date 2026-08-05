@@ -1,0 +1,80 @@
+name: Install Vercel Speed Insights Once
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: install-vercel-speed-insights-main
+  cancel-in-progress: false
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Speed Insights
+        run: npm install @vercel/speed-insights
+
+      - name: Add Speed Insights to root layout
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'src/app/layout.tsx';
+          let source = fs.readFileSync(path, 'utf8');
+
+          if (!source.includes('@vercel/speed-insights/next')) {
+            source = source.replace(
+              'import { Inter_Tight, Manrope } from "next/font/google";',
+              'import { Inter_Tight, Manrope } from "next/font/google";\nimport { SpeedInsights } from "@vercel/speed-insights/next";',
+            );
+          }
+
+          if (!source.includes('<SpeedInsights />')) {
+            source = source.replace(
+              '        {children}\n      </body>',
+              '        {children}\n        <SpeedInsights />\n      </body>',
+            );
+          }
+
+          fs.writeFileSync(path, source);
+          NODE
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: Remove one-time installer
+        run: rm .github/workflows/install-vercel-speed-insights-main.yml
+
+      - name: Commit installation
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json src/app/layout.tsx .github/workflows/install-vercel-speed-insights-main.yml
+          git commit -m "Add Vercel Speed Insights"
+          git push origin HEAD:main
