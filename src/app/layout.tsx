@@ -38,6 +38,7 @@ import "./brand-identity.css";
 import "./app-entry.css";
 import "./public-pages.css";
 import "./oauth-homepage.css";
+import "./mobile-homepage.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
