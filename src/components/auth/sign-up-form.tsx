@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useMemo, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { Icon } from "@/components/biloo/ui";
 import { signUpAction } from "@/app/auth/actions";
+import { Icon } from "@/components/biloo/ui";
+import { EthiopianPhoneInput } from "@/components/forms/ethiopian-phone-input";
 
 import { authButtonClass, authInputClass } from "./auth-shell";
 
@@ -24,6 +26,41 @@ const ethiopianRegions = [
   "South West Ethiopia Peoples’ Region",
   "Tigray",
 ];
+
+const signupSteps = [
+  { label: "Personal", description: "Your Ethiopian name" },
+  { label: "Account", description: "Contact and username" },
+  { label: "Location", description: "Region and city" },
+  { label: "Security", description: "Password and review" },
+] as const;
+
+const finalStep = signupSteps.length - 1;
+
+type SignupValues = {
+  firstName: string;
+  fatherName: string;
+  grandfatherName: string;
+  username: string;
+  phone: string;
+  email: string;
+  region: string;
+  city: string;
+  subCity: string;
+  woreda: string;
+};
+
+const initialValues: SignupValues = {
+  firstName: "",
+  fatherName: "",
+  grandfatherName: "",
+  username: "",
+  phone: "",
+  email: "",
+  region: "",
+  city: "",
+  subCity: "",
+  woreda: "",
+};
 
 function FieldLabel({
   children,
@@ -55,7 +92,7 @@ function SubmitButton({ passwordReady }: { passwordReady: boolean }) {
       {pending ? (
         <>
           <span className="biloo-feedback-spinner" aria-hidden="true" />
-          <span>Creating your secure account…</span>
+          <span>Submitting your registration…</span>
         </>
       ) : (
         <>
@@ -69,11 +106,13 @@ function SubmitButton({ passwordReady }: { passwordReady: boolean }) {
 }
 
 export function SignUpForm() {
-  const [username, setUsername] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+  const [step, setStep] = useState(0);
+  const [values, setValues] = useState<SignupValues>(initialValues);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const usernameValid = /^[a-z][a-z0-9._]{2,29}$/.test(username);
+  const usernameValid = /^[a-z][a-z0-9._]{2,29}$/.test(values.username);
   const passwordChecks = useMemo(
     () => ({
       length: password.length >= 8,
@@ -89,8 +128,16 @@ export function SignUpForm() {
     passwordChecks.number &&
     passwordChecks.match;
 
+  function updateField<Key extends keyof SignupValues>(
+    key: Key,
+    value: SignupValues[Key],
+  ) {
+    setValues((current) => ({ ...current, [key]: value }));
+  }
+
   function updateUsername(value: string) {
-    setUsername(
+    updateField(
+      "username",
       value
         .toLowerCase()
         .replace(/\s+/g, "")
@@ -99,9 +146,75 @@ export function SignUpForm() {
     );
   }
 
+  function validateCurrentStep() {
+    const panel = formRef.current?.querySelector<HTMLElement>(
+      `[data-signup-panel="${step}"]`,
+    );
+    const controls = panel?.querySelectorAll<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >("input:not([type='hidden']), select, textarea");
+
+    for (const control of Array.from(controls ?? [])) {
+      if (!control.checkValidity()) {
+        control.reportValidity();
+        control.focus();
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function goNext() {
+    if (!validateCurrentStep()) return;
+    setStep((current) => Math.min(current + 1, finalStep));
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function goPrevious() {
+    setStep((current) => Math.max(current - 1, 0));
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    if (step !== finalStep) {
+      event.preventDefault();
+      goNext();
+    }
+  }
+
   return (
-    <form action={signUpAction} className="biloo-signup-form">
-      <section className="biloo-signup-section">
+    <form
+      action={signUpAction}
+      className="biloo-signup-form"
+      onSubmit={handleSubmit}
+      ref={formRef}
+    >
+      <div className="biloo-signup-progress" aria-label={`Step ${step + 1} of ${signupSteps.length}`}>
+        <div className="biloo-signup-progress-track" aria-hidden="true">
+          <span style={{ width: `${(step / finalStep) * 100}%` }} />
+        </div>
+        <ol>
+          {signupSteps.map((item, index) => {
+            const state = index < step ? "complete" : index === step ? "current" : "upcoming";
+            return (
+              <li data-state={state} key={item.label}>
+                <span>{index < step ? "✓" : index + 1}</span>
+                <div>
+                  <strong>{item.label}</strong>
+                  <small>{item.description}</small>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+
+      <section
+        className="biloo-signup-section biloo-signup-panel"
+        data-signup-panel="0"
+        hidden={step !== 0}
+      >
         <div className="biloo-signup-section-heading">
           <span className="biloo-signup-step">1</span>
           <div>
@@ -117,11 +230,13 @@ export function SignUpForm() {
               autoCapitalize="words"
               autoComplete="given-name"
               className={authInputClass}
+              disabled={step !== 0}
               maxLength={50}
               minLength={2}
-              name="firstName"
+              onChange={(event) => updateField("firstName", event.target.value)}
               placeholder="Mahir"
               required
+              value={values.firstName}
             />
           </label>
           <label>
@@ -130,11 +245,13 @@ export function SignUpForm() {
               autoCapitalize="words"
               autoComplete="additional-name"
               className={authInputClass}
+              disabled={step !== 0}
               maxLength={50}
               minLength={2}
-              name="fatherName"
+              onChange={(event) => updateField("fatherName", event.target.value)}
               placeholder="Aman"
               required
+              value={values.fatherName}
             />
           </label>
           <label>
@@ -142,22 +259,28 @@ export function SignUpForm() {
             <input
               autoCapitalize="words"
               className={authInputClass}
+              disabled={step !== 0}
               maxLength={50}
               minLength={2}
-              name="grandfatherName"
+              onChange={(event) => updateField("grandfatherName", event.target.value)}
               placeholder="Biftu"
               required
+              value={values.grandfatherName}
             />
           </label>
         </div>
       </section>
 
-      <section className="biloo-signup-section">
+      <section
+        className="biloo-signup-section biloo-signup-panel"
+        data-signup-panel="1"
+        hidden={step !== 1}
+      >
         <div className="biloo-signup-section-heading">
           <span className="biloo-signup-step">2</span>
           <div>
             <h2>Account details</h2>
-            <p>Your username identifies you inside BILOO.</p>
+            <p>Your username and contact details identify your BILOO account.</p>
           </div>
         </div>
 
@@ -171,18 +294,18 @@ export function SignUpForm() {
                 autoCapitalize="none"
                 autoComplete="username"
                 className={authInputClass}
+                disabled={step !== 1}
                 inputMode="text"
                 maxLength={30}
                 minLength={3}
-                name="username"
                 onChange={(event) => updateUsername(event.target.value)}
                 pattern="[a-z][a-z0-9._]{2,29}"
                 placeholder="mahir.biloo"
                 required
                 spellCheck={false}
-                value={username}
+                value={values.username}
               />
-              {username ? (
+              {values.username ? (
                 <Icon
                   className="size-[17px]"
                   name={usernameValid ? "check" : "alert"}
@@ -196,15 +319,17 @@ export function SignUpForm() {
 
           <label>
             <FieldLabel>Ethiopian mobile number</FieldLabel>
-            <input
-              autoComplete="tel"
+            <EthiopianPhoneInput
               className={authInputClass}
-              inputMode="tel"
+              disabled={step !== 1}
               name="phone"
-              placeholder="0912 345 678"
+              onValueChange={(value) => updateField("phone", value)}
               required
-              type="tel"
+              value={values.phone}
             />
+            <small className="biloo-signup-help">
+              +251 is fixed. Enter only the 9 digits beginning with 9 or 7.
+            </small>
           </label>
 
           <label>
@@ -213,16 +338,22 @@ export function SignUpForm() {
               autoCapitalize="none"
               autoComplete="email"
               className={authInputClass}
-              name="email"
+              disabled={step !== 1}
+              onChange={(event) => updateField("email", event.target.value)}
               placeholder="you@example.com"
               required
               type="email"
+              value={values.email}
             />
           </label>
         </div>
       </section>
 
-      <section className="biloo-signup-section">
+      <section
+        className="biloo-signup-section biloo-signup-panel"
+        data-signup-panel="2"
+        hidden={step !== 2}
+      >
         <div className="biloo-signup-section-heading">
           <span className="biloo-signup-step">3</span>
           <div>
@@ -236,9 +367,10 @@ export function SignUpForm() {
             <FieldLabel>Region or city administration</FieldLabel>
             <select
               className={authInputClass}
-              defaultValue=""
-              name="region"
+              disabled={step !== 2}
+              onChange={(event) => updateField("region", event.target.value)}
               required
+              value={values.region}
             >
               <option disabled value="">
                 Select region
@@ -257,9 +389,12 @@ export function SignUpForm() {
               autoCapitalize="words"
               autoComplete="address-level2"
               className={authInputClass}
-              name="city"
+              disabled={step !== 2}
+              minLength={2}
+              onChange={(event) => updateField("city", event.target.value)}
               placeholder="Addis Ababa"
               required
+              value={values.city}
             />
           </label>
 
@@ -269,8 +404,10 @@ export function SignUpForm() {
               autoCapitalize="words"
               autoComplete="address-level3"
               className={authInputClass}
-              name="subCity"
+              disabled={step !== 2}
+              onChange={(event) => updateField("subCity", event.target.value)}
               placeholder="Bole"
+              value={values.subCity}
             />
           </label>
 
@@ -279,19 +416,44 @@ export function SignUpForm() {
             <input
               autoCapitalize="words"
               className={authInputClass}
-              name="woreda"
+              disabled={step !== 2}
+              onChange={(event) => updateField("woreda", event.target.value)}
               placeholder="Woreda 03"
+              value={values.woreda}
             />
           </label>
         </div>
       </section>
 
-      <section className="biloo-signup-section">
+      <section
+        className="biloo-signup-section biloo-signup-panel"
+        data-signup-panel="3"
+        hidden={step !== 3}
+      >
         <div className="biloo-signup-section-heading">
           <span className="biloo-signup-step">4</span>
           <div>
-            <h2>Security</h2>
-            <p>Create a password that you do not use on another service.</p>
+            <h2>Security and review</h2>
+            <p>Create your password and confirm the information sent to BILOO.</p>
+          </div>
+        </div>
+
+        <div className="biloo-signup-review" aria-label="Registration summary">
+          <div>
+            <span>Full name</span>
+            <strong>{`${values.firstName} ${values.fatherName} ${values.grandfatherName}`.trim()}</strong>
+          </div>
+          <div>
+            <span>Username</span>
+            <strong>@{values.username}</strong>
+          </div>
+          <div>
+            <span>Mobile</span>
+            <strong>{values.phone}</strong>
+          </div>
+          <div>
+            <span>Location</span>
+            <strong>{[values.city, values.region].filter(Boolean).join(", ")}</strong>
           </div>
         </div>
 
@@ -301,6 +463,7 @@ export function SignUpForm() {
             <input
               autoComplete="new-password"
               className={authInputClass}
+              disabled={step !== 3}
               minLength={8}
               name="password"
               onChange={(event) => setPassword(event.target.value)}
@@ -314,11 +477,10 @@ export function SignUpForm() {
           <label>
             <FieldLabel>Confirm password</FieldLabel>
             <input
-              aria-invalid={
-                confirmPassword.length > 0 && !passwordChecks.match
-              }
+              aria-invalid={confirmPassword.length > 0 && !passwordChecks.match}
               autoComplete="new-password"
               className={authInputClass}
+              disabled={step !== 3}
               minLength={8}
               name="confirmPassword"
               onChange={(event) => setConfirmPassword(event.target.value)}
@@ -336,19 +498,55 @@ export function SignUpForm() {
           <span data-complete={passwordChecks.number}>Contains a number</span>
           <span data-complete={passwordChecks.match}>Passwords match</span>
         </div>
+
+        <label className="biloo-signup-consent">
+          <input disabled={step !== 3} name="terms" required type="checkbox" />
+          <span>
+            I agree to the BILOO <Link href="/terms">Terms of Service</Link> and acknowledge the{" "}
+            <Link href="/privacy">Privacy Policy</Link>.
+          </span>
+        </label>
+
+        <input disabled={step !== 3} name="firstName" type="hidden" value={values.firstName} />
+        <input disabled={step !== 3} name="fatherName" type="hidden" value={values.fatherName} />
+        <input disabled={step !== 3} name="grandfatherName" type="hidden" value={values.grandfatherName} />
+        <input disabled={step !== 3} name="username" type="hidden" value={values.username} />
+        <input disabled={step !== 3} name="phone" type="hidden" value={values.phone} />
+        <input disabled={step !== 3} name="email" type="hidden" value={values.email} />
+        <input disabled={step !== 3} name="region" type="hidden" value={values.region} />
+        <input disabled={step !== 3} name="city" type="hidden" value={values.city} />
+        <input disabled={step !== 3} name="subCity" type="hidden" value={values.subCity} />
+        <input disabled={step !== 3} name="woreda" type="hidden" value={values.woreda} />
       </section>
 
-      <label className="biloo-signup-consent">
-        <input name="terms" required type="checkbox" />
-        <span>
-          I agree to the BILOO Terms of Service and acknowledge the Privacy Notice.
-        </span>
-      </label>
+      <div className="biloo-signup-navigation">
+        <button
+          className="biloo-signup-previous"
+          disabled={step === 0}
+          onClick={goPrevious}
+          type="button"
+        >
+          <span aria-hidden="true">←</span>
+          Previous
+        </button>
 
-      <SubmitButton passwordReady={passwordReady} />
+        <span className="biloo-signup-step-count">
+          Step {step + 1} of {signupSteps.length}
+        </span>
+
+        {step < finalStep ? (
+          <button className="biloo-signup-next" onClick={goNext} type="button">
+            Next
+            <span aria-hidden="true">→</span>
+          </button>
+        ) : (
+          <SubmitButton passwordReady={passwordReady} />
+        )}
+      </div>
+
       <p className="biloo-signup-security-note">
         <Icon className="size-[15px]" name="shield" />
-        Your password is handled by Supabase Auth and is never stored in this form.
+        Your profile is submitted securely to Supabase only after final confirmation.
       </p>
     </form>
   );
