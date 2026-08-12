@@ -34,11 +34,13 @@
   opacity: 1 !important;
 }
 
-/* Embedded copy of the exact official loading-screen SVG. No network request or
-   stale PWA asset cache is required for the header mark to render. */
+/* Deterministic purple logo surface. The embedded background remains as a fallback,
+   while the real inline SVG is now kept visible above it so the header can never
+   collapse into an empty white rounded square. */
 [data-biloo-header] .biloo-brand-glyph,
 .biloo-command-head .biloo-brand-glyph {
   display: block !important;
+  position: relative !important;
   width: 42px !important;
   height: 42px !important;
   min-width: 42px !important;
@@ -61,9 +63,13 @@
 
 [data-biloo-header] .biloo-brand-glyph-svg,
 .biloo-command-head .biloo-brand-glyph-svg {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 [data-biloo-header] .biloo-brand-copy {
