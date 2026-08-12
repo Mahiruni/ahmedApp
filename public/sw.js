@@ -1,4 +1,4 @@
-const BILOO_CACHE = "biloo-static-v1";
+const BILOO_CACHE = "biloo-static-v2";
 const BILOO_PRECACHE = [
   "/manifest.webmanifest",
   "/icons/favicon-32.png",
