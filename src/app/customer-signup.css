@@ -298,3 +298,109 @@
     transition: none;
   }
 }
+
+
+/* Premium customer signup refinement */
+.biloo-signup-section {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(17, 54, 87, 0.10);
+  box-shadow: 0 18px 50px rgba(20, 39, 61, 0.055), 0 2px 8px rgba(20, 39, 61, 0.035);
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1), box-shadow 220ms ease, border-color 220ms ease;
+}
+.biloo-signup-section::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(11,71,125,.035), transparent 35%, rgba(255,145,0,.025));
+  content: "";
+  pointer-events: none;
+}
+.biloo-signup-section:hover {
+  border-color: rgba(11, 71, 125, 0.16);
+  box-shadow: 0 22px 60px rgba(20, 39, 61, 0.075), 0 3px 10px rgba(20, 39, 61, 0.04);
+  transform: translateY(-1px);
+}
+.biloo-signup-section-heading,
+.biloo-signup-grid,
+.biloo-signup-password-checks { position: relative; z-index: 1; }
+
+.biloo-signup-form .biloo-auth-input {
+  border-color: #dfe4ea;
+  background: rgba(255,255,255,.92);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 1px 2px rgba(20,39,61,.025);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
+}
+.biloo-signup-form .biloo-auth-input:hover {
+  border-color: #bfcbd7;
+}
+.biloo-signup-form .biloo-auth-input:focus {
+  border-color: #0b477d;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(11,71,125,.10), 0 8px 22px rgba(20,39,61,.07);
+  transform: translateY(-1px);
+}
+.biloo-signup-form .biloo-auth-input::placeholder {
+  color: #a5adb7;
+  font-weight: 450;
+}
+.biloo-signup-field-label > span:first-child {
+  color: #24384b;
+  font-weight: 760;
+}
+.biloo-signup-field-label > span:last-child {
+  color: #8b98a5;
+}
+.biloo-signup-step {
+  background: linear-gradient(145deg, #0b477d, #155f9d);
+  box-shadow: 0 9px 20px rgba(11,71,125,.18);
+}
+.biloo-signup-username-field {
+  border-color: #dfe4ea;
+  box-shadow: 0 1px 2px rgba(20,39,61,.025);
+}
+.biloo-signup-username-field:focus-within {
+  border-color: #0b477d;
+  box-shadow: 0 0 0 4px rgba(11,71,125,.10), 0 8px 22px rgba(20,39,61,.06);
+}
+.biloo-signup-submit {
+  min-height: 56px;
+  border: 0 !important;
+  border-radius: 15px !important;
+  background: linear-gradient(135deg, #0b477d, #155f9d) !important;
+  box-shadow: 0 14px 30px rgba(11,71,125,.22) !important;
+  transition: transform 150ms ease, box-shadow 180ms ease, filter 180ms ease !important;
+}
+.biloo-signup-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #093b68, #0b477d) !important;
+  box-shadow: 0 18px 36px rgba(11,71,125,.27) !important;
+  filter: saturate(1.05);
+  transform: translateY(-2px) !important;
+}
+.biloo-signup-submit:active:not(:disabled) {
+  transform: translateY(0) scale(.985) !important;
+  box-shadow: 0 8px 18px rgba(11,71,125,.18) !important;
+}
+.biloo-signup-notes {
+  min-height: 96px !important;
+  resize: vertical;
+  line-height: 1.55;
+}
+.biloo-signup-consent {
+  box-shadow: 0 8px 24px rgba(20,39,61,.035);
+}
+.biloo-signup-consent input {
+  accent-color: #0b477d;
+}
+.biloo-signup-security-note svg { color: #0b477d; }
+@media (max-width: 620px) {
+  .biloo-signup-section {
+    box-shadow: 0 12px 32px rgba(20,39,61,.05);
+  }
+  .biloo-signup-section:hover { transform: none; }
+  .biloo-signup-submit { min-height: 54px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .biloo-signup-section,
+  .biloo-signup-form .biloo-auth-input,
+  .biloo-signup-submit { transition: none !important; }
+}
