@@ -78,7 +78,17 @@ export function SignUpForm() {
   }
 
   return (
-    <form action={signUpAction} className="biloo-signup-form" onSubmit={(event) => { if (step !== 4) event.preventDefault(); }}>
+    <form
+      action={signUpAction}
+      className="biloo-signup-form"
+      onSubmit={(event) => {
+        if (step !== 4) {
+          event.preventDefault();
+          return;
+        }
+        if (passwordReady) setSaving(true);
+      }}
+    >
       <div className="biloo-signup-progress">
         <button aria-label="Go back one step" className="biloo-signup-back" disabled={step === 1 || saving} onClick={handlePrevious} type="button">
           <Icon className="size-[17px] biloo-signup-back-icon" name="arrow" />
@@ -151,7 +161,7 @@ export function SignUpForm() {
           <div className="biloo-signup-saving-card">
             <div className="biloo-signup-saving-ring"><Image alt="BILOO" height={52} priority src="/icons/biloo-mark.svg" width={52} /></div>
             <strong>Saving…</strong>
-            <span>Preparing the next step</span>
+            <span>{step === 4 ? "Creating your secure account" : "Preparing the next step"}</span>
           </div>
         </div>
       ) : null}
