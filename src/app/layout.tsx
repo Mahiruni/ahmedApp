@@ -58,6 +58,7 @@ import "./footer-sticky-fix.css";
 import "./compact-login.css";
 import "./header-brand-emergency-fix.css";
 import "./biloo-premium-marketplace.css";
+import "./biloo-personal-information.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -73,52 +74,22 @@ const bilooDisplay = Inter_Tight({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://biloo.hisabtechnologies.com"),
-  title: {
-    default: "BILOO Super App",
-    template: "%s · BILOO",
-  },
-  description:
-    "One beautifully connected platform for taxi booking, food delivery, supermarket shopping, construction materials, and car parts.",
+  title: { default: "BILOO Super App", template: "%s · BILOO" },
+  description: "One beautifully connected platform for taxi booking, food delivery, supermarket shopping, construction materials, and car parts.",
   applicationName: "BILOO",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: [
-      {
-        url: "/icons/favicon-32.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-      {
-        url: "/icons/icon-192.png",
-        sizes: "192x192",
-        type: "image/png",
-      },
-      {
-        url: "/icons/biloo-mark.svg",
-        sizes: "any",
-        type: "image/svg+xml",
-      },
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/biloo-mark.svg", sizes: "any", type: "image/svg+xml" },
     ],
     shortcut: "/icons/favicon-32.png",
-    apple: [
-      {
-        url: "/icons/apple-touch-icon.png",
-        sizes: "180x180",
-        type: "image/png",
-      },
-    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "BILOO",
-  },
-  formatDetection: {
-    telephone: false,
-  },
-  other: {
-    "mobile-web-app-capable": "yes",
-  },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "BILOO" },
+  formatDetection: { telephone: false },
+  other: { "mobile-web-app-capable": "yes" },
 };
 
 export const viewport: Viewport = {
