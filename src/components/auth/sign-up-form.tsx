@@ -29,11 +29,11 @@ function FieldLabel({ children, optional = false }: { children: React.ReactNode;
 function SubmitButton({ passwordReady }: { passwordReady: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <button aria-busy={pending} className={"biloo-signup-nav-primary biloo-signup-submit"} disabled={pending || !passwordReady} type="submit">
+    <button aria-busy={pending} className="biloo-signup-nav-primary biloo-signup-submit" disabled={pending || !passwordReady} type="submit">
       {pending ? (
         <><span className="biloo-feedback-spinner" aria-hidden="true" /><span>Creating your secure account…</span></>
       ) : (
-        <><Icon className="size-[17px]" name="shield" /><span>Create customer account</span><Icon className="size-[16px]" name="arrow" /></>
+        <><span>Create Account</span><Icon className="size-[16px]" name="arrow" /></>
       )}
     </button>
   );
@@ -62,33 +62,23 @@ export function SignUpForm() {
       setSaving(false);
     }, 520);
   }
-
   function handleNext(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     if (step < 4) moveTo(step + 1);
   }
-
   function handlePrevious(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     if (step > 1) moveTo(step - 1);
   }
-
   function updateUsername(value: string) {
     setUsername(value.toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9._]/g, "").slice(0, 30));
   }
 
   return (
-    <form
-      action={signUpAction}
-      className="biloo-signup-form"
-      onSubmit={(event) => {
-        if (step !== 4) {
-          event.preventDefault();
-          return;
-        }
-        if (passwordReady) setSaving(true);
-      }}
-    >
+    <form action={signUpAction} className="biloo-signup-form" onSubmit={(event) => {
+      if (step !== 4) { event.preventDefault(); return; }
+      if (passwordReady) setSaving(true);
+    }}>
       <div className="biloo-signup-progress">
         <button aria-label="Go back one step" className="biloo-signup-back" disabled={step === 1 || saving} onClick={handlePrevious} type="button">
           <Icon className="size-[17px] biloo-signup-back-icon" name="arrow" />
@@ -110,15 +100,7 @@ export function SignUpForm() {
         <section className={"biloo-signup-section biloo-signup-step-panel " + (step === 2 ? "is-active" : "")} aria-hidden={step !== 2}>
           <div className="biloo-signup-section-heading"><span className="biloo-signup-step">2</span><div><h2>Account details</h2><p>Choose how BILOO should identify and securely contact you.</p></div></div>
           <div className="biloo-signup-grid">
-            <label className="biloo-signup-wide">
-              <FieldLabel>Username</FieldLabel>
-              <div className="biloo-signup-username-field" data-valid={usernameValid}>
-                <span aria-hidden="true">@</span>
-                <input aria-describedby="biloo-username-help" autoCapitalize="none" autoComplete="username" className={authInputClass} inputMode="text" maxLength={30} minLength={3} name="username" onChange={(event) => updateUsername(event.target.value)} pattern="[a-z][a-z0-9._]{2,29}" placeholder="Choose a username" required spellCheck={false} value={username} />
-                {username ? <Icon className="size-[17px]" name={usernameValid ? "check" : "alert"} /> : null}
-              </div>
-              <small id="biloo-username-help" className="biloo-signup-help">3–30 characters. Start with a letter; use letters, numbers, dots or underscores.</small>
-            </label>
+            <label className="biloo-signup-wide"><FieldLabel>Username</FieldLabel><div className="biloo-signup-username-field" data-valid={usernameValid}><span aria-hidden="true">@</span><input aria-describedby="biloo-username-help" autoCapitalize="none" autoComplete="username" className={authInputClass} inputMode="text" maxLength={30} minLength={3} name="username" onChange={(event) => updateUsername(event.target.value)} pattern="[a-z][a-z0-9._]{2,29}" placeholder="Choose a username" required spellCheck={false} value={username} />{username ? <Icon className="size-[17px]" name={usernameValid ? "check" : "alert"} /> : null}</div><small id="biloo-username-help" className="biloo-signup-help">3–30 characters. Start with a letter; use letters, numbers, dots or underscores.</small></label>
             <label><FieldLabel>Ethiopian mobile number</FieldLabel><EthiopianPhoneInput className={authInputClass} name="phone" required /><small className="biloo-signup-help">+251 is added automatically.</small></label>
             <label><FieldLabel>Email address</FieldLabel><input autoCapitalize="none" autoComplete="email" className={authInputClass} inputMode="email" name="email" placeholder="example@email.com" required type="email" /></label>
           </div>
@@ -140,7 +122,7 @@ export function SignUpForm() {
           <div className="biloo-signup-section-heading"><span className="biloo-signup-step">4</span><div><h2>Security</h2><p>Create a strong password and finish your BILOO account.</p></div></div>
           <div className="biloo-signup-grid">
             <label><FieldLabel>Password</FieldLabel><input autoComplete="new-password" className={authInputClass} minLength={8} name="password" onChange={(event) => setPassword(event.target.value)} placeholder="Create a password" required type="password" value={password} /></label>
-            <label><FieldLabel>Confirm password</FieldLabel><input aria-invalid={confirmPassword.length > 0 && !passwordChecks.match} autoComplete="new-password" className={authInputClass} minLength={8} name="confirmPassword" onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Re-enter your password" required type="password" value={confirmPassword} /></label>
+            <label><FieldLabel>Confirm password</FieldLabel><input aria-invalid={confirmPassword.length > 0 && !passwordChecks.match} autoComplete="new-password" className={authInputClass} minLength={8} name="confirmPassword" onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm your password" required type="password" value={confirmPassword} /></label>
           </div>
           <div className="biloo-signup-password-checks" aria-live="polite">
             <span data-complete={passwordChecks.length}>8 or more characters</span><span data-complete={passwordChecks.letter}>Contains a letter</span><span data-complete={passwordChecks.number}>Contains a number</span><span data-complete={passwordChecks.match}>Passwords match</span>
@@ -151,7 +133,7 @@ export function SignUpForm() {
 
       <div className="biloo-signup-navigation">
         {step > 1 ? <button className="biloo-signup-nav-secondary" disabled={saving} onClick={handlePrevious} type="button">Previous</button> : <span />}
-        {step < 4 ? <button className="biloo-signup-nav-primary" disabled={saving} onClick={handleNext} type="button">Next <Icon className="size-[16px]" name="arrow" /></button> : <SubmitButton passwordReady={passwordReady} />}
+        {step < 4 ? <button className="biloo-signup-nav-primary" disabled={saving} onClick={handleNext} type="button">Continue <Icon className="size-[16px]" name="arrow" /></button> : <SubmitButton passwordReady={passwordReady} />}
       </div>
 
       <p className="biloo-signup-security-note"><Icon className="size-[15px]" name="shield" /> Your password is protected by Supabase Auth.</p>
