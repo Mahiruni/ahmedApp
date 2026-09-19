@@ -1,221 +1,81 @@
 /* BILOO 2026 authentication refinement — premium mobile-first layer. */
-.biloo-auth-page {
-  position: relative;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 8% 8%, rgba(11,71,125,.09), transparent 34%),
-    radial-gradient(circle at 92% 88%, rgba(242,138,24,.07), transparent 30%),
-    #f7f9fb;
-}
-.biloo-auth-shell { position: relative; z-index: 1; }
-.biloo-auth-story {
-  background:
-    radial-gradient(circle at 78% 20%, rgba(242,138,24,.18), transparent 26%),
-    radial-gradient(circle at 16% 78%, rgba(255,255,255,.08), transparent 30%),
-    linear-gradient(145deg,#073861 0%,#0b477d 52%,#092f50 100%);
-}
-.biloo-auth-story::before {
-  border-color: rgba(255,255,255,.13);
-  box-shadow: inset 0 0 0 46px rgba(255,255,255,.025), 0 0 80px rgba(242,138,24,.08);
-}
-.biloo-auth-story::after { border-color: rgba(242,138,24,.2); }
+.biloo-auth-page { position:relative; overflow:hidden; background:radial-gradient(circle at 8% 8%,rgba(11,71,125,.09),transparent 34%),radial-gradient(circle at 92% 88%,rgba(242,138,24,.07),transparent 30%),#f7f9fb; }
+.biloo-auth-shell { position:relative; z-index:1; }
+.biloo-auth-story { background:radial-gradient(circle at 78% 20%,rgba(242,138,24,.18),transparent 26%),radial-gradient(circle at 16% 78%,rgba(255,255,255,.08),transparent 30%),linear-gradient(145deg,#073861 0%,#0b477d 52%,#092f50 100%); }
+.biloo-auth-story::before { border-color:rgba(255,255,255,.13); box-shadow:inset 0 0 0 46px rgba(255,255,255,.025),0 0 80px rgba(242,138,24,.08); }
+.biloo-auth-story::after { border-color:rgba(242,138,24,.2); }
 .biloo-auth-story-kicker { color:#ffb45f; }
 .biloo-auth-benefits article { background:rgba(255,255,255,.045); }
 .biloo-auth-benefit-icon { background:rgba(242,138,24,.12); color:#ffb45f; }
-
-.biloo-auth-form-panel {
-  position: relative;
-  background: rgba(255,255,255,.42);
-}
-.biloo-auth-form-wrap {
-  position: relative;
-  padding: clamp(8px,1.5vw,20px);
-}
-.biloo-auth-form-topbar { margin-bottom: clamp(34px,6vh,62px); }
-.biloo-auth-secure-label {
-  border-color:#dfe7ee;
-  background:rgba(255,255,255,.82);
-  color:#607384;
-  box-shadow:0 8px 24px rgba(18,47,72,.055);
-}
+.biloo-auth-form-panel { position:relative; background:rgba(255,255,255,.42); }
+.biloo-auth-form-wrap { position:relative; padding:clamp(8px,1.5vw,20px); }
+.biloo-auth-form-topbar { margin-bottom:clamp(34px,6vh,62px); }
+.biloo-auth-secure-label { border-color:#dfe7ee; background:rgba(255,255,255,.82); color:#607384; box-shadow:0 8px 24px rgba(18,47,72,.055); }
 .biloo-auth-secure-label svg { color:#0b477d; }
 .biloo-auth-heading > span { color:#c66a08; }
-.biloo-auth-heading h1 {
-  color:#102d46;
-  font-weight:780;
-}
+.biloo-auth-heading h1 { color:#102d46; font-weight:780; }
 .biloo-auth-heading p { color:#718292; }
-
 .biloo-auth-content { margin-top:30px; }
-.biloo-auth-google-button,
-.biloo-auth-input,
-.biloo-auth-submit {
-  border-radius:16px;
-}
-.biloo-auth-google-button {
-  min-height:56px;
-  border-color:#dce5ec;
-  box-shadow:0 8px 24px rgba(18,47,72,.055);
-  transition:transform 180ms cubic-bezier(.2,.8,.2,1),box-shadow 180ms ease,border-color 180ms ease;
-}
-.biloo-auth-google-button:hover:not(:disabled) {
-  border-color:#b9c9d6;
-  box-shadow:0 14px 34px rgba(18,47,72,.09);
-}
+.biloo-auth-google-button,.biloo-auth-input,.biloo-auth-submit { border-radius:16px; }
+.biloo-auth-google-button { min-height:56px; border-color:#dce5ec; box-shadow:0 8px 24px rgba(18,47,72,.055); transition:transform 180ms cubic-bezier(.2,.8,.2,1),box-shadow 180ms ease,border-color 180ms ease; }
+.biloo-auth-google-button:hover:not(:disabled) { border-color:#b9c9d6; box-shadow:0 14px 34px rgba(18,47,72,.09); }
+/* Keep the Google mark at a compact, fixed size on every viewport. */
+.biloo-auth-google-button .biloo-auth-google-icon { width:19px !important; height:19px !important; min-width:19px !important; max-width:19px !important; min-height:19px !important; max-height:19px !important; flex:0 0 19px !important; display:block; }
 .biloo-auth-divider span { background:#e2e9ee; }
 .biloo-auth-divider b { color:#8796a3; }
-
-.biloo-auth-field,
-.biloo-signup-grid > label {
-  position:relative;
-}
-.biloo-auth-field > span:first-child,
-.biloo-signup-field-label {
-  position:absolute;
-  z-index:2;
-  top:0;
-  left:13px;
-  width:auto;
-  min-height:0;
-  margin:0;
-  padding:0 6px;
-  background:linear-gradient(#f7f9fb,#f7f9fb);
-  color:#687b8b;
-  font-size:9px;
-  font-weight:780;
-  letter-spacing:.01em;
-  transform:translateY(-50%);
-}
+.biloo-auth-field,.biloo-signup-grid > label { position:relative; }
+.biloo-auth-field > span:first-child,.biloo-signup-field-label { position:absolute; z-index:2; top:0; left:13px; width:auto; min-height:0; margin:0; padding:0 6px; background:linear-gradient(#f7f9fb,#f7f9fb); color:#687b8b; font-size:9px; font-weight:780; letter-spacing:.01em; transform:translateY(-50%); }
 .biloo-auth-field > span:first-child { background:#f7f9fb; }
 .biloo-signup-field-label { background:#fff; }
-.biloo-auth-field .biloo-auth-input,
-.biloo-signup-grid > label > .biloo-auth-input {
-  min-height:56px;
-  padding-top:18px;
-  border-color:#dbe4eb;
-  background:rgba(255,255,255,.9);
-  box-shadow:0 5px 18px rgba(18,47,72,.035);
-}
-.biloo-auth-input:focus {
-  border-color:#0b477d !important;
-  box-shadow:0 0 0 4px rgba(11,71,125,.1),0 12px 28px rgba(18,47,72,.075) !important;
-}
+.biloo-auth-field .biloo-auth-input,.biloo-signup-grid > label > .biloo-auth-input { min-height:56px; padding-top:18px; border-color:#dbe4eb; background:rgba(255,255,255,.9); box-shadow:0 5px 18px rgba(18,47,72,.035); }
+.biloo-auth-input:focus { border-color:#0b477d !important; box-shadow:0 0 0 4px rgba(11,71,125,.1),0 12px 28px rgba(18,47,72,.075) !important; }
 .biloo-auth-input::placeholder { color:#a3afb9; }
 .biloo-auth-password-field { margin-top:0 !important; }
 .biloo-auth-password-field .biloo-auth-input { padding-top:18px; }
-.biloo-auth-password-toggle {
-  background:#eef4f8;
-  color:#0b477d;
-}
-.biloo-auth-form-options > a,
-.biloo-auth-switch-copy a,
-.biloo-auth-legal-copy a,
-.biloo-signup-consent a { color:#0b477d; }
+.biloo-auth-password-toggle { background:#eef4f8; color:#0b477d; }
+.biloo-auth-form-options > a,.biloo-auth-switch-copy a,.biloo-auth-legal-copy a,.biloo-signup-consent a { color:#0b477d; }
 .biloo-auth-remember input { accent-color:#0b477d; }
-
-.biloo-auth-submit,
-.biloo-signup-nav-primary {
-  min-height:56px;
-  border-color:#0b477d;
-  background:linear-gradient(135deg,#0b477d 0%,#11649f 100%);
-  box-shadow:0 16px 34px rgba(11,71,125,.2);
-}
-.biloo-auth-submit:hover:not(:disabled),
-.biloo-signup-nav-primary:hover:not(:disabled) {
-  border-color:#083b69;
-  background:linear-gradient(135deg,#083b69 0%,#0f5b92 100%);
-  box-shadow:0 20px 40px rgba(11,71,125,.25);
-  transform:translateY(-2px);
-}
-.biloo-auth-submit:active:not(:disabled),
-.biloo-signup-nav-primary:active:not(:disabled) {
-  transform:translateY(0) scale(.985);
-}
+.biloo-auth-submit,.biloo-signup-nav-primary { min-height:56px; border-color:#0b477d; background:linear-gradient(135deg,#0b477d 0%,#11649f 100%); box-shadow:0 16px 34px rgba(11,71,125,.2); }
+.biloo-auth-submit:hover:not(:disabled),.biloo-signup-nav-primary:hover:not(:disabled) { border-color:#083b69; background:linear-gradient(135deg,#083b69 0%,#0f5b92 100%); box-shadow:0 20px 40px rgba(11,71,125,.25); transform:translateY(-2px); }
+.biloo-auth-submit:active:not(:disabled),.biloo-signup-nav-primary:active:not(:disabled) { transform:translateY(0) scale(.985); }
 .biloo-auth-footer { border-top-color:#e2e9ee; }
-
 .biloo-signup-form { gap:16px; }
-.biloo-signup-progress {
-  min-height:50px;
-  padding-inline:2px;
-}
-.biloo-signup-back {
-  border-color:#dbe4eb;
-  background:rgba(255,255,255,.9);
-  color:#0b477d;
-  border-radius:15px;
-}
+.biloo-signup-progress { min-height:50px; padding-inline:2px; }
+.biloo-signup-back { border-color:#dbe4eb; background:rgba(255,255,255,.9); color:#0b477d; border-radius:15px; }
 .biloo-signup-progress-copy span { color:#8998a5; }
 .biloo-signup-progress-copy strong { color:#153a58; }
 .biloo-signup-progress-track { background:#e7edf2; }
-.biloo-signup-progress-track span {
-  background:linear-gradient(90deg,#0b477d,#f28a18);
-}
-.biloo-signup-section {
-  border-color:#dfe7ed;
-  border-radius:22px;
-  background:rgba(255,255,255,.94);
-  box-shadow:0 24px 60px rgba(18,47,72,.065),0 2px 8px rgba(18,47,72,.035);
-}
-.biloo-signup-section::before {
-  background:
-    radial-gradient(circle at 100% 0,rgba(242,138,24,.045),transparent 28%),
-    linear-gradient(135deg,rgba(11,71,125,.035),transparent 42%);
-}
-.biloo-signup-step {
-  background:linear-gradient(145deg,#0b477d,#176ca6);
-  box-shadow:0 10px 22px rgba(11,71,125,.2);
-}
-.biloo-signup-form .biloo-auth-input {
-  min-height:56px;
-  border-radius:16px;
-}
-.biloo-signup-form .biloo-auth-input:focus {
-  border-color:#0b477d;
-  box-shadow:0 0 0 4px rgba(11,71,125,.1),0 12px 28px rgba(18,47,72,.075);
-}
-.biloo-signup-username-field {
-  min-height:56px;
-  border-color:#dbe4eb;
-  border-radius:16px;
-  box-shadow:0 5px 18px rgba(18,47,72,.035);
-}
-.biloo-signup-username-field:focus-within {
-  border-color:#0b477d;
-  box-shadow:0 0 0 4px rgba(11,71,125,.1),0 12px 28px rgba(18,47,72,.07);
-}
+.biloo-signup-progress-track span { background:linear-gradient(90deg,#0b477d,#f28a18); }
+.biloo-signup-section { border-color:#dfe7ed; border-radius:22px; background:rgba(255,255,255,.94); box-shadow:0 24px 60px rgba(18,47,72,.065),0 2px 8px rgba(18,47,72,.035); }
+.biloo-signup-section::before { background:radial-gradient(circle at 100% 0,rgba(242,138,24,.045),transparent 28%),linear-gradient(135deg,rgba(11,71,125,.035),transparent 42%); }
+.biloo-signup-step { background:linear-gradient(145deg,#0b477d,#176ca6); box-shadow:0 10px 22px rgba(11,71,125,.2); }
+.biloo-signup-form .biloo-auth-input { min-height:56px; border-radius:16px; }
+.biloo-signup-form .biloo-auth-input:focus { border-color:#0b477d; box-shadow:0 0 0 4px rgba(11,71,125,.1),0 12px 28px rgba(18,47,72,.075); }
+.biloo-signup-username-field { min-height:56px; border-color:#dbe4eb; border-radius:16px; box-shadow:0 5px 18px rgba(18,47,72,.035); }
+.biloo-signup-username-field:focus-within { border-color:#0b477d; box-shadow:0 0 0 4px rgba(11,71,125,.1),0 12px 28px rgba(18,47,72,.07); }
 .biloo-signup-username-field .biloo-auth-input { min-height:54px; padding-top:0 !important; }
 .biloo-signup-consent { border-color:#e1e9ef; background:#fbfcfd; }
 .biloo-signup-security-note svg { color:#0b477d; }
-
 @media (max-width:860px) {
-  .biloo-auth-page {
-    background:
-      radial-gradient(circle at 90% 0,rgba(11,71,125,.08),transparent 32%),
-      #f8fafc;
-  }
-  .biloo-auth-form-panel { background:transparent; }
-  .biloo-auth-form-wrap { padding-inline:4px; }
-  .biloo-auth-mobile-brand span { color:#102d46; }
-  .biloo-auth-heading h1 { letter-spacing:-.055em; }
+.biloo-auth-page { background:radial-gradient(circle at 90% 0,rgba(11,71,125,.08),transparent 32%),#f8fafc; }
+.biloo-auth-form-panel { background:transparent; }
+.biloo-auth-form-wrap { padding-inline:4px; }
+.biloo-auth-mobile-brand span { color:#102d46; }
+.biloo-auth-heading h1 { letter-spacing:-.055em; }
 }
 @media (max-width:620px) {
-  .biloo-auth-form-panel { padding-inline:16px; }
-  .biloo-auth-form-wrap { padding:0; }
-  .biloo-auth-form-topbar { margin-bottom:38px; }
-  .biloo-auth-mobile-brand img { box-shadow:0 8px 20px rgba(11,71,125,.14); }
-  .biloo-auth-secure-label { background:rgba(255,255,255,.8); }
-  .biloo-auth-heading h1 { font-size:clamp(34px,9.8vw,42px); }
-  .biloo-auth-content { margin-top:28px; }
-  .biloo-auth-google-button,
-  .biloo-auth-submit { min-height:56px; }
-  .biloo-auth-field > span:first-child,
-  .biloo-signup-field-label { left:11px; }
-  .biloo-auth-field .biloo-auth-input,
-  .biloo-signup-grid > label > .biloo-auth-input { min-height:55px; }
+.biloo-auth-form-panel { padding-inline:16px; }
+.biloo-auth-form-wrap { padding:0; }
+.biloo-auth-form-topbar { margin-bottom:38px; }
+.biloo-auth-mobile-brand img { box-shadow:0 8px 20px rgba(11,71,125,.14); }
+.biloo-auth-secure-label { background:rgba(255,255,255,.8); }
+.biloo-auth-heading h1 { font-size:clamp(34px,9.8vw,42px); }
+.biloo-auth-content { margin-top:28px; }
+.biloo-auth-google-button,.biloo-auth-submit { min-height:56px; }
+.biloo-auth-field > span:first-child,.biloo-signup-field-label { left:11px; }
+.biloo-auth-field .biloo-auth-input,.biloo-signup-grid > label > .biloo-auth-input { min-height:55px; }
+.biloo-auth-google-button .biloo-auth-google-icon { width:18px !important; height:18px !important; min-width:18px !important; max-width:18px !important; min-height:18px !important; max-height:18px !important; flex-basis:18px !important; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .biloo-auth-google-button,
-  .biloo-auth-submit,
-  .biloo-signup-nav-primary,
-  .biloo-signup-back { transition:none !important; }
+.biloo-auth-google-button,.biloo-auth-submit,.biloo-signup-nav-primary,.biloo-signup-back { transition:none !important; }
 }
