@@ -57,6 +57,7 @@ import "./header-visibility-fix.css";
 import "./footer-sticky-fix.css";
 import "./compact-login.css";
 import "./header-brand-emergency-fix.css";
+import "./biloo-premium-marketplace.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -124,7 +125,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#5146e5",
+  themeColor: "#0b477d",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
