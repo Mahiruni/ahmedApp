@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Icon } from "@/components/biloo/ui";
+import { HomeNavigation } from "@/components/public/home-navigation";
 import { getViewer } from "@/lib/biloo/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
@@ -111,6 +112,7 @@ export default async function HomePage() {
             <Link className="biloo-home-get-started" href="/auth/sign-up">
               Get started <Icon name="arrow" />
             </Link>
+            <HomeNavigation />
           </div>
         </div>
       </header>

@@ -8,10 +8,7 @@ import {
   type KeyboardEvent,
 } from "react";
 
-import {
-  searchAddisPlaces,
-  type AddisPlace,
-} from "@/data/addis-places";
+import { searchAddisPlaces, type AddisPlace } from "@/data/addis-places";
 
 import { Icon } from "./ui";
 
@@ -188,7 +185,8 @@ function remoteResult(
 ): GoogleResult | null {
   const fullText = prediction.text?.toString().trim() ?? "";
   const label = prediction.mainText?.toString().trim() || fullText;
-  const context = prediction.secondaryText?.toString().trim() || "Addis Ababa and nearby";
+  const context =
+    prediction.secondaryText?.toString().trim() || "Addis Ababa and nearby";
   if (!label) return null;
 
   return {
@@ -482,6 +480,7 @@ export function AddisPlaceSearch({
         <span className="relative mt-0.5 block min-h-6">
           <input
             aria-autocomplete="list"
+            role="combobox"
             aria-controls={`${tone}-place-results`}
             aria-expanded={listOpen}
             aria-label={`${label} in Addis Ababa and surrounding areas`}
@@ -521,6 +520,7 @@ export function AddisPlaceSearch({
         ) : value && !trackingLocation ? (
           <button
             aria-label={`Clear ${label.toLowerCase()}`}
+            data-transient-field-action="true"
             className="biloo-place-search-clear"
             onClick={() => {
               stopLiveLocation();
@@ -571,7 +571,9 @@ export function AddisPlaceSearch({
           role="listbox"
         >
           <div className="biloo-place-results-head">
-            <span>{value.trim() ? "Best matches" : "Popular around Addis"}</span>
+            <span>
+              {value.trim() ? "Best matches" : "Popular around Addis"}
+            </span>
             <span>Addis + nearby</span>
           </div>
 
@@ -611,7 +613,11 @@ export function AddisPlaceSearch({
               <span className="size-1.5 rounded-full bg-[#5146e5]" />
               Detailed Addis place search
             </span>
-            {mapsReady ? <span>Powered by Google Maps</span> : <span>BILOO local index</span>}
+            {mapsReady ? (
+              <span>Powered by Google Maps</span>
+            ) : (
+              <span>BILOO local index</span>
+            )}
           </div>
         </div>
       ) : null}

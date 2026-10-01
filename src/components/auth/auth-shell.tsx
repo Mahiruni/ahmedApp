@@ -30,12 +30,14 @@ const authBenefits: Array<{
 const serviceLabels = ["Taxi", "Food", "Market", "Materials", "Car parts"];
 
 export function AuthShell({
+  mode = "default",
   eyebrow,
   title,
   description,
   children,
   footer,
 }: {
+  mode?: "default" | "signup";
   eyebrow: string;
   title: string;
   description: string;
@@ -43,9 +45,14 @@ export function AuthShell({
   footer?: ReactNode;
 }) {
   return (
-    <main className="biloo-auth-page">
+    <main
+      className={`biloo-auth-page${mode === "signup" ? " biloo-auth-page--signup" : ""}`}
+    >
       <div className="biloo-auth-shell">
-        <section className="biloo-auth-story" aria-label="BILOO account benefits">
+        <section
+          className="biloo-auth-story"
+          aria-label="BILOO account benefits"
+        >
           <div className="biloo-auth-story-top">
             <Link className="biloo-auth-brand" href="/" aria-label="BILOO home">
               <Image
@@ -68,14 +75,19 @@ export function AuthShell({
           </div>
 
           <div className="biloo-auth-story-copy">
-            <span className="biloo-auth-story-kicker">ONE ACCOUNT. EVERY MOVE.</span>
+            <span className="biloo-auth-story-kicker">
+              ONE ACCOUNT. EVERY MOVE.
+            </span>
             <h2>Everything you need, connected through BILOO.</h2>
             <p>
               Book rides, order essentials and manage every service through one
               secure account designed for daily life in Ethiopia.
             </p>
 
-            <div aria-label="BILOO services" className="biloo-auth-service-list">
+            <div
+              aria-label="BILOO services"
+              className="biloo-auth-service-list"
+            >
               {serviceLabels.map((service) => (
                 <span key={service}>{service}</span>
               ))}
@@ -104,8 +116,17 @@ export function AuthShell({
         <section className="biloo-auth-form-panel">
           <div className="biloo-auth-form-wrap">
             <div className="biloo-auth-form-topbar">
-              <Link className="biloo-auth-mobile-brand" href="/" aria-label="BILOO home">
-                <Image alt="" height={38} src="/icons/biloo-mark.svg" width={38} />
+              <Link
+                className="biloo-auth-mobile-brand"
+                href="/"
+                aria-label="BILOO home"
+              >
+                <Image
+                  alt=""
+                  height={38}
+                  src="/icons/biloo-mark.svg"
+                  width={38}
+                />
                 <span>BILOO</span>
               </Link>
               <span className="biloo-auth-secure-label">
@@ -121,7 +142,9 @@ export function AuthShell({
             </header>
 
             <div className="biloo-auth-content">{children}</div>
-            {footer ? <footer className="biloo-auth-footer">{footer}</footer> : null}
+            {footer ? (
+              <footer className="biloo-auth-footer">{footer}</footer>
+            ) : null}
           </div>
         </section>
       </div>

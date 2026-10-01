@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { roles, type Role } from "@/data/biloo";
+import { useDialog } from "@/hooks/use-dialog";
 
 import { BrandMark, Icon } from "./ui";
 
@@ -18,7 +19,9 @@ type RoleState = {
 type CustomerSection = "home" | "explore";
 
 function announceRoleChange(role: Role) {
-  window.dispatchEvent(new CustomEvent<Role>(roleChangeEvent, { detail: role }));
+  window.dispatchEvent(
+    new CustomEvent<Role>(roleChangeEvent, { detail: role }),
+  );
 }
 
 function announceRoleState(role: Role, availableRoles: Role[]) {
@@ -52,6 +55,7 @@ export function AppHeader({
     availableRoles,
   });
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useDialog(menuOpen, () => setMenuOpen(false));
   const visibleRoles = roles.filter((item) =>
     roleState.availableRoles.includes(item.key),
   );
@@ -69,25 +73,6 @@ export function AppHeader({
     return () => window.removeEventListener(roleStateEvent, syncRoleState);
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
-      setMenuOpen(false);
-      menuButtonRef.current?.focus();
-    }
-
-    window.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [menuOpen]);
-
   function runMenuAction(action: () => void) {
     setMenuOpen(false);
     action();
@@ -102,6 +87,9 @@ export function AppHeader({
 
   return (
     <>
+      <a className="biloo-skip-link" href="#biloo-main-content">
+        Skip to content
+      </a>
       <header className="biloo-app-header" data-biloo-header>
         <div className="biloo-app-header-inner">
           <Link
@@ -157,6 +145,7 @@ export function AppHeader({
 
       <div
         aria-hidden={!menuOpen}
+        inert={!menuOpen}
         className="biloo-command-overlay"
         data-open={menuOpen}
         id="biloo-command-menu"
@@ -170,6 +159,8 @@ export function AppHeader({
         />
 
         <section
+          ref={menuRef}
+          tabIndex={-1}
           aria-label="BILOO navigation"
           aria-modal="true"
           className="biloo-command-panel"
@@ -194,7 +185,8 @@ export function AppHeader({
               <span className="biloo-command-account-copy">
                 <strong>BILOO account</strong>
                 <small>
-                  {currentRole.label} workspace · {liveData ? "Connected" : "Demo"}
+                  {currentRole.label} workspace ·{" "}
+                  {liveData ? "Connected" : "Demo"}
                 </small>
               </span>
               <span
@@ -223,10 +215,15 @@ export function AppHeader({
                     </span>
                     <span className="biloo-command-row-copy">
                       <strong>{item.label}</strong>
-                      <small>{active ? "Current workspace" : "Open workspace"}</small>
+                      <small>
+                        {active ? "Current workspace" : "Open workspace"}
+                      </small>
                     </span>
                     {active ? (
-                      <span className="biloo-command-current" aria-hidden="true" />
+                      <span
+                        className="biloo-command-current"
+                        aria-hidden="true"
+                      />
                     ) : (
                       <Icon className="size-[18px]" name="arrow" />
                     )}
@@ -396,7 +393,9 @@ export function RoleRail({
   availableRoles?: Role[];
   liveData?: boolean;
 }) {
-  const visibleRoles = roles.filter((item) => availableRoles.includes(item.key));
+  const visibleRoles = roles.filter((item) =>
+    availableRoles.includes(item.key),
+  );
   const customerOnly = role === "customer" && visibleRoles.length === 1;
   const [customerSection, setCustomerSection] =
     useState<CustomerSection>("home");
@@ -408,7 +407,8 @@ export function RoleRail({
   useEffect(() => {
     function switchFromHeader(event: Event) {
       const nextRole = (event as CustomEvent<Role>).detail;
-      if (nextRole !== role && availableRoles.includes(nextRole)) setRole(nextRole);
+      if (nextRole !== role && availableRoles.includes(nextRole))
+        setRole(nextRole);
     }
 
     window.addEventListener(roleChangeEvent, switchFromHeader);
@@ -472,7 +472,10 @@ export function RoleRail({
           <span>Customer</span>
           <strong>Quick navigation</strong>
         </div>
-        <nav aria-label="Customer navigation" className="biloo-customer-nav-list">
+        <nav
+          aria-label="Customer navigation"
+          className="biloo-customer-nav-list"
+        >
           <CustomerNavButton
             active={customerSection === "home"}
             icon="home"

@@ -47,7 +47,11 @@ export function AuthGoogleButton({ label }: { label: string }) {
       {pending ? (
         <span aria-hidden="true" className="biloo-feedback-spinner" />
       ) : (
-        <svg aria-hidden="true" className="biloo-auth-google-icon" viewBox="0 0 24 24">
+        <svg
+          aria-hidden="true"
+          className="biloo-auth-google-icon"
+          viewBox="0 0 24 24"
+        >
           <path
             d="M21.8 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.5a4.7 4.7 0 0 1-2 3.1v2.6h3.3c1.9-1.8 3-4.4 3-7.6Z"
             fill="#4285F4"
@@ -96,6 +100,7 @@ export function LoginForm({ next }: { next: string }) {
         <span>Password</span>
         <span className="biloo-auth-password-field">
           <input
+            aria-label="Password"
             autoComplete="current-password"
             className={authInputClass}
             minLength={8}

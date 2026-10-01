@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useDialog } from "@/hooks/use-dialog";
 
 import { Icon } from "./ui";
 
@@ -15,9 +16,11 @@ export function Drawer({
   title: string;
   children: ReactNode;
 }) {
+  const dialogRef = useDialog(open, onClose);
   return (
     <div
       aria-hidden={!open}
+      inert={!open}
       className="biloo-overlay"
       data-open={open}
     >
@@ -29,6 +32,8 @@ export function Drawer({
         type="button"
       />
       <section
+        ref={dialogRef}
+        tabIndex={-1}
         aria-label={title}
         aria-modal="true"
         className="biloo-drawer-sheet"
@@ -40,7 +45,12 @@ export function Drawer({
             <span>BILOO workspace</span>
             <h2>{title}</h2>
           </div>
-          <button aria-label="Close" className="biloo-icon-button" onClick={onClose} type="button">
+          <button
+            aria-label="Close"
+            className="biloo-icon-button"
+            onClick={onClose}
+            type="button"
+          >
             <Icon name="close" />
           </button>
         </header>
@@ -61,10 +71,18 @@ export function Modal({
   children: ReactNode;
   wide?: boolean;
 }) {
+  const dialogRef = useDialog(true, onClose);
   return (
     <div className="biloo-overlay biloo-overlay-modal" data-open="true">
-      <button aria-label="Close dialog" className="biloo-overlay-backdrop" onClick={onClose} type="button" />
+      <button
+        aria-label="Close dialog"
+        className="biloo-overlay-backdrop"
+        onClick={onClose}
+        type="button"
+      />
       <section
+        ref={dialogRef}
+        tabIndex={-1}
         aria-label={title}
         aria-modal="true"
         className="biloo-modal-sheet"
@@ -77,7 +95,12 @@ export function Modal({
             <span>Connected experience</span>
             <h2>{title}</h2>
           </div>
-          <button aria-label="Close" className="biloo-icon-button" onClick={onClose} type="button">
+          <button
+            aria-label="Close"
+            className="biloo-icon-button"
+            onClick={onClose}
+            type="button"
+          >
             <Icon name="close" />
           </button>
         </header>

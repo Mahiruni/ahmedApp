@@ -171,9 +171,7 @@ export function BilooApp({
     liveData ? initialRemoteOrders : demoInitialOrders,
     !liveData,
   );
-  const [notifications, setNotifications] = useStoredState<
-    BilooNotification[]
-  >(
+  const [notifications, setNotifications] = useStoredState<BilooNotification[]>(
     "biloo.notifications",
     liveData ? initialRemoteNotifications : demoInitialNotifications,
     !liveData,
@@ -208,11 +206,12 @@ export function BilooApp({
     initialDriverJobs,
     !liveData,
   );
-  const [activeDriverJob, setActiveDriverJob] = useStoredState<DriverJob | null>(
-    "biloo.driver-active-job",
-    null,
-    !liveData,
-  );
+  const [activeDriverJob, setActiveDriverJob] =
+    useStoredState<DriverJob | null>(
+      "biloo.driver-active-job",
+      null,
+      !liveData,
+    );
   const [driverEarnings, setDriverEarnings] = useStoredState(
     "biloo.driver-earnings",
     2460,
@@ -282,18 +281,6 @@ export function BilooApp({
     const timeout = window.setTimeout(() => setToast(null), 3200);
     return () => window.clearTimeout(timeout);
   }, [toast]);
-
-  useEffect(() => {
-    const overlayOpen =
-      cartOpen || checkoutOpen || notificationsOpen || Boolean(selectedOrder);
-    if (!overlayOpen) return;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [cartOpen, checkoutOpen, notificationsOpen, selectedOrder]);
 
   useEffect(() => {
     if (!selectedOrder) return;
@@ -433,9 +420,7 @@ export function BilooApp({
 
   function updateCartQuantity(itemId: string, quantity: number) {
     if (quantity <= 0) {
-      setCart((current) =>
-        current.filter((line) => line.item.id !== itemId),
-      );
+      setCart((current) => current.filter((line) => line.item.id !== itemId));
       return;
     }
     setCart((current) =>
@@ -490,7 +475,10 @@ export function BilooApp({
     const total = subtotal + 75 + Math.round(subtotal * 0.025);
     const orderService = cart[0].item.service;
     const merchant = cart[0].item.merchant;
-    const lineCount = cart.reduce((totalItems, line) => totalItems + line.quantity, 0);
+    const lineCount = cart.reduce(
+      (totalItems, line) => totalItems + line.quantity,
+      0,
+    );
     const order: ActiveOrder = {
       id: createOrderId(),
       service: orderService,
@@ -563,7 +551,9 @@ export function BilooApp({
         setToast("Ride request sent. A driver is being matched.");
         setSelectedOrder(result.order);
       } catch (error) {
-        setToast(error instanceof Error ? error.message : "Ride request failed.");
+        setToast(
+          error instanceof Error ? error.message : "Ride request failed.",
+        );
       }
       return;
     }
@@ -615,7 +605,9 @@ export function BilooApp({
       },
       () => {
         setLocationLabel("Home · Bole, Addis Ababa");
-        setToast("Location permission was not granted. Using your saved address.");
+        setToast(
+          "Location permission was not granted. Using your saved address.",
+        );
       },
       { enableHighAccuracy: true, maximumAge: 60000, timeout: 8000 },
     );
@@ -722,7 +714,8 @@ export function BilooApp({
           pickup: customerOrder.title.replace(/ order$/i, ""),
           dropoff: locationLabel,
           amount: Math.max(180, Math.round(customerOrder.total * 0.12)),
-          distance: customerOrder.service === "construction" ? "13.2 km" : "6.8 km",
+          distance:
+            customerOrder.service === "construction" ? "13.2 km" : "6.8 km",
           eta: customerOrder.service === "construction" ? "44 min" : "24 min",
         };
         setDriverJobs((current) =>
@@ -765,7 +758,10 @@ export function BilooApp({
   }
 
   return (
-    <main className="min-h-screen bg-[#f2f5f7] text-[#10243a]">
+    <main
+      id="biloo-app"
+      className="biloo-app min-h-screen bg-[#f2f5f7] text-[#10243a]"
+    >
       <AppHeader
         cartCount={cartCount}
         onOpenCart={() => setCartOpen(true)}
@@ -775,7 +771,7 @@ export function BilooApp({
         liveData={liveData}
       />
 
-      <div className="mx-auto grid max-w-[1540px] lg:grid-cols-[270px_minmax(0,1fr)]">
+      <div className="biloo-app-layout mx-auto grid max-w-[1540px] lg:grid-cols-[270px_minmax(0,1fr)]">
         <RoleRail
           role={role}
           setRole={setRole}
@@ -783,7 +779,11 @@ export function BilooApp({
           liveData={liveData}
         />
 
-        <section className="min-w-0 px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8">
+        <section
+          className="biloo-app-content min-w-0 px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8"
+          id="biloo-main-content"
+          tabIndex={-1}
+        >
           {role === "customer" ? (
             <CustomerDashboard
               cart={cart}
@@ -896,7 +896,11 @@ export function BilooApp({
       />
 
       {toast ? (
-        <div className="fixed bottom-5 left-1/2 z-[100] flex w-[min(92vw,520px)] -translate-x-1/2 items-center gap-3 rounded-2xl bg-[#082640] px-4 py-3 text-sm font-bold text-white shadow-2xl">
+        <div
+          aria-live="polite"
+          role="status"
+          className="biloo-toast fixed bottom-5 left-1/2 z-[100] flex w-[min(92vw,520px)] -translate-x-1/2 items-center gap-3 rounded-2xl bg-[#082640] px-4 py-3 text-sm font-bold text-white shadow-2xl"
+        >
           <span className="grid size-8 shrink-0 place-items-center rounded-full bg-emerald-500 text-white">
             <Icon className="size-4" name="check" />
           </span>
@@ -933,7 +937,9 @@ function OperationsLifecycle({
   const linkedDriverJobs = driverJobs.filter((job) =>
     Boolean(linkedOrderIdFromJob(job)),
   ).length;
-  const completedOrders = orders.filter((order) => order.progress >= 100).length;
+  const completedOrders = orders.filter(
+    (order) => order.progress >= 100,
+  ).length;
 
   return (
     <Surface className="p-5 sm:p-6">
@@ -946,7 +952,8 @@ function OperationsLifecycle({
             End-to-end order lifecycle
           </h2>
           <p className="mt-2 text-sm text-slate-500">
-            Customer, vendor, driver and admin now share one persistent demo workflow.
+            Customer, vendor, driver and admin now share one persistent demo
+            workflow.
           </p>
         </div>
         <span className="rounded-full bg-emerald-50 px-3 py-2 text-xs font-black text-emerald-700">
@@ -967,10 +974,7 @@ function OperationsLifecycle({
                 <p className="text-2xl font-black">{value}</p>
                 <p className="mt-1 text-xs font-bold text-slate-400">{label}</p>
               </div>
-              <Icon
-                className="size-5 text-[#082640]"
-                name={icon as IconName}
-              />
+              <Icon className="size-5 text-[#082640]" name={icon as IconName} />
             </div>
           </div>
         ))}
@@ -1002,10 +1006,17 @@ function OperationsLifecycle({
               {serviceLabel(order.service)}
             </span>
             <span className="text-xs font-black text-[#082640]">
-              {orderStageLabel(order, vendorOrders, driverJobs, activeDriverJob)}
+              {orderStageLabel(
+                order,
+                vendorOrders,
+                driverJobs,
+                activeDriverJob,
+              )}
             </span>
             <span>
-              <span className="block text-sm font-black">{order.progress}%</span>
+              <span className="block text-sm font-black">
+                {order.progress}%
+              </span>
               <span className="mt-2 block h-2 overflow-hidden rounded-full bg-slate-100">
                 <span
                   className="block h-full rounded-full bg-emerald-500"

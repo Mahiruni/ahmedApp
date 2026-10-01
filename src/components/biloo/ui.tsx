@@ -303,7 +303,7 @@ export function Surface({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-[#e4e4e4] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] ${className}`}
+      className={`biloo-surface rounded-2xl border border-[#e4e4e4] bg-white ${className}`}
     >
       {children}
     </section>
@@ -327,7 +327,8 @@ export function StatusPill({
 
   return (
     <span
-      className={`inline-flex min-h-6 items-center rounded-full px-2.5 text-[10px] font-semibold ${tones[tone]}`}
+      className={`biloo-status-pill inline-flex min-h-6 items-center rounded-full px-2.5 text-[10px] font-semibold ${tones[tone]}`}
+      data-tone={tone}
     >
       {children}
     </span>

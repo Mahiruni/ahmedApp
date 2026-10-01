@@ -6,8 +6,6 @@ import type { ReactNode } from "react";
 import { BilooLoadingController } from "@/components/biloo/biloo-loading-controller";
 import { InteractionFeedbackController } from "@/components/biloo/interaction-feedback-controller";
 import { ProductTour } from "@/components/biloo/product-tour";
-import { SearchFocusController } from "@/components/biloo/search-focus-controller";
-import { SearchMotionController } from "@/components/biloo/search-motion-controller";
 import { EthiopianPhoneController } from "@/components/forms/ethiopian-phone-controller";
 import { PwaRegister } from "@/components/pwa-register";
 
@@ -37,7 +35,6 @@ import "./search-standard-fix.css";
 import "./live-location.css";
 import "./customer-signup.css";
 import "./customer-navigation.css";
-import "./customer-navigation-icons.css";
 import "./brand-identity.css";
 import "./app-entry.css";
 import "./public-pages.css";
@@ -51,14 +48,9 @@ import "./account-settings.css";
 import "./phone-verification.css";
 import "./biloo-loading-tour.css";
 import "./mobile-footer-polish.css";
-import "./mobile-app-frame.css";
 import "./text-contrast.css";
-import "./header-visibility-fix.css";
-import "./footer-sticky-fix.css";
-import "./compact-login.css";
-import "./header-brand-emergency-fix.css";
-import "./biloo-premium-marketplace.css";
 import "./biloo-personal-information.css";
+import "./design-system.css";
 
 const bilooSans = Manrope({
   subsets: ["latin"],
@@ -75,7 +67,8 @@ const bilooDisplay = Inter_Tight({
 export const metadata: Metadata = {
   metadataBase: new URL("https://biloo.hisabtechnologies.com"),
   title: { default: "BILOO Super App", template: "%s · BILOO" },
-  description: "One beautifully connected platform for taxi booking, food delivery, supermarket shopping, construction materials, and car parts.",
+  description:
+    "One beautifully connected platform for taxi booking, food delivery, supermarket shopping, construction materials, and car parts.",
   applicationName: "BILOO",
   manifest: "/manifest.webmanifest",
   icons: {
@@ -85,7 +78,13 @@ export const metadata: Metadata = {
       { url: "/icons/biloo-mark.svg", sizes: "any", type: "image/svg+xml" },
     ],
     shortcut: "/icons/favicon-32.png",
-    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [
+      {
+        url: "/icons/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
   },
   appleWebApp: { capable: true, statusBarStyle: "default", title: "BILOO" },
   formatDetection: { telephone: false },
@@ -96,10 +95,12 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#0b477d",
+  themeColor: "#5146e5",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
       <body className={`${bilooSans.variable} ${bilooDisplay.variable}`}>
@@ -107,8 +108,6 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <EthiopianPhoneController />
         <BilooLoadingController />
         <InteractionFeedbackController />
-        <SearchFocusController />
-        <SearchMotionController />
         <ProductTour />
         {children}
         <SpeedInsights />
