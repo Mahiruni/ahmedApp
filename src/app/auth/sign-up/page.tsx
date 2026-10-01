@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { signInWithGoogleAction } from "@/app/auth/actions";
 import { AuthError, AuthShell } from "@/components/auth/auth-shell";
-import { AuthGoogleButton } from "@/components/auth/login-form";
+import { AuthGoogleForm } from "@/components/auth/login-form";
 import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export const metadata: Metadata = {
   title: "Create account",
-  description: "Create a secure BILOO customer account for rides, delivery and shopping.",
+  description:
+    "Create a secure BILOO customer account for rides, delivery and shopping.",
 };
 
 export default async function SignUpPage({
@@ -33,17 +33,16 @@ export default async function SignUpPage({
       <div className="biloo-signup-intro">
         <span>
           <strong>Customer account</strong>
-          <small>Driver and vendor access can be requested after registration.</small>
+          <small>
+            Driver and vendor access can be requested after registration.
+          </small>
         </span>
         <span className="biloo-signup-intro-status">Secure signup</span>
       </div>
 
       <AuthError message={params.error} />
 
-      <form action={signInWithGoogleAction}>
-        <input name="next" type="hidden" value="/onboarding" />
-        <AuthGoogleButton label="Continue with Google" />
-      </form>
+      <AuthGoogleForm next="/onboarding" label="Continue with Google" />
 
       <div className="biloo-auth-divider" aria-hidden="true">
         <span />

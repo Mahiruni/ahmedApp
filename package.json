@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test:auth": "node --experimental-strip-types --test tests/auth.test.mjs",
     "format:check": "prettier --check ."
   },
   "dependencies": {

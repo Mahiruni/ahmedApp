@@ -14,7 +14,10 @@ export default async function OnboardingPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const viewer = await getViewer();
-  if (!viewer) redirect("/auth/login");
+  if (!viewer)
+    redirect(
+      "/auth/login?next=/onboarding&error=We%20could%20not%20load%20your%20account.%20Please%20try%20again%20or%20contact%20BILOO%20support.",
+    );
   if (viewer.onboardingComplete) redirect("/biloo");
 
   const phoneVerificationEnabled =
@@ -30,7 +33,9 @@ export default async function OnboardingPage({
     const authenticatedPhone = normalizeEthiopianPhone(user?.phone ?? "");
 
     if (authenticatedPhone) defaultPhone = authenticatedPhone;
-    initialPhoneVerified = Boolean(authenticatedPhone && user?.phone_confirmed_at);
+    initialPhoneVerified = Boolean(
+      authenticatedPhone && user?.phone_confirmed_at,
+    );
   }
 
   const params = await searchParams;
