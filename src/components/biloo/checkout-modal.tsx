@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import type { CartLine, PaymentMethod } from "@/data/biloo";
+import { useDialog } from "@/hooks/use-dialog";
 
 import { formatETB, Icon, serviceLabel } from "./ui";
 
@@ -19,6 +20,7 @@ export function CheckoutModal({
   onClose: () => void;
   onConfirm: (payment: PaymentMethod) => void;
 }) {
+  const dialogRef = useDialog(open, onClose);
   const [payment, setPayment] = useState<PaymentMethod>("wallet");
   const [cardholder, setCardholder] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -64,7 +66,9 @@ export function CheckoutModal({
 
   function formatExpiry(value: string) {
     const digits = value.replace(/\D/g, "").slice(0, 4);
-    return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+    return digits.length > 2
+      ? `${digits.slice(0, 2)}/${digits.slice(2)}`
+      : digits;
   }
 
   function submitPayment() {
@@ -110,6 +114,8 @@ export function CheckoutModal({
       />
 
       <section
+        ref={dialogRef}
+        tabIndex={-1}
         aria-label="Secure payment"
         aria-modal="true"
         className="biloo-payment-sheet"
@@ -215,9 +221,13 @@ export function CheckoutModal({
           </div>
 
           {payment === "wallet" ? (
-            <div className={`biloo-payment-wallet ${walletValid ? "" : "is-low"}`}>
+            <div
+              className={`biloo-payment-wallet ${walletValid ? "" : "is-low"}`}
+            >
               <span>
-                <span className="biloo-payment-small-label">Available balance</span>
+                <span className="biloo-payment-small-label">
+                  Available balance
+                </span>
                 <strong>{formatETB(walletBalance)}</strong>
               </span>
               <span>
@@ -275,7 +285,9 @@ export function CheckoutModal({
                   <input
                     autoComplete="cc-exp"
                     inputMode="numeric"
-                    onChange={(event) => setExpiry(formatExpiry(event.target.value))}
+                    onChange={(event) =>
+                      setExpiry(formatExpiry(event.target.value))
+                    }
                     placeholder="MM/YY"
                     value={expiry}
                   />

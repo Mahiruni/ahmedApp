@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { BilooNotification, IconName } from "@/data/biloo";
+import { useDialog } from "@/hooks/use-dialog";
 
 import { Icon } from "./ui";
 
@@ -14,10 +15,16 @@ type NotificationStyle = {
   label: string;
 };
 
-function getNotificationStyle(notification: BilooNotification): NotificationStyle {
+function getNotificationStyle(
+  notification: BilooNotification,
+): NotificationStyle {
   const content = `${notification.title} ${notification.message}`.toLowerCase();
 
-  if (content.includes("wallet") || content.includes("payment") || content.includes("credited")) {
+  if (
+    content.includes("wallet") ||
+    content.includes("payment") ||
+    content.includes("credited")
+  ) {
     return {
       icon: "wallet",
       iconClassName: "bg-[#eef6ff] text-[#0a68d8]",
@@ -25,7 +32,11 @@ function getNotificationStyle(notification: BilooNotification): NotificationStyl
     };
   }
 
-  if (content.includes("driver") || content.includes("ride") || content.includes("taxi")) {
+  if (
+    content.includes("driver") ||
+    content.includes("ride") ||
+    content.includes("taxi")
+  ) {
     return {
       icon: "taxi",
       iconClassName: "bg-[#edf9f2] text-[#078449]",
@@ -46,7 +57,11 @@ function getNotificationStyle(notification: BilooNotification): NotificationStyl
     };
   }
 
-  if (content.includes("alert") || content.includes("failed") || content.includes("issue")) {
+  if (
+    content.includes("alert") ||
+    content.includes("failed") ||
+    content.includes("issue")
+  ) {
     return {
       icon: "alert",
       iconClassName: "bg-[#fff0f0] text-[#d92d20]",
@@ -54,7 +69,11 @@ function getNotificationStyle(notification: BilooNotification): NotificationStyl
     };
   }
 
-  if (content.includes("welcome") || content.includes("ready") || content.includes("completed")) {
+  if (
+    content.includes("welcome") ||
+    content.includes("ready") ||
+    content.includes("completed")
+  ) {
     return {
       icon: "check",
       iconClassName: "bg-[#edf9f2] text-[#078449]",
@@ -78,9 +97,13 @@ export function NotificationsDrawer({
   notifications: BilooNotification[];
   onClose: () => void;
 }) {
+  const dialogRef = useDialog(open, onClose);
   const [filter, setFilter] = useState<NotificationFilter>("all");
   const [unreadIds, setUnreadIds] = useState<Set<string>>(
-    () => new Set(notifications.filter((item) => !item.read).map((item) => item.id)),
+    () =>
+      new Set(
+        notifications.filter((item) => !item.read).map((item) => item.id),
+      ),
   );
   const unreadBeforeOpenRef = useRef<Set<string>>(new Set(unreadIds));
   const previouslyOpenRef = useRef(open);
@@ -125,8 +148,12 @@ export function NotificationsDrawer({
         : notifications,
     [filter, notifications, unreadIds],
   );
-  const newNotifications = visibleNotifications.filter((item) => unreadIds.has(item.id));
-  const earlierNotifications = visibleNotifications.filter((item) => !unreadIds.has(item.id));
+  const newNotifications = visibleNotifications.filter((item) =>
+    unreadIds.has(item.id),
+  );
+  const earlierNotifications = visibleNotifications.filter(
+    (item) => !unreadIds.has(item.id),
+  );
 
   function markRead(notificationId: string) {
     setUnreadIds((current) => {
@@ -144,6 +171,7 @@ export function NotificationsDrawer({
   return (
     <div
       aria-hidden={!open}
+      inert={!open}
       className={`fixed inset-0 z-[90] transition ${
         open ? "pointer-events-auto" : "pointer-events-none"
       }`}
@@ -160,6 +188,8 @@ export function NotificationsDrawer({
       />
 
       <section
+        ref={dialogRef}
+        tabIndex={-1}
         aria-labelledby="biloo-notification-title"
         aria-modal="true"
         className={`absolute inset-x-0 bottom-0 flex max-h-[88svh] flex-col overflow-hidden rounded-t-[26px] border border-black/5 bg-white shadow-[0_-20px_64px_rgba(0,0,0,0.18)] transition duration-300 ease-out sm:inset-y-3 sm:left-auto sm:right-3 sm:max-h-none sm:w-[420px] sm:rounded-[24px] sm:shadow-[-18px_20px_70px_rgba(0,0,0,0.18)] ${
@@ -266,10 +296,15 @@ export function NotificationsDrawer({
             <div className="grid min-h-[360px] place-items-center px-8 py-12 text-center">
               <div>
                 <span className="mx-auto grid size-14 place-items-center rounded-full bg-[#f1f2f4] text-[#5f6267]">
-                  <Icon className="size-6" name={filter === "unread" ? "check" : "bell"} />
+                  <Icon
+                    className="size-6"
+                    name={filter === "unread" ? "check" : "bell"}
+                  />
                 </span>
                 <h3 className="mt-4 text-[15px] font-semibold text-[#17181a]">
-                  {filter === "unread" ? "No unread notifications" : "No notifications yet"}
+                  {filter === "unread"
+                    ? "No unread notifications"
+                    : "No notifications yet"}
                 </h3>
                 <p className="mx-auto mt-1.5 max-w-[250px] text-[11px] leading-[1.65] text-[#777a7f]">
                   {filter === "unread"
@@ -304,7 +339,9 @@ function NotificationGroup({
         <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#85888d]">
           {title}
         </h3>
-        <span className="text-[10px] text-[#a0a3a7]">{notifications.length}</span>
+        <span className="text-[10px] text-[#a0a3a7]">
+          {notifications.length}
+        </span>
       </div>
 
       <div>
@@ -316,7 +353,9 @@ function NotificationGroup({
             <button
               aria-label={`${unread ? "Unread: " : ""}${notification.title}`}
               className={`group relative flex w-full items-start gap-3 border-b border-[#f0f1f2] px-4 py-3.5 text-left transition last:border-b-0 sm:px-5 ${
-                unread ? "bg-[#f7fbff] hover:bg-[#f1f8ff]" : "bg-white hover:bg-[#f8f9fa]"
+                unread
+                  ? "bg-[#f7fbff] hover:bg-[#f1f8ff]"
+                  : "bg-white hover:bg-[#f8f9fa]"
               }`}
               key={notification.id}
               onClick={() => onRead(notification.id)}
@@ -350,7 +389,9 @@ function NotificationGroup({
                 </span>
                 <span className="mt-2 inline-flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#92959a]">
                   {style.label}
-                  {unread ? <span className="size-1 rounded-full bg-[#0a68d8]" /> : null}
+                  {unread ? (
+                    <span className="size-1 rounded-full bg-[#0a68d8]" />
+                  ) : null}
                 </span>
               </span>
             </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDialog } from "@/hooks/use-dialog";
 
 import { Icon } from "./ui";
 
@@ -29,9 +30,11 @@ function getAudioContext() {
 
   const AudioContextConstructor =
     window.AudioContext ??
-    (window as unknown as {
-      webkitAudioContext?: new () => AudioContext;
-    }).webkitAudioContext;
+    (
+      window as unknown as {
+        webkitAudioContext?: new () => AudioContext;
+      }
+    ).webkitAudioContext;
 
   if (!AudioContextConstructor) return null;
 
@@ -103,16 +106,18 @@ function playFeedbackSound(sound: FeedbackSound) {
   };
 
   if (context.state === "suspended") {
-    void context.resume().then(play).catch(() => undefined);
+    void context
+      .resume()
+      .then(play)
+      .catch(() => undefined);
   } else {
     play();
   }
 }
 
 function cartCountFromDocument() {
-  const openCartCount = document.querySelector<HTMLElement>(
-    ".biloo-cart-count",
-  )?.textContent;
+  const openCartCount =
+    document.querySelector<HTMLElement>(".biloo-cart-count")?.textContent;
   const openMatch = openCartCount?.match(/\d+/);
   if (openMatch) return Number(openMatch[0]);
 
@@ -129,16 +134,15 @@ function cartCountFromDocument() {
 }
 
 function normalizedButtonLabel(button: HTMLButtonElement) {
-  return (
-    button.getAttribute("aria-label") ?? button.textContent ?? ""
-  )
+  return (button.getAttribute("aria-label") ?? button.textContent ?? "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
 export function InteractionFeedbackController() {
-  const [confirmation, setConfirmation] =
-    useState<ConfirmationState | null>(null);
+  const [confirmation, setConfirmation] = useState<ConfirmationState | null>(
+    null,
+  );
   const [paymentPhase, setPaymentPhase] = useState<PaymentPhase | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
@@ -168,6 +172,7 @@ export function InteractionFeedbackController() {
     setConfirmation(null);
     addTimer(() => trigger?.focus(), 0);
   }, [addTimer]);
+  const confirmationRef = useDialog(Boolean(confirmation), cancelConfirmation);
 
   const trackCartChange = useCallback(
     (before: number, expected: "add" | "remove") => {
@@ -182,9 +187,7 @@ export function InteractionFeedbackController() {
 
         settled = true;
         observer?.disconnect();
-        playFeedbackSound(
-          expected === "add" ? "cart-add" : "cart-remove",
-        );
+        playFeedbackSound(expected === "add" ? "cart-add" : "cart-remove");
       };
 
       observer = new MutationObserver(finish);
@@ -280,8 +283,9 @@ export function InteractionFeedbackController() {
       const label = normalizedButtonLabel(button);
       const cartRemoval = /^Remove .+ from cart$/i.test(label);
       const explicitDelete =
-        button.dataset.confirmDelete === "true" ||
-        /^(Delete|Clear)\b/i.test(label);
+        button.dataset.transientFieldAction !== "true" &&
+        (button.dataset.confirmDelete === "true" ||
+          /^(Delete|Clear)\b/i.test(label));
 
       if (cartRemoval || explicitDelete) {
         event.preventDefault();
@@ -319,10 +323,7 @@ export function InteractionFeedbackController() {
         return;
       }
 
-      if (
-        button.closest("#biloo-taxi-booking") &&
-        /^Confirm\b/i.test(label)
-      ) {
+      if (button.closest("#biloo-taxi-booking") && /^Confirm\b/i.test(label)) {
         event.preventDefault();
         event.stopPropagation();
         event.stopImmediatePropagation();
@@ -348,10 +349,7 @@ export function InteractionFeedbackController() {
 
       if (addAction || removeAction) {
         primeAudio();
-        trackCartChange(
-          cartCountFromDocument(),
-          addAction ? "add" : "remove",
-        );
+        trackCartChange(cartCountFromDocument(), addAction ? "add" : "remove");
       }
     }
 
@@ -402,11 +400,7 @@ export function InteractionFeedbackController() {
   return (
     <>
       {actionLoading ? (
-        <div
-          aria-live="polite"
-          className="biloo-action-loading"
-          role="status"
-        >
+        <div aria-live="polite" className="biloo-action-loading" role="status">
           <span className="biloo-feedback-spinner" aria-hidden="true" />
           <span>{actionLoading}</span>
         </div>
@@ -453,6 +447,8 @@ export function InteractionFeedbackController() {
             type="button"
           />
           <section
+            ref={confirmationRef}
+            tabIndex={-1}
             aria-describedby="biloo-confirmation-message"
             aria-labelledby="biloo-confirmation-title"
             aria-modal="true"

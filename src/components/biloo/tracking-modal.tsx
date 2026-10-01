@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { ActiveOrder, PaymentMethod } from "@/data/biloo";
+import { useDialog } from "@/hooks/use-dialog";
 
 import { formatETB, Icon, serviceLabel } from "./ui";
 
@@ -28,10 +29,12 @@ export function TrackingModal({
   onAdvance: (order: ActiveOrder) => void;
 }) {
   const [mode, setMode] = useState<ExperienceMode>("tracking");
-  const [confirmation, setConfirmation] =
-    useState<ConfirmationContext | null>(null);
+  const [confirmation, setConfirmation] = useState<ConfirmationContext | null>(
+    null,
+  );
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const dialogRef = useDialog(Boolean(order), onClose, mode);
 
   const orderId = order?.id;
   const orderService = order?.service;
@@ -133,6 +136,8 @@ export function TrackingModal({
       <div className="biloo-order-overlay" role="presentation">
         <div className="biloo-order-backdrop" />
         <section
+          ref={dialogRef}
+          tabIndex={-1}
           aria-label="Order confirmation"
           aria-modal="true"
           className="biloo-order-confirmation"
@@ -300,6 +305,8 @@ export function TrackingModal({
       />
 
       <section
+        ref={dialogRef}
+        tabIndex={-1}
         aria-label={`Track ${currentOrder.id}`}
         aria-modal="true"
         className="biloo-tracking-sheet"
@@ -436,9 +443,7 @@ function ReceiptLine({
 function TrackingStep({ done, label }: { done: boolean; label: string }) {
   return (
     <div className="biloo-tracking-step" data-done={done}>
-      <span>
-        {done ? <Icon className="size-3.5" name="check" /> : <i />}
-      </span>
+      <span>{done ? <Icon className="size-3.5" name="check" /> : <i />}</span>
       <strong>{label}</strong>
     </div>
   );

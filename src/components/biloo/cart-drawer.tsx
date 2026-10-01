@@ -1,6 +1,7 @@
 "use client";
 
 import type { CartLine } from "@/data/biloo";
+import { useDialog } from "@/hooks/use-dialog";
 
 import { formatETB, Icon, serviceLabel } from "./ui";
 
@@ -17,6 +18,7 @@ export function CartDrawer({
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onCheckout: () => void;
 }) {
+  const dialogRef = useDialog(open, onClose);
   const subtotal = cart.reduce(
     (total, line) => total + line.item.price * line.quantity,
     0,
@@ -31,6 +33,7 @@ export function CartDrawer({
   return (
     <div
       aria-hidden={!open}
+      inert={!open}
       className="biloo-cart-overlay"
       data-open={open}
     >
@@ -43,6 +46,8 @@ export function CartDrawer({
       />
 
       <section
+        ref={dialogRef}
+        tabIndex={-1}
         aria-label="Your cart"
         aria-modal="true"
         className="biloo-cart-sheet"
@@ -88,7 +93,9 @@ export function CartDrawer({
                   <Icon className="size-4" name="vendor" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="biloo-cart-context-label">Ordering from</span>
+                  <span className="biloo-cart-context-label">
+                    Ordering from
+                  </span>
                   <span className="biloo-cart-context-value">
                     {merchant ?? "BILOO partner"}
                   </span>
@@ -101,7 +108,10 @@ export function CartDrawer({
                   const lineTotal = line.item.price * line.quantity;
                   return (
                     <article className="biloo-cart-item" key={line.item.id}>
-                      <span className="biloo-cart-item-visual" aria-hidden="true">
+                      <span
+                        className="biloo-cart-item-visual"
+                        aria-hidden="true"
+                      >
                         {line.item.icon}
                       </span>
 
@@ -130,10 +140,7 @@ export function CartDrawer({
                             className="biloo-cart-quantity-button"
                             data-action="decrease"
                             onClick={() =>
-                              onUpdateQuantity(
-                                line.item.id,
-                                line.quantity - 1,
-                              )
+                              onUpdateQuantity(line.item.id, line.quantity - 1)
                             }
                             type="button"
                           >
@@ -150,10 +157,7 @@ export function CartDrawer({
                             className="biloo-cart-quantity-button"
                             data-action="increase"
                             onClick={() =>
-                              onUpdateQuantity(
-                                line.item.id,
-                                line.quantity + 1,
-                              )
+                              onUpdateQuantity(line.item.id, line.quantity + 1)
                             }
                             type="button"
                           >

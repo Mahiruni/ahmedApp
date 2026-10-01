@@ -20,7 +20,8 @@ export default async function SignUpPage({
 
   return (
     <AuthShell
-      mode="signup"\n      eyebrow="JOIN BILOO"
+      mode="signup"
+      eyebrow="JOIN BILOO"
       title="Create your BILOO account"
       description="One secure profile for taxi rides, food, groceries, construction materials and car parts."
       footer={

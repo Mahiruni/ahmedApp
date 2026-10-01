@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  type ChangeEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   rideTypes,
@@ -59,9 +53,7 @@ type CustomerGoogleMaps = {
 
 type CustomerGeocodingLibrary = {
   Geocoder: new () => {
-    geocode: (request: {
-      location: { lat: number; lng: number };
-    }) => Promise<{
+    geocode: (request: { location: { lat: number; lng: number } }) => Promise<{
       results?: Array<{ formatted_address?: string }>;
     }>;
   };
@@ -102,56 +94,31 @@ const heroServices: HeroService[] = [
 
 const heroServiceLabels = heroServices.map((item) => item.label);
 
-const searchTypingPrompts: Record<ServiceKey, readonly string[]> = {
-  taxi: [
-    "Search Bole Airport",
-    "Try CMC, Ayat or Piassa",
-    "Enter a street, gate or landmark",
-  ],
-  food: [
-    "Search restaurants or meals",
-    "Try pizza, burger or injera",
-    "Find food near your location",
-  ],
-  market: [
-    "Search groceries and stores",
-    "Try milk, bread or vegetables",
-    "Find daily essentials",
-  ],
-  construction: [
-    "Search cement, steel or tools",
-    "Try blocks, sand or hardware",
-    "Find verified suppliers",
-  ],
-  parts: [
-    "Search vehicle parts",
-    "Try brake pads or filters",
-    "Find parts by vehicle model",
-  ],
-};
-
-const serviceCopy: Record<ServiceKey, { title: string; description: string }> = {
-  food: {
-    title: "Food near you",
-    description: "Local kitchens with clear prices and reliable delivery times.",
-  },
-  taxi: {
-    title: "Book a ride",
-    description: "Upfront fares, nearby drivers and live trip progress.",
-  },
-  market: {
-    title: "Groceries and essentials",
-    description: "Everyday shopping from trusted local stores.",
-  },
-  construction: {
-    title: "Construction materials",
-    description: "Verified cement, steel, blocks and tools for your project.",
-  },
-  parts: {
-    title: "Car parts",
-    description: "Trusted suppliers, clear pricing and compatibility support.",
-  },
-};
+const serviceCopy: Record<ServiceKey, { title: string; description: string }> =
+  {
+    food: {
+      title: "Food near you",
+      description:
+        "Local kitchens with clear prices and reliable delivery times.",
+    },
+    taxi: {
+      title: "Book a ride",
+      description: "Upfront fares, nearby drivers and live trip progress.",
+    },
+    market: {
+      title: "Groceries and essentials",
+      description: "Everyday shopping from trusted local stores.",
+    },
+    construction: {
+      title: "Construction materials",
+      description: "Verified cement, steel, blocks and tools for your project.",
+    },
+    parts: {
+      title: "Car parts",
+      description:
+        "Trusted suppliers, clear pricing and compatibility support.",
+    },
+  };
 
 const searchLabels: Record<ServiceKey, string> = {
   food: "Search restaurants or meals",
@@ -286,11 +253,6 @@ export function CustomerDashboard({
     deletingMs: 30,
     pauseMs: 1200,
   });
-  const searchTypewriter = useTypewriterCycle(searchTypingPrompts[service], {
-    typingMs: 48,
-    deletingMs: 25,
-    pauseMs: 1350,
-  });
 
   const selectedRide =
     rideTypes.find((ride) => ride.id === rideId) ?? rideTypes[0];
@@ -373,7 +335,7 @@ export function CustomerDashboard({
   }
 
   return (
-    <div className="space-y-7 sm:space-y-8">
+    <div className="biloo-customer-workspace space-y-7 sm:space-y-8">
       <section className="pt-1" data-biloo-customer-home>
         <button
           aria-busy={resolvingLocation}
@@ -410,11 +372,12 @@ export function CustomerDashboard({
           <span className="biloo-service-loop-icon" aria-hidden="true">
             <Icon className="size-5" name={animatedService.icon} />
           </span>
-          <span className="biloo-service-loop-copy">
+          <span
+            className="biloo-service-loop-copy biloo-service-motion-enter"
+            key={animatedService.key}
+          >
             <span className="biloo-service-loop-label">
-              <span aria-hidden="true">{heroTypewriter.text || "\u00a0"}</span>
-              <span aria-hidden="true" className="biloo-typewriter-caret" />
-              <span className="sr-only">{animatedService.label}</span>
+              <span>{animatedService.label}</span>
             </span>
             <span className="biloo-service-loop-detail">
               {animatedService.detail}
@@ -446,7 +409,7 @@ export function CustomerDashboard({
               <Icon className="size-[18px]" name="search" />
             </span>
             <span className="biloo-search-typewriter min-w-0 flex-1 truncate">
-              <span>{searchTypewriter.text || "\u00a0"}</span>
+              <span>{searchLabels[service]}</span>
               <span aria-hidden="true" className="biloo-typewriter-caret" />
             </span>
             <span className="biloo-search-action">
@@ -467,23 +430,15 @@ export function CustomerDashboard({
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   setSearch(event.target.value)
                 }
-                placeholder=""
+                placeholder={searchLabels[service]}
                 spellCheck={false}
                 type="search"
                 value={search}
               />
-              {!search ? (
-                <span
-                  aria-hidden="true"
-                  className="biloo-search-typewriter-overlay"
-                >
-                  <span>{searchTypewriter.text || "\u00a0"}</span>
-                  <span className="biloo-typewriter-caret" />
-                </span>
-              ) : null}
               {search ? (
                 <button
                   aria-label="Clear search"
+                  data-transient-field-action="true"
                   className="biloo-search-clear relative z-20 grid size-8 shrink-0 place-items-center rounded-full text-[#5f636b]"
                   onClick={() => setSearch("")}
                   type="button"
@@ -504,7 +459,7 @@ export function CustomerDashboard({
         )}
       </section>
 
-      <section>
+      <section className="biloo-service-section">
         <div className="flex items-center justify-between">
           <h2 className="text-[20px] font-semibold tracking-[-0.025em] text-black">
             Services
@@ -518,7 +473,7 @@ export function CustomerDashboard({
             return (
               <button
                 aria-pressed={active}
-                className="group min-w-0 text-center"
+                className="biloo-service-option group min-w-0 text-center"
                 key={item.key}
                 onClick={() => {
                   setService(item.key);
@@ -548,31 +503,31 @@ export function CustomerDashboard({
         </div>
       </section>
 
-      <section className="grid grid-cols-3 overflow-hidden rounded-xl border border-[#e4e4e4] bg-white">
-        <button
-          className="min-w-0 border-r border-[#eeeeee] px-3 py-3.5 text-left transition hover:bg-[#f8f8f8]"
-          type="button"
-        >
-          <span className="block truncate text-[10px] text-[#777777]">Wallet</span>
+      <section className="biloo-customer-summary grid grid-cols-3 overflow-hidden rounded-xl border border-[#e4e4e4] bg-white">
+        <div className="min-w-0 border-r border-[#eeeeee] px-3 py-3.5 text-left transition hover:bg-[#f8f8f8]">
+          <span className="block truncate text-[10px] text-[#777777]">
+            Wallet
+          </span>
           <span className="mt-1 block truncate text-[14px] font-semibold text-black sm:text-[16px]">
             ETB 3,840
           </span>
-        </button>
-        <button
-          className="min-w-0 border-r border-[#eeeeee] px-3 py-3.5 text-left transition hover:bg-[#f8f8f8]"
-          type="button"
-        >
-          <span className="block truncate text-[10px] text-[#777777]">Active</span>
+        </div>
+        <div className="min-w-0 border-r border-[#eeeeee] px-3 py-3.5 text-left transition hover:bg-[#f8f8f8]">
+          <span className="block truncate text-[10px] text-[#777777]">
+            Active
+          </span>
           <span className="mt-1 block text-[14px] font-semibold text-black sm:text-[16px]">
             {serviceStats.active}
           </span>
-        </button>
+        </div>
         <button
           className="min-w-0 px-3 py-3.5 text-left transition hover:bg-[#f8f8f8]"
           onClick={onOpenCart}
           type="button"
         >
-          <span className="block truncate text-[10px] text-[#777777]">Cart</span>
+          <span className="block truncate text-[10px] text-[#777777]">
+            Cart
+          </span>
           <span className="mt-1 flex items-center justify-between gap-1 text-[14px] font-semibold text-black sm:text-[16px]">
             {cartCount}
             <Icon className="size-4 shrink-0" name="arrow" />
@@ -599,7 +554,7 @@ export function CustomerDashboard({
         />
       ) : (
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-          <Surface className="overflow-hidden p-4 sm:p-5">
+          <Surface className="biloo-catalog-surface overflow-hidden p-4 sm:p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] font-medium text-[#777777]">
@@ -615,13 +570,13 @@ export function CustomerDashboard({
               <StatusPill tone="success">Available</StatusPill>
             </div>
 
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
+            <div className="biloo-catalog-grid mt-5 grid gap-3 md:grid-cols-2">
               {catalogItems.map((item) => (
                 <article
-                  className="group flex min-h-[132px] gap-3 rounded-xl border border-[#e4e4e4] bg-white p-3 transition hover:border-[#cfcfcf] hover:shadow-[0_3px_12px_rgba(0,0,0,0.06)]"
+                  className="biloo-product-card group flex min-h-[132px] gap-3 rounded-xl border border-[#e4e4e4] bg-white p-3 transition hover:border-[#cfcfcf] hover:shadow-[0_3px_12px_rgba(0,0,0,0.06)]"
                   key={item.id}
                 >
-                  <span className="grid size-[72px] shrink-0 place-items-center rounded-lg bg-[#f3f3f3] text-[30px]">
+                  <span className="biloo-product-visual grid size-[72px] shrink-0 place-items-center rounded-lg bg-[#f3f3f3] text-[30px]">
                     {item.icon}
                   </span>
 
@@ -657,7 +612,7 @@ export function CustomerDashboard({
                       </div>
                       <button
                         aria-label={`Add ${item.name} to cart`}
-                        className="grid size-9 shrink-0 place-items-center rounded-full bg-black text-white transition hover:bg-[#333333] active:scale-95"
+                        className="biloo-product-add grid size-9 shrink-0 place-items-center rounded-full bg-black text-white transition hover:bg-[#333333] active:scale-95"
                         onClick={() => onAddToCart(item)}
                         type="button"
                       >
@@ -670,7 +625,7 @@ export function CustomerDashboard({
             </div>
 
             {catalogItems.length === 0 ? (
-              <div className="mt-5 rounded-xl bg-[#f3f3f3] px-5 py-12 text-center">
+              <div className="biloo-empty-state mt-5 rounded-xl bg-[#f3f3f3] px-5 py-12 text-center">
                 <Icon className="mx-auto size-5 text-[#777777]" name="search" />
                 <p className="mt-3 text-[13px] font-semibold text-black">
                   No matching results
