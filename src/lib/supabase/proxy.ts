@@ -41,15 +41,25 @@ export async function updateSession(request: NextRequest) {
   const signedIn = Boolean(data?.claims?.sub);
   const pathname = request.nextUrl.pathname;
 
+  function redirectWithCookies(url: URL) {
+    const redirect = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
+  }
+
   if (routeMatches(pathname, protectedRoutes) && !signedIn) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/auth/login";
     loginUrl.searchParams.set("next", `${pathname}${request.nextUrl.search}`);
-    return NextResponse.redirect(loginUrl);
+    return redirectWithCookies(loginUrl);
   }
 
-  if (routeMatches(pathname, authRoutes) && signedIn) {
-    return NextResponse.redirect(new URL("/biloo", request.url));
+  if (
+    routeMatches(pathname, authRoutes) &&
+    signedIn &&
+    !request.nextUrl.searchParams.has("error")
+  ) {
+    return redirectWithCookies(new URL("/biloo", request.url));
   }
 
   return response;

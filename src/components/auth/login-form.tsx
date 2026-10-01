@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { signInAction } from "@/app/auth/actions";
+import { signInAction, signInWithGoogleAction } from "@/app/auth/actions";
 import { Icon } from "@/components/biloo/ui";
+import { initialAuthState } from "@/lib/auth/form-state";
 
-import { authButtonClass, authInputClass } from "./auth-shell";
+import { AuthError, authButtonClass, authInputClass } from "./auth-shell";
 
 function SignInButton() {
   const { pending } = useFormStatus();
@@ -75,12 +76,44 @@ export function AuthGoogleButton({ label }: { label: string }) {
   );
 }
 
+export function AuthGoogleForm({
+  next,
+  label,
+}: {
+  next: string;
+  label: string;
+}) {
+  const [state, action] = useActionState(
+    signInWithGoogleAction,
+    initialAuthState,
+  );
+  return (
+    <form action={action}>
+      <input name="next" type="hidden" value={next} />
+      <AuthGoogleButton label={label} />
+      <AuthError message={state.error ?? undefined} />
+    </form>
+  );
+}
+
 export function LoginForm({ next }: { next: string }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [state, formAction] = useActionState(signInAction, initialAuthState);
+  const errorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (state.error) errorRef.current?.focus();
+  }, [state]);
 
   return (
-    <form action={signInAction} className="biloo-login-form">
+    <form action={formAction} className="biloo-login-form">
       <input name="next" type="hidden" value={next} />
+      {state.error ? (
+        <div ref={errorRef} tabIndex={-1}>
+          <AuthError message={state.error} />
+        </div>
+      ) : null}
 
       <label className="biloo-auth-field">
         <span>Email address</span>
@@ -90,6 +123,8 @@ export function LoginForm({ next }: { next: string }) {
           className={authInputClass}
           inputMode="email"
           name="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
           placeholder="you@example.com"
           required
           type="email"
@@ -103,8 +138,9 @@ export function LoginForm({ next }: { next: string }) {
             aria-label="Password"
             autoComplete="current-password"
             className={authInputClass}
-            minLength={8}
             name="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
             placeholder="Enter your password"
             required
             type={showPassword ? "text" : "password"}

@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { signInWithGoogleAction } from "@/app/auth/actions";
 import { AuthError, AuthShell } from "@/components/auth/auth-shell";
-import { AuthGoogleButton, LoginForm } from "@/components/auth/login-form";
+import { AuthGoogleForm, LoginForm } from "@/components/auth/login-form";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -31,10 +30,7 @@ export default async function LoginPage({
     >
       <AuthError message={params.error} />
 
-      <form action={signInWithGoogleAction}>
-        <input name="next" type="hidden" value={next} />
-        <AuthGoogleButton label="Continue with Google" />
-      </form>
+      <AuthGoogleForm next={next} label="Continue with Google" />
 
       <div className="biloo-auth-divider" aria-hidden="true">
         <span />
@@ -45,8 +41,8 @@ export default async function LoginPage({
       <LoginForm next={next} />
 
       <p className="biloo-auth-legal-copy">
-        By continuing, you agree to the BILOO <Link href="/terms">Terms</Link> and{" "}
-        <Link href="/privacy">Privacy Policy</Link>.
+        By continuing, you agree to the BILOO <Link href="/terms">Terms</Link>{" "}
+        and <Link href="/privacy">Privacy Policy</Link>.
       </p>
     </AuthShell>
   );
